@@ -1,0 +1,210 @@
+//全局颜色变量
+$blue:#2069E5;   //主色调，用于指示性强烈的控件、标签以及特定 场景下需要重点突出的信息
+$imt:#ED1A23;    //重要提示文字，如价格、状态文字提示
+$bor-color:#E5E5E5;  //分割线，用于tab控件底部分割线，描述文字较多列表项
+$bg-blue:linear-gradient(135deg,rgba(69,156,255,1) 0%,rgba(32,105,229,1) 100%); //用于按钮渐变色，45度，对角线渐变
+$bg-org:linear-gradient(135deg,rgba(69,156,255,1) 0%,rgba(32,105,229,1) 100%);  //用于按钮渐变色，45度，对角线渐变
+$bg-color:#F4F4F4; //背景色
+
+// 宽高
+@mixin wh($width:100%, $height:100%){
+	width: $width;
+	height: $height;
+}
+
+// 字体大小、行高
+@mixin ft($size:16px, $line-height:1) {  
+	font-size: $size;
+	line-height:$line-height;
+}
+
+
+//iconfont 图标自定义颜色
+.icon-zhushi{
+	color:#FF9400;
+}
+.icon-youjiantou{
+	font-size: 12px;
+	margin-left: 16px;
+	color: #8E8E93;
+}
+
+
+
+
+.wrap{
+	border-radius: 14px;
+	border:1px solid  $bor-color;
+	background: #F4F4F4;
+	box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
+	margin-top: 12px;
+}
+
+//弹窗样式
+.vux-popup-dialog {
+	width: 100%;
+	background: #ffffff !important;
+	border-radius: 12px 12px 0px 0px;
+  }
+// 弹层头部标准样式
+.PopupTop {
+	width: 375px;
+	height: 46px;
+	border-bottom: 1px solid #e5e5e5;
+	background: rgba(250, 250, 250, 1);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	& > p {
+	  font-size: 16px;
+	  font-family: PingFangSC-Semibold;
+	  font-weight: 600;
+	  color: rgba(51, 51, 51, 1);
+	  line-height: 22px;
+	  margin-left: 12px;
+	}
+	& > span {
+	  font-size: 14px;
+	  font-weight: 500;
+	  color: rgba(102, 102, 102, 1);
+	  line-height: 20px;
+	  margin-right: 12px;
+	}
+  }
+
+// 显示考场信息公用box
+.commonBox{
+	width:327px;
+	padding: 16px;
+	font-family: PingFangSC-Semibold;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
+	border-radius:14px;
+	& > h3 {
+		font-size: 16px;
+		font-family: PingFangSC-Semibold;
+		font-weight: 600;
+		color: rgba(51, 51, 51, 1);
+		line-height: 22px;
+		margin-bottom: 16px;
+	}
+  	&>p{
+		margin-bottom: 8px;
+		& > span {
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 20px;
+			font-size:14px;
+		}
+		& > span:nth-of-type(1) {
+			color: #666666;
+			float: left;
+			margin-right: 16px;
+		}
+		& > span:nth-of-type(2) {
+			color: #333333;
+			width: 249px;
+            display: inline-block;
+		}
+		&:last-child{
+			margin-bottom: 0px;
+		}
+	}
+}
+
+// 底部固定的价格提交Bar
+.fixedBox{
+	width: 375px;
+	height: 52px;
+	display: flex;
+	align-items: center;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	&>button{
+		border: none;
+		width:180px;
+		height:52px;
+		font-size:16px;
+		font-weight:600;
+		line-height:22px;
+		color: #ffffff;
+		text-align: center;
+		line-height: 52px;
+		background:rgba(176,176,176,1);
+	   
+	}
+	&>p{
+		width: 126px;
+		height: 25px;
+		display: flex;
+		align-items: center;
+		padding: 14px  45px 13px 24px; 
+		background:rgba(255,255,255,1);
+		box-shadow:0px -1px 0px 0px rgba(229,229,229,1);
+		&>span{
+			font-weight:600;
+			color:rgba(237,26,35,1);
+			line-height:25px;
+			font-size:18px;
+			margin-left: 3px;
+		}
+		&>span:nth-of-type(1){
+			font-size:14px;
+			font-weight:500;
+			color:#333333;
+			margin-left: 0px;
+			line-height:20px;
+		}
+		&>i{
+			font-style: normal;
+			font-size:15px;
+			font-weight:500;
+			margin-left: 5px;
+			color:rgba(237,26,35,1);
+			line-height:20px;
+		}
+	}
+	.allowClick{
+		background:linear-gradient(135deg,rgba(243,93,46,1) 0%,rgba(237,26,35,1) 100%);
+	}
+}
+
+//确认删除按钮样式
+.weui-dialog{
+	width:340px!important;
+	height:147px!important;
+	margin:185px 18px 335px!important; 
+	max-width:none!important;
+	background:rgba(255,255,255,1);
+	border-radius:14px!important;
+	& /deep/ .weui-dialog__bd:first-child{
+		height: 23px!important;
+		min-height: 0;
+		padding: 32px 100px 32px 96px!important;
+		&>p{
+			font-size:16px;
+			font-family:PingFangSC-Semibold;
+			font-weight:600;
+			color:rgba(102,102,102,1);
+			line-height:22px;
+		}
+	}
+}
+.weui-dialog__ft{
+	height: 60px;
+	line-height: 1;
+}
+.weui-dialog__btn_primary{
+	font-size:16px;
+	font-weight:600;
+	line-height: 60px;
+	color:rgba(32,105,229,1)!important;
+}
+.weui-dialog__btn_default{
+	font-size:16px;
+	font-weight:600;
+	line-height: 60px;
+	color: #666666!important;
+}
+

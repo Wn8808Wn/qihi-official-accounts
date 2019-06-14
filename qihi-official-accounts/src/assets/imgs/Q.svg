@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>常见问题说明</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#F35D2E" offset="0%"></stop>
+            <stop stop-color="#ED1A23" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="常见问题说明" transform="translate(-14.000000, -427.000000)">
+            <g id="分组-5" transform="translate(14.000000, 427.000000)">
+                <circle id="椭圆形" fill="url(#linearGradient-1)" cx="7" cy="7" r="7"></circle>
+                <path d="M6.644,2.264 C7.952,2.264 8.984,2.684 9.74,3.536 C10.46,4.34 10.82,5.408 10.82,6.728 C10.82,8.012 10.472,9.056 9.8,9.848 C10.112,10.256 10.436,10.688 10.748,11.144 L9.836,11.936 C9.512,11.468 9.2,11.024 8.888,10.616 C8.264,10.976 7.508,11.168 6.644,11.168 C5.324,11.168 4.292,10.736 3.548,9.896 C2.828,9.08 2.48,8.024 2.48,6.728 C2.48,5.42 2.828,4.364 3.548,3.548 C4.292,2.684 5.324,2.264 6.644,2.264 Z M6.644,3.5 C5.756,3.5 5.072,3.8 4.58,4.4 C4.112,4.976 3.884,5.744 3.884,6.728 C3.884,7.7 4.112,8.468 4.58,9.044 C5.06,9.632 5.756,9.932 6.644,9.932 C7.208,9.932 7.688,9.812 8.096,9.584 C7.664,9.056 7.256,8.588 6.86,8.168 L7.676,7.376 C8.096,7.82 8.516,8.288 8.924,8.768 C9.236,8.24 9.404,7.556 9.404,6.728 C9.404,5.72 9.164,4.928 8.696,4.352 C8.216,3.776 7.532,3.5 6.644,3.5 Z" id="Q" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

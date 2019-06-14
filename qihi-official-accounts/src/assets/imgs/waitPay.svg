@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="375px" height="104px" viewBox="0 0 375 104" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>订单详情 copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="1.87183887%" y1="1.87183887%" x2="97.6469448%" y2="97.6469448%" id="linearGradient-1">
+            <stop stop-color="#459CFF" offset="0%"></stop>
+            <stop stop-color="#2069E5" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="375" height="104"></rect>
+        <linearGradient x1="7.75951292%" y1="3.17482907%" x2="96.2942019%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#98B5FF" offset="0%"></stop>
+            <stop stop-color="#557BFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="59.8392066%" y1="93.3815422%" x2="25.7823518%" y2="32.9829714%" id="linearGradient-5">
+            <stop stop-color="#459CFF" offset="0%"></stop>
+            <stop stop-color="#2069E5" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="订单详情-copy" transform="translate(0.000000, -65.000000)">
+            <g id="分组-9" transform="translate(0.000000, 65.000000)">
+                <g id="分组-5">
+                    <mask id="mask-3" fill="white">
+                        <use xlink:href="#path-2"></use>
+                    </mask>
+                    <use id="矩形" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                    <circle id="椭圆形" fill="url(#linearGradient-4)" opacity="0.300000012" mask="url(#mask-3)" cx="325" cy="133" r="118"></circle>
+                    <circle id="椭圆形-copy-3" fill="url(#linearGradient-4)" opacity="0.300000012" mask="url(#mask-3)" cx="202.5" cy="55.5" r="208.5"></circle>
+                    <circle id="椭圆形-copy-3" fill="url(#linearGradient-5)" opacity="0.600000024" mask="url(#mask-3)" cx="129.5" cy="-10.5" r="58.5"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

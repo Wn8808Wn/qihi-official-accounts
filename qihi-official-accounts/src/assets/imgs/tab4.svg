@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>规范 copy 4</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#459CFF" offset="0%"></stop>
+            <stop stop-color="#2069E5" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="规范" transform="translate(-899.000000, -5398.000000)">
+            <g id="changyongxinxi" transform="translate(899.000000, 5398.000000)">
+                <g>
+                    <circle id="椭圆形-copy" fill="url(#linearGradient-1)" cx="17" cy="17" r="17"></circle>
+                    <g id="shezhi-copy-3" transform="translate(7.000000, 8.000000)" stroke="#FFFFFF" stroke-width="1.5">
+                        <g id="分组">
+                            <path d="M16.6474788,16.9495097 C16.0164023,18.1908621 14.7467139,18.9717706 13.360255,18.9715712 L6.68478754,18.9715712 C5.30963173,18.9713433 4.04855524,18.2024558 3.41260623,16.9763433 L0.418951841,11.2089745 C-0.139660057,10.1328396 -0.139660057,8.85009745 0.418951841,7.773991 L3.41260623,2.0053973 C4.04889518,0.779854573 5.30985836,0.0113943028 6.68478754,0.0113943028 L13.360255,0.0113943028 C14.7467989,0.0113943028 16.016289,0.793071964 16.6474788,2.03342729 L19.5797167,7.80190705 C20.1191785,8.86368516 20.1191785,10.1203913 19.5797167,11.180916 L16.6474788,16.9495097 Z" id="Fill-1"></path>
+                        </g>
+                        <path d="M10.1176609,13.8125 C7.84353382,13.8125 6,11.951711 6,9.656264 C6,7.36081695 7.84353382,5.5 10.1176609,5.5 C12.3916771,5.5 14.2352941,7.36081695 14.2352941,9.656264 C14.2352941,11.951711 12.3916771,13.8125 10.1176609,13.8125 Z" id="Fill-3"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>规范 copy</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="规范" transform="translate(-200.000000, -2630.000000)" stroke="#B0B0B0">
+            <g id="我的订单" transform="translate(200.000000, 2630.000000)">
+                <g id="分组-copy-2">
+                    <rect id="矩形" stroke-width="1.5" x="0.75" y="12.9318182" width="18.5" height="6.31818182" rx="3.15909091"></rect>
+                    <path d="M4.38636364,12.7768505 L15.6136364,12.7768505 L15.6136364,4 C15.6136364,2.20507456 14.1585618,0.75 12.3636364,0.75 L7.63636364,0.75 C5.8414382,0.75 4.38636364,2.20507456 4.38636364,4 L4.38636364,12.7768505 Z" id="矩形-copy" stroke-width="1.5"></path>
+                    <rect id="矩形" fill="#8E8E8E" x="6.86363636" y="5.04545455" width="6.27272727" height="1" rx="0.5"></rect>
+                    <rect id="矩形-copy-2" fill="#8E8E8E" x="6.86363636" y="7.77272727" width="6.27272727" height="1" rx="0.5"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

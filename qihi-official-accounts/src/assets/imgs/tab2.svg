@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>规范 copy 4</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#459CFF" offset="0%"></stop>
+            <stop stop-color="#2069E5" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="规范" transform="translate(-720.000000, -5398.000000)">
+            <g id="yibaoming" transform="translate(720.000000, 5398.000000)">
+                <g id="分组-12">
+                    <circle id="椭圆形-copy-2" fill="url(#linearGradient-1)" cx="17" cy="17" r="17"></circle>
+                    <g id="分组-copy-2" transform="translate(7.000000, 7.000000)" stroke="#FFFFFF" stroke-width="1.5">
+                        <rect id="矩形" x="1.50990331e-14" y="5.42521994" width="5.42521994" height="13.6656891" rx="2.71260997"></rect>
+                        <path d="M5.42410988,7.88250633 C7.51173329,6.98692919 8.555545,5.48342215 8.555545,3.3719852 C8.555545,0.204829779 11.866662,-0.124972804 13.1303251,1.28593034 C14.1860435,2.69355497 13.0663421,6.56891496 13.7701544,7.27272727 C14.4739668,7.97653959 15.8460385,5.86939047 17.2976514,6.11651342 C18.7492643,6.36363636 20.1129006,7.07329027 19.2038097,11.5862399 C18.2947188,16.0991896 17.8401734,17.7272727 15.5674461,19.0909091 C14.0522946,20 10.6711825,19.4722788 5.42410988,17.5077455 L5.42410988,12.2727273 L5.42410988,7.88250633 Z" id="路径-2"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

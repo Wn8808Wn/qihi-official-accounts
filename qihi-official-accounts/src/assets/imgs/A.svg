@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>常见问题说明</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#459CFF" offset="0%"></stop>
+            <stop stop-color="#2069E5" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="常见问题说明" transform="translate(-14.000000, -475.000000)">
+            <g id="分组-6" transform="translate(14.000000, 475.000000)">
+                <g id="分组-3-copy">
+                    <circle id="椭圆形" fill="url(#linearGradient-1)" cx="7" cy="7" r="7"></circle>
+                    <path d="M6.276,2.432 L7.872,2.432 L11.148,11 L9.648,11 L8.868,8.852 L5.28,8.852 L4.5,11 L3,11 L6.276,2.432 Z M5.7,7.7 L8.448,7.7 L7.104,3.944 L7.056,3.944 L5.7,7.7 Z" id="A" fill="#FFFFFF"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
