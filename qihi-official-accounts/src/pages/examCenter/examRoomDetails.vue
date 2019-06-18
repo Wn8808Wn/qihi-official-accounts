@@ -141,7 +141,7 @@ export default {
             this.examDateCommon = item.examDate;
             this.currentIndex = index;
             let  params = {
-                roomId:JSON.parse(this.$route.query.currentItem).examRoomId,
+                roomId:JSON.parse(sessionStorage.getItem('currentItem')).examRoomId,
                 examDate :item.examDate
             }
             this.$axios.get('/api/enter/get_examDetal',{params}).then( res =>{
@@ -167,38 +167,44 @@ export default {
             this.examTime = item.examDate.replace(/-/g, '.') +' ' +item.examTime+'-'+this.longTimeAgo(this.examDateCommon,item.examTime,30)
         },
         submitExamTime(){
-            let obj = {
-                examRoomName:this.examRoomName,
-                examLevel:this.examLevelTitle,
-                address:this.address,
-                examTime: this.examTime,
-                price:this.price
-            }
-            // console.log(obj)
-            this.$router.push({name:'submitOrder',params:obj})
+            // let obj = {
+            //     examTime: this.examTime,
+            //     price:this.price
+            // }
+            // this.$router.push({name:'submitOrder',params:obj})
+            sessionStorage.setItem('examTime',this.examTime);
+            sessionStorage.setItem('price',this.price);
+            this.$router.push({name:'submitOrder'})
         },
     },
     mounted(){
-        this.examLevelId = this.$route.query.examLevelId;
-        this.examLevelTitle = this.$route.query.level;
-        this.examRoomName = JSON.parse(this.$route.query.currentItem).examRoomName;
-        this.address = JSON.parse(this.$route.query.currentItem).address;
+        //路由方式
+        // this.examLevelId = this.$route.query.examLevelId;
+        // this.examLevelTitle = this.$route.query.level;
+        // this.examRoomName = JSON.parse(this.$route.query.currentItem).examRoomName;
+        // this.address = JSON.parse(this.$route.query.currentItem).address;
+        //缓存方式
+        this.examLevelId = sessionStorage.getItem('examLevelId');
+        this.examLevelTitle = sessionStorage.getItem('examLevelTitle');
+        this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName
+        this.address = JSON.parse(sessionStorage.getItem('currentItem')).address
+
+        //请求滑动的日期
         let  params  = {
-            roomId:JSON.parse(this.$route.query.currentItem).examRoomId
+            roomId:JSON.parse(sessionStorage.getItem('currentItem')).examRoomId
         }
         this.$axios.get('/api/enter/get_calendar',{params}).then( res =>{
             if(res.data.code === 0){
                this.swiperSlides = res.data.data;
-         
             }
         })
+        //请求报考价格
         this.$axios.get('/api/enter/get_serviceFee?examLevel='+this.examLevelId).then( res => {
             if(res.data.code === 0){
                 this.price = res.data.data
             }
         })
     },
-    
 }   
 </script>
 

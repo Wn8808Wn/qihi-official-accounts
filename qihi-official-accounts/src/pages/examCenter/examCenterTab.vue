@@ -2,7 +2,7 @@
     <div class="examinationLevelPage">
         <div class="wrap pageTop">
             <div class="contentLf" @click="showPopupPage">
-              <img src="../../assets/imgs/kaoshixuzhi.png" alt="报名须知">
+              <img src="../../assets/imgs/kaoshixuzhi.svg" alt="报名须知">
               <span>报名须知</span>
             </div>
             <div class="contentRg">
@@ -124,7 +124,7 @@
                 </p>
                 <p class="commonTagP">
                   <span>考试时间</span>
-                  <span>{{item.examBeginDate}}-{{item.examEndDate}}</span>
+                  <span>{{item.examBeginDate.replace(/-/g,'.')}} 至 {{item.examEndDate.replace(/-/g,'.')}}</span>
                 </p>
             </div>
             <p class="bottomBar">
@@ -226,6 +226,7 @@ export default {
             if (res.data.code === 0) {
               this.examAreaList = res.data.data.areaList;
               this.examLevelList = res.data.data.levelType;
+              sessionStorage.setItem('examLevelList',JSON.stringify(res.data.data.levelType))
             }
           });
     },
@@ -233,6 +234,7 @@ export default {
         return  this.$axios.get('/api/enter/get_examRoom',{params}).then( res => {
             this.examRoomList =[];
             if(res.data.code === 0){
+              console.log(res.data.data,'json')
                this.examRoomList = res.data.data
             }else{
               console.log(res.data.msg)
@@ -303,7 +305,12 @@ export default {
     },
     handleSignUp(item){
       let examLevelId = this.examLevelList.filter( e => e.levelName == this.examLevelTitle)[0].id
-      this.$router.push({name:'examRoomDetails',query:{currentItem:JSON.stringify(item),level:this.examLevelTitle,examLevelId}})
+      sessionStorage.setItem('examLevelTitle',this.examLevelTitle)
+      sessionStorage.setItem('currentItem',JSON.stringify(item))
+      sessionStorage.setItem('examLevelId',examLevelId)
+      //路由传值
+      // this.$router.push({name:'examRoomDetails',query:{currentItem:JSON.stringify(item),level:this.examLevelTitle,examLevelId}})
+      this.$router.push({name:'examRoomDetails'})
     }
   },
   mounted() {
@@ -358,27 +365,25 @@ export default {
       box-sizing: border-box;
       border-right: 1px solid #e5e5e5;
       & > img {
+        width: 34px;
+        height: 34px;
+        object-fit: cover;
         margin-left: 39px;
         margin-top: 12px;
         margin-right: 12px;
-        background: linear-gradient(
-          135deg,
-          rgba(77, 232, 208, 1) 0%,
-          rgba(31, 211, 189, 1) 100%
-        );
+        background: linear-gradient(135deg, rgba(77, 232, 208, 1) 0%,rgba(31, 211, 189, 1) 100%);
         box-shadow: 0px 3px 5px 0px rgba(0, 233, 204, 0.5);
       }
     }
     .contentRg {
       & > img {
+        width: 34px;
+        height: 34px;
+        object-fit: cover;
         margin-left: 18px;
         margin-top: 12px;
         margin-right: 12px;
-        background: linear-gradient(
-          138deg,
-          rgba(251, 207, 6, 1) 0%,
-          rgba(255, 166, 9, 1) 100%
-        );
+        background: linear-gradient(138deg, rgba(251, 207, 6, 1) 0%, rgba(255, 166, 9, 1) 100%);
         box-shadow: 0px 3px 4px 0px rgba(255, 180, 0, 0.5);
       }
     }

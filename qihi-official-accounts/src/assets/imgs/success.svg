@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="336px" height="124px" viewBox="0 0 336 124" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>报名成功</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="335" height="563" rx="14"></rect>
+        <filter x="-2.7%" y="-1.6%" width="105.4%" height="103.2%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.05 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="7.75951292%" y1="3.17482907%" x2="94.4410666%" y2="97.9733351%" id="linearGradient-4">
+            <stop stop-color="#98B5FF" offset="0%"></stop>
+            <stop stop-color="#557BFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="报名成功" transform="translate(-19.000000, -84.000000)">
+            <g id="分组-5" transform="translate(19.000000, 84.000000)">
+                <g id="分组-2" transform="translate(1.000000, 0.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="矩形-copy-37">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-1"></use>
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    </g>
+                    <path d="M-3,99 C28.3333333,112.333333 57.3333333,119 84,119 C124,119 190.5,100 229.5,105 C268.5,110 352.5,129.5 367.5,122 C377.5,117 389.5,96 403.5,59 L308,-9 C175.333333,-18.3333333 107.666667,-23 105,-23 C102.333333,-23 82,-23 44,-23 L-20,21 L-3,99 Z" id="路径" fill="#2069E5" opacity="0.200000003" mask="url(#mask-2)"></path>
+                    <path d="M-20,124.029268 C20,97.3430894 79.3333333,93 158,111 C276,138 365,81.5292683 384,54.0292683 C396.666667,35.695935 387.333333,19.0195122 356,4 L255,-13.4436508 L100,-9 C63.505136,-14.6957703 33.9899845,-14.6957703 11.4545455,-9 C-11.0808936,-3.30422969 -27.0657421,8.19577031 -36.5,25.5 L-20,124.029268 Z" id="路径-6" fill="url(#linearGradient-4)" mask="url(#mask-2)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

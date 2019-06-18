@@ -21,7 +21,7 @@
                     </p>
                     <p>
                         <span>考试时间</span>
-                        <span>{{time}}</span>
+                        <span>{{examTime}}</span>
                     </p>
 
                 </div>
@@ -29,7 +29,7 @@
                 <div class="bottomBorderBox">
                     <p>
                         <span>联&nbsp;&nbsp;系&nbsp;&nbsp;人</span>
-                        <span>小智15613119863</span>
+                        <span>{{linkman}}{{phone}}</span>
                      </p>
                     <p>
                         <span>发票信息</span>
@@ -38,13 +38,14 @@
                 </div>
 
                 <div class="bottomBorderBox">
-                    <p>
+                    <p class="orderNumberP">
                         <span>订单编号</span>
-                        <span>E2018120514203100900</span>
+                        <span>{{orderNo}}</span>
+                         <x-button plain type="primary" style="border-radius:14px;">复制</x-button>
                      </p>
                     <p>
                         <span>下单时间</span>
-                        <span>2018-12-05 14:20:31</span>
+                        <span>{{createdTime}}</span>
                     </p>
                 </div>
                 <div class="bottomBar">
@@ -53,10 +54,10 @@
                 </div>
             </div>
             <div class="applyPlayerList">
-                    <div v-for="(item,index) in list" :key="index" class="commonBox">
+                    <div v-for="(item,index) in playerslist" :key="index" class="commonBox">
                         <p>
-                        <span>{{item.name}}</span>
-                        <span>{{item.id}}}</span>
+                        <span>{{item.playerName}}</span>
+                        <span>{{item.certificateNo}}</span>
                         </p>
                         <p>
                             <span>电话号码</span>
@@ -64,54 +65,75 @@
                         </p>
                         <p>
                             <span>报名费用</span>
-                            <span>¥{{item.cost}}</span>
+                            <span>¥{{item.examFee}}</span>
                         </p>
 
                     </div>
 
             </div>
         </div>
-
          <div class="fixedBox">
             <p><span>合计:</span> <i>¥</i><span>{{totalPrice}}</span></p>
             <button @click="submitExamTime" :class="{'allowClick':disabled === false}" :disabled="disabled" >
                 提交订单
             </button>
-        </div>     
+        </div>
+        <!-- 确认删除吗 -->
+        <div v-transfer-dom>
+          <confirm v-model="showCofirm"
+          title="提示"
+          @on-cancel="onCancel"
+          @on-confirm="onConfirm"
+          confirm-text='继续支付'
+          >
+            <p style="font-size:16px;font-weight:400;color:rgba(102,102,102,1);line-height:22px;">报名成功后,退款将收取30%的手续费（距考试开始不足48小时将不再支持退款）。</p>
+          </confirm>
+        </div>
+     
     </div>
-
 </template>
 
 <script>
-import { Clocker, Cell, Group } from 'vux'
+import qs from 'qs' // qs在安装axios后会自动安装，只需要组件里import一下即可
+import { Clocker, Cell, Group,XButton,Confirm,TransferDom} from 'vux'
 export default {
+    directives: {
+        TransferDom
+    },
     components: {
             Clocker,
             Cell,
-            Group
+            Group,
+            XButton,
+            Confirm
     },
     data(){
         return{
             time1: this.formatDate(new Date(), "YYYY-MM-DD hh:mm:ss"),
-            examRoomName:'龙岗区考场',
-            examLevelTitle:'10级',
-            address:'黑龙江省哈尔滨市围棋协会二楼黑龙江省哈尔滨市围',
-            time:'12-20 09:00至09:30',
+            examRoomName:'',
+            examLevelTitle:'',
+            examTime:'',
+            address:'',
+            linkman:'',
+            phone:'',
+            orderNo:'',
+            createdTime:'',
             disabled:false,
-            totalPrice:660,
-            list:[
-                {
-                    name:'浓哥',
-                    id:'12321321321313',
-                    phone:'1231231313213',
-                    cost:150
-                },
-                {
-                    name:'浓哥',
-                    id:'11112312321321321313',
-                    phone:'123123131321',
-                    cost:150
-                },
+            showCofirm:false,
+            totalPrice:'',
+            playerslist:[
+                // {
+                //     name:'浓哥',
+                //     id:'12321321321313',
+                //     phone:'1231231313213',
+                //     cost:150
+                // },
+                // {
+                //     name:'浓哥',
+                //     id:'11112312321321321313',
+                //     phone:'123123131321',
+                //     cost:150
+                // },
                 ]
         }
     },
@@ -120,12 +142,38 @@ export default {
             alert('请重新下单')
         },
         submitExamTime(){
+            this.showCofirm = true;
+        },
+        onCancel(){
+
+        },
+        onConfirm(){
 
         }
     },
     mounted(){
         let t = new Date().getTime()+30*1000*60;
         this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
+        //缓存数据
+        this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName;
+        this.address = JSON.parse(sessionStorage.getItem('currentItem')).address;
+        this.examLevelTitle = sessionStorage.getItem('examLevelTitle')
+        this.examTime = sessionStorage.getItem('examTime')
+        this.linkman = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).linkMan;
+        this.totalPrice = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).totalFee;
+        this.phone = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).phone;
+        this.playerslist = JSON.parse(JSON.parse(sessionStorage.getItem('chessPlayersInfo')).chessPlay)
+        // 请求获取订单编号
+        let dataObj = JSON.parse(sessionStorage.getItem('chessPlayersInfo'))
+        this.$axios.post('/api/enter/signUpOrder',qs.stringify(dataObj)).then( (res) => {
+            console.log(res,'dasdad')
+            if( res.data.code === 0){
+                let obj = res.data.data
+                this.orderNo = obj.orderNo;
+                this.createdTime = obj.createdTime;
+            }      
+        })
+       
     }
 }
 </script>
@@ -207,8 +255,27 @@ export default {
                         width: 249px;
                         display: inline-block;
                     }
+                    
                     &:last-child{
                         margin-bottom: 0px;
+                    }
+                }
+                .orderNumberP{
+                    position: relative;
+                    .weui-btn_plain-primary{
+                        color: #2069E5;
+                        font-size:14px;
+                        font-family:PingFang-SC-Medium;
+                        font-weight:500;
+                        line-height:20px;
+                        border:1px  solid #2069E5;
+                    }
+                    button.weui-btn, input.weui-btn{
+                        height: 28px;
+                        width: 60px;
+                        position: absolute;
+                        right: 0;
+                        top: -5px;
                     }
                 }
             }
@@ -245,6 +312,16 @@ export default {
             position: absolute;
             left: 8px;
             top: 480px;
+            &>p:first-child{
+                &>span{
+                    font-size:16px;
+                    font-family:PingFangSC-Semibold;
+                    font-weight:600;
+                    color:rgba(51,51,51,1);
+                    line-height:22px;
+                }
+
+            }
         }
     }    
 }

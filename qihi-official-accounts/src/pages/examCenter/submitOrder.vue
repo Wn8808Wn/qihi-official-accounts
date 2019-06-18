@@ -45,11 +45,13 @@
                     <swipeout-button @click.native="onButtonClick(index)" type="primary">删除</swipeout-button>
                 </div>
                 <div slot="content">
-                    <i slot="icon" class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'active':'deactive'"></i>
+                    <i slot="icon" class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'active1':'deactive1'"></i>
                     <div class="infoBox">
                         <p><span>棋手姓名</span> <span>{{item.playerName}}</span></p>
-                        <p><span>段位等级</span> <span>{{item.chessLevel}}</span></p>
-                        <p><span>身份证号</span> <span>{{item.certificateNo}}</span></p>
+                        <p><span>段位等级</span>
+                        <span>{{examLevelList.filter( item1 => item1.id === item.chessLevel)[0].levelName}}</span>
+                        </p>
+                        <p><span>证件号码</span> <span>{{item.certificateNo}}</span></p>
                     </div>
                 </div>
                 </swipeout-item>
@@ -161,7 +163,6 @@
                             <p style="color:#FF9201"><i class="imgB"></i>请到首页-会员系统根据信息提示完成申请操作</p>
                         </li>
                     </ul>
-
                     <div>
 
                     </div>
@@ -182,7 +183,6 @@
 </template>
 
 <script>
-import qs from 'qs' // qs在安装axios后会自动安装，只需要组件里import一下即可
 import {PopupPicker, Group,TransferDom,Popup,Swipeout,SwipeoutItem,SwipeoutButton,Confirm} from "vux";
 import appointmentInfo from "./popups/appointmentInfo.vue";
 export default {
@@ -215,25 +215,18 @@ export default {
       showPlayer: false,
       disabled: true,
       playerNum: 0,
+      examLevelList:'',
       checkList: [],
       linkManList: [
-        {
-          linkman: "老王",
-          phone: 18811111188
-        },
-        {
-          linkman: "隔壁老王",
-          phone: 18811111188,
-          email: "18811111188@163.com"
-        },
-        {
-          linkman: "老李",
-          phone: 18811111188
-        },
-        {
-          linkman: "老白",
-          phone: 18811111188
-        }
+        // {
+        //   linkman: "老王",
+        //   phone: 18811111188
+        // },
+        // {
+        //   linkman: "隔壁老王",
+        //   phone: 18811111188,
+        //   email: "18811111188@163.com"
+        // },
       ],
       playerList: [
         //  {
@@ -325,6 +318,10 @@ export default {
           console.log(res.data)
           let that = this;
           if(res.data.code === 3){   //剩余座位数充足
+                that.checkList.forEach( (item,index) => {
+                    that.$set(item,'examFee',that.price)
+                })
+                console.log(that.checkList,'加上价格')
                let dataObj ={
                   examPlanId:sessionStorage.getItem('examPlanId'),   
                   linkMan:that.linkManInfo,
@@ -332,9 +329,8 @@ export default {
                   totalFee:that.totalPrice,
                   chessPlay:JSON.stringify(that.checkList)
                 }
-               this.$axios.post('/api/enter/signUpOrder',qs.stringify(dataObj)).then( (res) => {
-                    console.log(res,'asda')
-               })
+                sessionStorage.setItem('chessPlayersInfo',JSON.stringify(dataObj));
+                this.$router.push({name:'orderDetails'})
           }else if(res.data.code === 2){
               alert(res.data.msg) //剩余座位数不足
           }else{
@@ -374,7 +370,7 @@ export default {
       setTimeout(() => {
         this.showLinkMan = false;
         this.currentLinkManId = "";
-      }, 3000);
+      }, 1000);
     },
     showPlayerPopups() {
       this.showPlayer = true;
@@ -403,14 +399,24 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.$route.params,111)
-    this.examRoomName = this.$route.params.examRoomName;
-    this.examLevelTitle = this.$route.params.examLevel;
-    this.address = this.$route.params.address;
-    this.time = this.$route.params.examTime;
-    this.price = this.$route.params.price;
+    //路由传值方式
+    // this.examRoomName = this.$route.params.examRoomName;
+    // this.examLevelTitle = this.$route.params.examLevel;
+    // this.address = this.$route.params.address;
+    // this.time = this.$route.params.examTime;
+    // this.price = this.$route.params.price;
+    //缓存方式
+    this.examLevelTitle = sessionStorage.getItem('examLevelTitle');
+    this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName
+    this.address = JSON.parse(sessionStorage.getItem('currentItem')).address
+    this.time = sessionStorage.getItem('examTime');
+    this.price = sessionStorage.getItem('price');
     this.getLinkManList();
     this.getPlayerList();
+    this.examLevelList = JSON.parse(sessionStorage.getItem('examLevelList'))
+    console.log(this.examLevelList,'000')
+
+
   }
 };
 </script>
@@ -620,7 +626,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #e5e5e5;
+    // border-bottom: 1px solid #e5e5e5;
     & > div {
       & > i {
         margin-right: 22px;
@@ -710,7 +716,6 @@ export default {
     align-items: center;
     padding: 16px;
     border-top: 1px solid #e5e5e5;
-    // background: skyblue;
     .icon-shanchu {
       position: absolute;
       left: 16px;
@@ -719,12 +724,12 @@ export default {
       font-size: 20px;
       color: rgba(32, 105, 229, 1);
     }
-    .active {
+    .active1 {
     display: block;
     transform: rotateZ(0deg);
     transition: all 500ms;
     }
-    .deactive {
+    .deactive1 {
     display: block;
     transform: rotateZ(90deg);
     transition: all 500ms;

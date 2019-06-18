@@ -161,7 +161,7 @@ export default {
       margin: 0 auto;
       margin-bottom: 12px;
     }
-    & > dd {
+    & > dd {                                                                                                                   
       margin: 0 auto;
       font-size: 14px;
       font-weight: 500;
