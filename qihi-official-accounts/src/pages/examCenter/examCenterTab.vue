@@ -80,13 +80,15 @@
                     </div>
                 </div>
                 <!-- 获取考试地区列表 -->
-                <div class="examListPart">
-                    <li   v-if="examAreaList.length>0"
-                          v-for="(item,index) in examAreaList" :key="index" 
-                          @click="selectCurrentProvince(item,index)" 
-                          :class="{'activeProvince':index===currentProvinceID}">
-                                {{item.areaName}}
-                          </li>
+                <div class="examListPart wrapper" ref="areaWrapper">
+                    <ul class="content">
+                        <li   v-if="examAreaList.length>0"
+                              v-for="(item,index) in examAreaList" :key="index" 
+                              @click="selectCurrentProvince(item,index)" 
+                              :class="{'activeProvince':index===currentProvinceID}">
+                                    {{item.areaName}}
+                        </li>
+                    </ul>
                 </div>
               </div>
             </popup>
@@ -100,12 +102,14 @@
                     <span @click="cancleBtnLevel">取消</span>
                 </div>
                 <!-- 获取考试级别列表 -->
-                <div class="examListPart">
-                    <li v-for="(item,index) in examLevelList" :key="index"
-                    @click="selectCurrentLevel(item,index)" 
-                    :class="{'activeProvince':index===currentLevelID}">
-                        {{item.levelName}}
-                    </li>
+                <div class="examListPart wrapper1" ref="levelWrapper">
+                   <ul class="content">
+                        <li v-for="(item,index) in examLevelList" :key="index"
+                        @click="selectCurrentLevel(item,index)" 
+                        :class="{'activeProvince':index===currentLevelID}">
+                            {{item.levelName}}
+                        </li>
+                   </ul>
                 </div>
               </div>
             </popup>
@@ -137,6 +141,7 @@
 </template>
 
 <script>
+import Bscroll from 'better-scroll'
 import { location } from "../../utils/map.js";
 import commonTabbar from "../../components/commonTabbar";
 import { TransferDom, Popup, Cell, CellBox, Group, XButton } from "vux";
@@ -275,7 +280,7 @@ export default {
       setTimeout( () =>{
         this.showExamArea = false;
         this.getRoomList(params);
-      },1000 )
+      },200)
     },
      selectCurrentProvince(row, index) {
       this.setHistoryItems(row);
@@ -288,7 +293,7 @@ export default {
       setTimeout( () =>{
         this.showExamArea = false;
         this.getRoomList(params);
-      },1000 )
+      },200)
      },
     selectCurrentLevel(row, index) {
       this.examLevelTitle = row.levelName;
@@ -300,7 +305,7 @@ export default {
       setTimeout(() => {
         this.showExamLevel = false;
         this.getRoomList(params);
-      }, 2000)
+      },200)
     },
     handleSignUp(item){
       let examLevelId = this.examLevelList.filter( e => e.levelName == this.examLevelTitle)[0].id
@@ -312,8 +317,21 @@ export default {
       this.$router.push({name:'examRoomDetails'})
     }
   },
-  mounted() {
-      this.getList();
+  created() {
+      this.$axios.get("/api/enter/get_examArea").then(res => {
+        if (res.data.code === 0) {
+          this.examAreaList = res.data.data.areaList;
+          this.examLevelList = res.data.data.levelType;
+          this.$nextTick(() => {
+              this.scroll = new Bscroll(this.$refs.areaWrapper, {click:true})
+          })
+          this.$nextTick(() => {
+              this.scroll = new Bscroll(this.$refs.levelWrapper, {click:true})
+          })
+          sessionStorage.setItem('examLevelList',JSON.stringify(res.data.data.levelType))
+        }
+      });
+
       this.getLocation();
       if(window.localStorage.getItem('historyItem') !== null){
           this.historyAreaList = window.localStorage.getItem('historyItem').split('|').map( item => JSON.parse(item));
@@ -549,18 +567,30 @@ export default {
   }
 }
 
-.examListPart {
+.wrapper{
   width: 100%;
-  & > li {
-    padding: 12px 0 10px 12px;
-    font-size: 16px;
-    border-bottom: 1px solid #e5e5e5;
-    font-weight: 500;
-    color: rgba(51, 51, 51, 1);
-    line-height: 22px;
-  }
-  .activeProvince {
-    color: $blue;
+  height: 469px;
+  overflow: hidden;
+}
+.wrapper1{
+  width: 100%;
+  height: 601px;
+  overflow: hidden;
+}
+.examListPart{
+  width: 100%;
+  &>.content{
+      & > li {
+          padding: 12px 0 10px 12px;
+          font-size: 16px;
+          border-bottom: 1px solid #e5e5e5;
+          font-weight: 500;
+          color: rgba(51, 51, 51, 1);
+          line-height: 22px;
+      }
+    .activeProvince {
+      color: $blue;
+    }
   }
 }
 
