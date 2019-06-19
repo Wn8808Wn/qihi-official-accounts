@@ -2,11 +2,11 @@
     <div class="examinationLevelPage">
         <div class="wrap pageTop">
             <div class="contentLf" @click="showPopupPage">
-              <img src="../../assets/imgs/kaoshixuzhi.svg" alt="报名须知">
+              <img  src="../../assets/imgs/bmxz.svg" alt="报名须知">
               <span>报名须知</span>
             </div>
             <div class="contentRg">
-              <img src="../../assets/imgs/kuajibie.png" alt="跨级别考试">
+              <img  src="../../assets/imgs/kjb.svg" alt="跨级别考试">
               <span>跨级别考试申请</span>
             </div>
         </div>
@@ -130,7 +130,6 @@
             <p class="bottomBar">
                 已加载全部
             </p>
-
         </div>
         <!-- 底部公共组件 -->
         <commonTabbar></commonTabbar>
@@ -365,9 +364,6 @@ export default {
       box-sizing: border-box;
       border-right: 1px solid #e5e5e5;
       & > img {
-        width: 34px;
-        height: 34px;
-        object-fit: cover;
         margin-left: 39px;
         margin-top: 12px;
         margin-right: 12px;
@@ -377,9 +373,6 @@ export default {
     }
     .contentRg {
       & > img {
-        width: 34px;
-        height: 34px;
-        object-fit: cover;
         margin-left: 18px;
         margin-top: 12px;
         margin-right: 12px;

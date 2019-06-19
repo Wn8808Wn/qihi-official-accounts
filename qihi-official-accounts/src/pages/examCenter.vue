@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     handleToPage(index) {
-      console.log(index);
+      // console.log(index);
       switch (index) {
         case 0:
           this.$router.push({ name: "examinationLevel" });

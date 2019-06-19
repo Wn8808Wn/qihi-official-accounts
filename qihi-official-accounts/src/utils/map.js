@@ -4,7 +4,7 @@
  */
 export const location = {
   initMap(id) {
-    let mapObj = new AMap.Map(id, {})
+    let mapObj = new AMap.Map('iCenter', {})
     let geolocation;
     mapObj.plugin(['AMap.Geolocation'], function () {
       geolocation = new AMap.Geolocation({

@@ -14,6 +14,10 @@ Vue.prototype.formatDate = formatDate;
 //引入iconfont文件
 import '../src/assets/icon/iconfont.css'
 
+//fastclick插件：解决移动端click 300ms延迟
+import fastclick from 'fastclick'
+fastclick.attach(document.body)
+
 // 引入axios 挂载
 import axios from 'axios'
 Vue.prototype.$axios = axios;

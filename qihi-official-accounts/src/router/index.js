@@ -63,6 +63,20 @@ export default new Router({
       component: () => import('../pages/registered/registered.vue'), // 段级位考试=>已报名
     },
     {
+      path: '/examCenter/examinationLevel/registered/chessplayerScores',
+      name: 'chessplayerScores',
+      meta: {
+        title: '棋手成绩'
+      },
+      component: () => import('../pages/registered/chessplayerScores.vue'), // 段级位考试=>已报名=>棋手成绩
+    },
+
+
+
+
+
+
+    {
       path: '/examCenter/examinationLevel/myOrder',
       name: 'myOrder',
       meta: {
