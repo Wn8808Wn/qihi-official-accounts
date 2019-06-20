@@ -72,27 +72,29 @@
                         <p>考试地区</p>
                         <span @click="cancleBtnArea">取消</span>
                     </div>
-                <div class="historicalAccess">
-                    <span>历史访问</span>
-                    <div>  
-                        <button  v-if="historyAreaList.length>0"   
-                        v-for="(item,index) in historyAreaList" :key="index" 
-                        @click="selectCurrent(item,index)" 
-                        :class="{'activeBtn':index===currentHistoryProvinceID}">
-                              {{item.areaName}}
-                        </button>
-                    </div>
-                </div>
-                <!-- 获取考试地区列表 -->
-                <div class="examListPart wrapper" ref="areaWrapper">
-                    <ul class="content">
-                        <li   v-if="examAreaList.length>0"
-                              v-for="(item,index) in examAreaList" :key="index" 
-                              @click="selectCurrentProvince(item,index)" 
-                              :class="{'activeProvince':index===currentProvinceID}">
-                                    {{item.areaName}}
-                        </li>
-                    </ul>
+                <div class="historicalAccess wrapper" ref="areaWrapper">
+                  <div class="content">
+                      <div class="historyBox">
+                        <span>历史访问</span>
+                        <div class="sixProvince">  
+                            <button  v-if="historyAreaList.length>0"   
+                            v-for="(item,index) in historyAreaList" :key="index" 
+                            @click="selectCurrent(item,index)" 
+                            :class="{'activeBtn':index===currentHistoryProvinceID}">
+                                  {{item.areaName}}
+                            </button>
+                        </div>
+                      </div>  
+                  <!-- 获取考试地区列表 -->
+                      <div class="examListPart">
+                          <li v-if="examAreaList.length>0"
+                                v-for="(item,index) in examAreaList" :key="index" 
+                                @click="selectCurrentProvince(item,index)" 
+                                :class="{'activeProvince':index===currentProvinceID}">
+                                {{item.areaName}}
+                          </li>
+                      </div>
+                   </div>
                 </div>
               </div>
             </popup>
@@ -145,7 +147,7 @@
 </template>
 
 <script>
-import Bscroll from 'better-scroll'
+import Bscroll from "better-scroll";
 import { location } from "../../utils/map.js";
 import commonTabbar from "../../components/commonTabbar";
 import { TransferDom, Popup, Cell, CellBox, Group, XButton } from "vux";
@@ -184,7 +186,7 @@ export default {
         //   examEndDate:"2019.03.04"
         // },
       ]
-    }
+    };
   },
   methods: {
     // 判断关键字是否存在，存在就移除添加在首位
@@ -193,20 +195,24 @@ export default {
       if (historyItem === null) {
         localStorage.historyItem = JSON.stringify(row);
       } else {
-          let historyItemArr = historyItem.split("|")
-          let historyItemArrs = historyItemArr.map( e => JSON.parse(e));
-          // console.log(historyItemArrs)
-          let isExists = historyItemArrs.filter( item => item.id === row.id).length
-          if (isExists) {
-            // historyItem = JSON.stringify(row) + "|" + historyItemArrs.filter(e => e.id !== row.id).join("|");
-          } else {
-            historyItem += "|" + JSON.stringify(row);
-          }
-          localStorage.historyItem = historyItem;
-          this.historyAreaList = window.localStorage.getItem('historyItem').split('|').map( item => JSON.parse(item));
-          if(this.historyAreaList.length>6){
-            this.historyAreaList = this.historyAreaList.slice(-6)
-          }
+        let historyItemArr = historyItem.split("|");
+        let historyItemArrs = historyItemArr.map(e => JSON.parse(e));
+        // console.log(historyItemArrs)
+        let isExists = historyItemArrs.filter(item => item.id === row.id)
+          .length;
+        if (isExists) {
+          // historyItem = JSON.stringify(row) + "|" + historyItemArrs.filter(e => e.id !== row.id).join("|");
+        } else {
+          historyItem += "|" + JSON.stringify(row);
+        }
+        localStorage.historyItem = historyItem;
+        this.historyAreaList = window.localStorage
+          .getItem("historyItem")
+          .split("|")
+          .map(item => JSON.parse(item));
+        if (this.historyAreaList.length > 6) {
+          this.historyAreaList = this.historyAreaList.slice(-6);
+        }
       }
     },
     //获取地理定位
@@ -214,40 +220,49 @@ export default {
       let geolocation = location.initMap("map-container"); //定位
       AMap.event.addListener(geolocation, "complete", result => {
         this.examAreaTitle = result.addressComponent.province;
-        console.log('定位结果为'+result.addressComponent.province)
-        this.getList().then( () =>{
+        console.log("定位结果为" + result.addressComponent.province);
+        this.getList().then(() => {
           // console.log('123')
-          let defualtProvince = this.examAreaList.filter( e => e.areaName == this.examAreaTitle)[0].id
-          let defualtLevel = this.examLevelList.filter( e => e.levelName == this.examLevelTitle)[0].id
+          let defualtProvince = this.examAreaList.filter(
+            e => e.areaName == this.examAreaTitle
+          )[0].id;
+          let defualtLevel = this.examLevelList.filter(
+            e => e.levelName == this.examLevelTitle
+          )[0].id;
           let params = {
-              provinceCode:defualtProvince,
-              examLevel:defualtLevel
-          }
-          this.getRoomList(params)
-        })
-      })
+            provinceCode: defualtProvince,
+            examLevel: defualtLevel
+          };
+          this.getRoomList(params);
+        });
+      });
     },
     //获取考试地区和级别列表
     getList() {
       return this.$axios.get("/api/enter/get_examArea").then(res => {
-            // console.log(res, "获取列表");
-            if (res.data.code === 0) {
-              this.examAreaList = res.data.data.areaList;
-              this.examLevelList = res.data.data.levelType;
-              sessionStorage.setItem('examLevelList',JSON.stringify(res.data.data.levelType))
-            }
-          });
+        // console.log(res, "获取列表");
+        if (res.data.code === 0) {
+          this.examAreaList = res.data.data.areaList;
+          this.examLevelList = res.data.data.levelType;
+          sessionStorage.setItem(
+            "examLevelList",
+            JSON.stringify(res.data.data.levelType)
+          );
+        }
+      });
     },
-    getRoomList(params){
-        return  this.$axios.get('/api/enter/get_examRoom',{params}).then( res => {
-            this.examRoomList =[];
-            if(res.data.code === 0){
-              console.log(res.data.data,'json')
-               this.examRoomList = res.data.data
-            }else{
-              console.log(res.data.msg)
-            }
-        })
+    getRoomList(params) {
+      return this.$axios
+        .get("/api/enter/get_examRoom", { params })
+        .then(res => {
+          this.examRoomList = [];
+          if (res.data.code === 0) {
+            console.log(res.data.data, "json");
+            this.examRoomList = res.data.data;
+          } else {
+            console.log(res.data.msg);
+          }
+        });
     },
     // 点击图标显示弹层
     showPopupPage() {
@@ -276,75 +291,89 @@ export default {
     },
     selectCurrent(row, index) {
       this.currentHistoryProvinceID = index;
-      this.examAreaTitle =row.areaName;
+      this.examAreaTitle = row.areaName;
       let params = {
-          provinceCode:row.id,
-          examLevel: this.examLevelList.filter( e => e.levelName === this.examLevelTitle)[0].id
-      }
-      setTimeout( () =>{
+        provinceCode: row.id,
+        examLevel: this.examLevelList.filter(
+          e => e.levelName === this.examLevelTitle
+        )[0].id
+      };
+      setTimeout(() => {
         this.showExamArea = false;
         this.getRoomList(params);
-      },200)
+      }, 200);
     },
-     selectCurrentProvince(row, index) {
+    selectCurrentProvince(row, index) {
       this.setHistoryItems(row);
-      this.examAreaTitle =row.areaName;
+      this.examAreaTitle = row.areaName;
       this.currentProvinceID = index;
       let params = {
-          provinceCode:row.id,
-          examLevel: this.examLevelList.filter( e => e.levelName === this.examLevelTitle)[0].id
-      }
-      setTimeout( () =>{
+        provinceCode: row.id,
+        examLevel: this.examLevelList.filter(
+          e => e.levelName === this.examLevelTitle
+        )[0].id
+      };
+      setTimeout(() => {
         this.showExamArea = false;
         this.getRoomList(params);
-      },200)
-     },
+      }, 200);
+    },
     selectCurrentLevel(row, index) {
       this.examLevelTitle = row.levelName;
       this.currentLevelID = index;
       let params = {
-          examLevel:row.id,
-          provinceCode: this.examAreaList.filter( e => e.areaName === this.examAreaTitle)[0].id
-      }
+        examLevel: row.id,
+        provinceCode: this.examAreaList.filter(
+          e => e.areaName === this.examAreaTitle
+        )[0].id
+      };
       setTimeout(() => {
         this.showExamLevel = false;
         this.getRoomList(params);
-      },200)
+      }, 200);
     },
-    handleSignUp(item){
-      let examLevelId = this.examLevelList.filter( e => e.levelName == this.examLevelTitle)[0].id
-      sessionStorage.setItem('examLevelTitle',this.examLevelTitle)
-      sessionStorage.setItem('currentItem',JSON.stringify(item))
-      sessionStorage.setItem('examLevelId',examLevelId)
+    handleSignUp(item) {
+      let examLevelId = this.examLevelList.filter(
+        e => e.levelName == this.examLevelTitle
+      )[0].id;
+      sessionStorage.setItem("examLevelTitle", this.examLevelTitle);
+      sessionStorage.setItem("currentItem", JSON.stringify(item));
+      sessionStorage.setItem("examLevelId", examLevelId);
       //路由传值
       // this.$router.push({name:'examRoomDetails',query:{currentItem:JSON.stringify(item),level:this.examLevelTitle,examLevelId}})
-      this.$router.push({name:'examRoomDetails'})
+      this.$router.push({ name: "examRoomDetails" });
     }
   },
   created() {
-      this.$axios.get("/api/enter/get_examArea").then(res => {
-        if (res.data.code === 0) {
-          this.examAreaList = res.data.data.areaList;
-          this.examLevelList = res.data.data.levelType;
-          this.$nextTick(() => {
-              this.scroll = new Bscroll(this.$refs.areaWrapper, {click:true})
-          })
-          this.$nextTick(() => {
-              this.scroll = new Bscroll(this.$refs.levelWrapper, {click:true})
-          })
-          sessionStorage.setItem('examLevelList',JSON.stringify(res.data.data.levelType))
-        }
-      });
-
-      this.getLocation();
-      if(window.localStorage.getItem('historyItem') !== null){
-          this.historyAreaList = window.localStorage.getItem('historyItem').split('|').map( item => JSON.parse(item));
-          if(this.historyAreaList.length>6){
-              this.historyAreaList = this.historyAreaList.slice(-6)
-          }
+    this.$axios.get("/api/enter/get_examArea").then(res => {
+      if (res.data.code === 0) {
+        this.examAreaList = res.data.data.areaList;
+        this.examLevelList = res.data.data.levelType;
+        this.$nextTick(() => {
+          this.scroll = new Bscroll(this.$refs.areaWrapper, { click: true });
+        });
+        this.$nextTick(() => {
+          this.scroll = new Bscroll(this.$refs.levelWrapper, { click: true });
+        });
+        sessionStorage.setItem(
+          "examLevelList",
+          JSON.stringify(res.data.data.levelType)
+        );
       }
+    });
+
+    this.getLocation();
+    if (window.localStorage.getItem("historyItem") !== null) {
+      this.historyAreaList = window.localStorage
+        .getItem("historyItem")
+        .split("|")
+        .map(item => JSON.parse(item));
+      if (this.historyAreaList.length > 6) {
+        this.historyAreaList = this.historyAreaList.slice(-6);
+      }
+    }
   }
-}
+};
 </script>
 
 <style lang='scss'>
@@ -356,7 +385,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  .pageTop {
+  & > .pageTop {
     width: 359px;
     height: 87px;
     background: #ffffff;
@@ -388,13 +417,17 @@ export default {
       & > div {
         width: 34px;
         height: 34px;
-        border-radius:14px;
+        border-radius: 14px;
         margin-left: 39px;
         margin-top: 12px;
         margin-right: 12px;
-        background: linear-gradient(135deg, rgba(77, 232, 208, 1) 0%,rgba(31, 211, 189, 1) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(77, 232, 208, 1) 0%,
+          rgba(31, 211, 189, 1) 100%
+        );
         box-shadow: 0px 3px 5px 0px rgba(0, 233, 204, 0.5);
-        &>img{
+        & > img {
           width: 100%;
           height: 100%;
         }
@@ -404,20 +437,24 @@ export default {
       & > div {
         width: 34px;
         height: 34px;
-        border-radius:14px;
+        border-radius: 14px;
         margin-left: 18px;
         margin-top: 12px;
         margin-right: 12px;
-        background: linear-gradient(138deg, rgba(251, 207, 6, 1) 0%, rgba(255, 166, 9, 1) 100%);
+        background: linear-gradient(
+          138deg,
+          rgba(251, 207, 6, 1) 0%,
+          rgba(255, 166, 9, 1) 100%
+        );
         box-shadow: 0px 3px 4px 0px rgba(255, 180, 0, 0.5);
-        &>img{
+        & > img {
           width: 100%;
           height: 100%;
         }
       }
     }
   }
-  .pageMid {
+  & > .pageMid {
     width: 359px;
     height: 60px;
     background: #ffffff;
@@ -458,8 +495,9 @@ export default {
       right: -10px;
     }
   }
+
   // 考场列表样式
-  .examRoomList {
+  &>.examRoomList {
     display: flex;
     flex: 1;
     width: 100%;
@@ -473,8 +511,8 @@ export default {
       background: rgba(255, 255, 255, 1);
       box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
       border-radius: 14px;
-      &:nth-of-type(1){
-        margin-top:0;
+      &:nth-of-type(1) {
+        margin-top: 0;
       }
       & > p:nth-of-type(1) {
         display: flex;
@@ -529,83 +567,102 @@ export default {
         }
       }
     }
-    .bottomBar{
+    .bottomBar {
       display: flex;
       justify-content: center;
-      font-size:12px;
-      font-family:PingFang-SC-Medium;
-      font-weight:500;
-      color:rgba(176,176,176,1);
-      line-height:17px;
-      margin-top:8px;
+      font-size: 12px;
+      font-family: PingFang-SC-Medium;
+      font-weight: 500;
+      color: rgba(176, 176, 176, 1);
+      line-height: 17px;
+      margin-top: 8px;
     }
   }
+}
+
+.wrapper {
+  width: 100%;
+  height: 620px;
+  overflow: hidden;
+}
+
+.wrapper1 {
+  width: 100%;
+  height: 620px;
+  overflow: hidden;
 }
 
 .historicalAccess {
   width: 375px;
   display: flex;
   flex-direction: column;
-  background: #fafafa;
-  & > span {
-    display: block;
-    padding: 15px 0 12px 12px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #666666;
-    line-height: 20px;
-    height: 20px;
-  }
-  & > div {
-    width: calc(100% -24px);
-    padding: 0 12px 10px 12px;
-    & > button {
-      font-size: 13px;
-      outline: none;
-      float: left;
-      font-weight: 500;
-      color: rgba(51, 51, 51, 1);
-      line-height: 20px;
-      height: 30px;
-      width: 110px;
-      padding: 0;
-      margin-right: 10px;
-      text-align: center;
-      background: #ffffff;
-      margin-bottom: 8px;
-      border: 1px solid rgba(229, 229, 229, 1);
-      border-radius: 15px;
-      &:nth-of-type(3n) {
-        margin-right: 0px;
+  & > .content {
+    & > .historyBox {
+      background: #fafafa;
+      & > span {
+        display: block;
+        padding: 15px 0 12px 12px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #666666;
+        line-height: 20px;
+        height: 20px;
+      }
+      & > .sixProvince {
+        width: calc(100% -24px);
+        overflow: hidden;
+        padding: 0 12px 10px 12px;
+        border-bottom: 1px solid #e5e5e5;
+        & > button {
+          font-size: 13px;
+          outline: none;
+          float: left;
+          font-weight: 500;
+          color: rgba(51, 51, 51, 1);
+          line-height: 20px;
+          height: 30px;
+          width: 110px;
+          padding: 0;
+          margin-right: 10px;
+          text-align: center;
+          background: #ffffff;
+          margin-bottom: 8px;
+          border: 1px solid rgba(229, 229, 229, 1);
+          border-radius: 15px;
+          &:nth-of-type(3n) {
+            margin-right: 0px;
+          }
+        }
+      }
+      .activeBtn {
+        background: $bg-blue;
       }
     }
   }
-  .activeBtn {
-    background: $bg-blue;
-  }
 }
 
-.wrapper{
+.examListPart {
   width: 100%;
-  height: 469px;
-  overflow: hidden;
-}
-.wrapper1{
-  width: 100%;
-  height: 601px;
-  overflow: hidden;
-}
-.examListPart{
-  width: 100%;
-  &>.content{
-      & > li {
-          padding: 12px 0 10px 12px;
-          font-size: 16px;
-          border-bottom: 1px solid #e5e5e5;
-          font-weight: 500;
-          color: rgba(51, 51, 51, 1);
-          line-height: 22px;
-      }
+  & > li {
+    padding: 12px 0 10px 12px;
+    font-size: 16px;
+    border-bottom: 1px solid #e5e5e5;
+    font-weight: 500;
+    color: rgba(51, 51, 51, 1);
+    line-height: 22px;
+  }
+  .activeProvince {
+    color: $blue;
+  }
+  & > .content {
+    & > li {
+      padding: 12px 0 10px 12px;
+      font-size: 16px;
+      border-bottom: 1px solid #e5e5e5;
+      font-weight: 500;
+      color: rgba(51, 51, 51, 1);
+      line-height: 22px;
+    }
     .activeProvince {
       color: $blue;
     }
