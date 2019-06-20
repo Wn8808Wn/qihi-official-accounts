@@ -2,11 +2,15 @@
     <div class="examinationLevelPage">
         <div class="wrap pageTop">
             <div class="contentLf" @click="showPopupPage">
-              <img  src="../../assets/imgs/bmxz.svg" alt="报名须知">
+              <div>
+                  <img  src="../../assets/imgs/bmxz.svg" alt="报名须知">
+              </div>
               <span>报名须知</span>
             </div>
             <div class="contentRg">
-              <img  src="../../assets/imgs/kjb.svg" alt="跨级别考试">
+               <div>
+                   <img  src="../../assets/imgs/kjb.svg" alt="跨级别考试">
+              </div>
               <span>跨级别考试申请</span>
             </div>
         </div>
@@ -381,21 +385,35 @@ export default {
     .contentLf {
       box-sizing: border-box;
       border-right: 1px solid #e5e5e5;
-      & > img {
+      & > div {
+        width: 34px;
+        height: 34px;
+        border-radius:14px;
         margin-left: 39px;
         margin-top: 12px;
         margin-right: 12px;
         background: linear-gradient(135deg, rgba(77, 232, 208, 1) 0%,rgba(31, 211, 189, 1) 100%);
         box-shadow: 0px 3px 5px 0px rgba(0, 233, 204, 0.5);
+        &>img{
+          width: 100%;
+          height: 100%;
+        }
       }
     }
     .contentRg {
-      & > img {
+      & > div {
+        width: 34px;
+        height: 34px;
+        border-radius:14px;
         margin-left: 18px;
         margin-top: 12px;
         margin-right: 12px;
         background: linear-gradient(138deg, rgba(251, 207, 6, 1) 0%, rgba(255, 166, 9, 1) 100%);
         box-shadow: 0px 3px 4px 0px rgba(255, 180, 0, 0.5);
+        &>img{
+          width: 100%;
+          height: 100%;
+        }
       }
     }
   }

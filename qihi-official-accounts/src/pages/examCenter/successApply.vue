@@ -2,24 +2,23 @@
     <div class="sucessApplyPage">
         <div class="innerBox">
             <div class="bannderBox">
-                <img src="../../assets/imgs/duigou.svg" alt="">
+                <div class="imgBox"><img src="../../assets/imgs/duigou.png" alt="" ></div>
                 <span>报名成功</span>
             </div>
-            
             <div class="stepLine">
                 <timeline>
-                    <timeline-item>
+                    <timeline-item class="one">
                         <h4>支付成功，完成报名</h4>
                     </timeline-item>
-                    <timeline-item>
+                    <timeline-item class="two">
                         <h4> 下载、打印准考证</h4>
                         <p>请下载、打印报考棋手的准考证，棋手 将凭借准考证入场考试</p>
                     </timeline-item>
-                    <timeline-item>
+                    <timeline-item class="three">
                         <h4> 入场考试</h4>
                         <p>根据报考信息到指定考场完成考试</p>
                     </timeline-item>
-                    <timeline-item>
+                    <timeline-item class="four">
                         <h4> 成绩通知</h4>
                         <p>若考试通过将收到段位证书认证通知</p>
                     </timeline-item>
@@ -36,11 +35,11 @@
 </template>
 
 <script>
-import { Timeline, TimelineItem } from 'vux'
+import { Timeline, TimelineItem} from 'vux'
 export default {
     components: {
         Timeline,
-        TimelineItem
+        TimelineItem,
     },
     data(){
         return{
@@ -58,31 +57,37 @@ export default {
     width: calc(100% -40px);
     height: calc(100% -40px);
     padding: 20px;
-    background: #F4F4F4;
+    background:rgba(244,244,244,1);
     .innerBox{
         width: 100%;
         height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
         background:rgba(255,255,255,1);
         box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
         border-radius:14px;
         .bannderBox{
-            height: 124px;
-            width: 100%;
-            background: url('../../assets/imgs/success.svg') no-repeat;
-            background-size: cover;
-            &>img{
+            height:30px;
+            padding-top: 40px;
+            padding-bottom: 54px;
+            width: 336px;
+            background: url('../../assets/imgs/success.png') no-repeat;
+            background-size: 100% 100%;
+            &>.imgBox{
                 width: 30px;
                 height: 30px;
                 float: left;
-                margin-top: 40px;
                 margin-left: 107px;
                 margin-right: 11px;
-                object-fit: cover;
+                &>img{
+                    width: 100%;
+                    height: 100%;
+                }
             }
             &>span{
                 font-size:20px;
                 float: left;
-                margin-top: 40px;
                 font-family:PingFangSC-Semibold;
                 font-weight:600;
                 color:rgba(255,255,255,1);
@@ -91,9 +96,22 @@ export default {
         }
         //步骤线样式
         .stepLine{
+            width: 100%;
             .vux-timeline{
-                padding: 47px 24px 44px 24px;
-                & /deep/ .vux-timeline-item-color, .vux-timeline-item-head{
+                padding: 47px 24px 6px 24px;
+                & /deep/  .vux-timeline-item-checked.weui-icon-success-no-circle:before{
+                    content: ''!important;
+                    color: blue;
+                }
+                .one /deep/ .vux-timeline-item-color, .vux-timeline-item-head{
+                    width: 20px;
+                    height: 20px;
+                    left: -4px;
+                    top: 0px;
+                    background:url('../../assets/imgs/1.svg') no-repeat -0px -0px;
+                    background-size: cover;
+                }
+                .two /deep/ .vux-timeline-item-color, .vux-timeline-item-head{
                     width: 20px;
                     height: 20px;
                     left: -4px;
@@ -101,24 +119,21 @@ export default {
                     background:url('../../assets/imgs/2.svg') no-repeat -0px -0px;
                     background-size: cover;
                 }
-
-                & /deep/ .vux-timeline-item-head-first{
+                .three /deep/ .vux-timeline-item-color, .vux-timeline-item-head{
                     width: 20px;
                     height: 20px;
-                    background: #2069E5;
+                    left: -4px;
                     top: 0px;
-                    & /deep/ i:before{
-                        content: '';
-                        width: 20px;
-                        height: 20px;
-                        display: inline-block;
-                        background:url('../../assets/imgs/1.svg') no-repeat -3px -3px;
-                        background-size: cover;
-                    }
+                    background:url('../../assets/imgs/3.svg') no-repeat -0px -0px;
+                    background-size: cover;
                 }
-                & /deep/  .vux-timeline-item-checked.weui-icon-success-no-circle:before{
-                    content: ''!important;
-                    color: blue;
+                .four /deep/ .vux-timeline-item-color, .vux-timeline-item-head{
+                    width: 20px;
+                    height: 20px;
+                    left: -4px;
+                    top: 0px;
+                    background:url('../../assets/imgs/4.svg') no-repeat -0px -0px;
+                    background-size: cover;
                 }
                 & /deep/ .vux-timeline-item-content{
                     padding-left: 26px;
@@ -141,11 +156,13 @@ export default {
                     }
                 }
             }
+            & /deep/ .vux-timeline-item-tail{
+                width: 1px;
+            }
             
         }
         .btnGroup{
             width: calc(100% - 56px);
-            margin-top: 16px;
             padding: 0 28px;
             display: flex;
             align-items: center;
