@@ -123,6 +123,7 @@ export default {
             width: 351px;
             height: 197px !important;
             border-radius: 14px;
+            object-fit:cover;
             overflow: hidden;
           }
         }

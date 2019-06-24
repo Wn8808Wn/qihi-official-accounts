@@ -477,6 +477,13 @@ export default {
       font-weight: 500;
       color: rgba(32, 105, 229, 1);
       line-height: 22px;
+      & /deep/ .vux-label{
+        font-size:16px;
+        font-family:PingFang-SC-Medium;
+        font-weight:400;
+        color:rgba(32,105,229,1);
+        line-height:22px;
+      }
     }
     .weui-cells:before {
       border: none;
@@ -494,6 +501,7 @@ export default {
       margin-top: -6px;
       right: -10px;
     }
+    
   }
 
   // 考场列表样式
@@ -528,14 +536,12 @@ export default {
         & > button {
           background: $bg-blue;
           border: none;
-          // width: 54px;
           height: 28px;
-          border-radius: 14px;
           padding: 4px 13px;
+          border-radius: 14px;
           font-size: 14px;
           font-weight: 500;
           color: rgba(255, 255, 255, 1);
-          line-height: 22px;
         }
         & > .fullBtn {
           border-radius: 14px;
@@ -552,7 +558,7 @@ export default {
       .commonTagP {
         & > span {
           font-size: 14px;
-          font-weight: 500;
+          font-weight: 400;
           line-height: 20px;
         }
         & > span:nth-of-type(1) {
@@ -678,14 +684,12 @@ export default {
     & > h3 {
       height: 22px;
       font-size: 16px;
-      font-weight: 500;
       color: rgba(51, 51, 51, 1);
       line-height: 22px;
     }
     & > p {
       font-size: 14px;
       margin-top: 8px;
-      font-weight: 500;
       color: rgba(102, 102, 102, 1);
       line-height: 22px;
       & > span {

@@ -45,7 +45,7 @@
                     <swipeout-button @click.native="onButtonClick(index)" type="primary">删除</swipeout-button>
                 </div>
                 <div slot="content">
-                    <i slot="icon" class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'active1':'deactive1'"></i>
+                    <i slot="icon" class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'activeTs':'deactiveTs'"></i>
                     <div class="infoBox">
                         <p><span>棋手姓名</span> <span>{{item.playerName}}</span></p>
                         <p><span>段位等级</span>
@@ -183,7 +183,16 @@
 </template>
 
 <script>
-import {PopupPicker, Group,TransferDom,Popup,Swipeout,SwipeoutItem,SwipeoutButton,Confirm} from "vux";
+import {
+  PopupPicker,
+  Group,
+  TransferDom,
+  Popup,
+  Swipeout,
+  SwipeoutItem,
+  SwipeoutButton,
+  Confirm
+} from "vux";
 import appointmentInfo from "./popups/appointmentInfo.vue";
 export default {
   directives: {
@@ -215,7 +224,7 @@ export default {
       showPlayer: false,
       disabled: true,
       playerNum: 0,
-      examLevelList:'',
+      examLevelList: "",
       checkList: [],
       linkManList: [
         // {
@@ -274,8 +283,8 @@ export default {
       ],
       activeId: null,
       btnActive: 1,
-      showCofirm:false,
-      linkManPhone:''
+      showCofirm: false,
+      linkManPhone: ""
     };
   },
   computed: {
@@ -309,34 +318,35 @@ export default {
       });
     },
     submitExamTime() {
-        // //提交前先看座位数够不够
-        let params ={
-             examPlanId:sessionStorage.getItem('examPlanId'), 
-             playerNum:this.playerNum
+      // //提交前先看座位数够不够
+      let params = {
+        examPlanId: sessionStorage.getItem("examPlanId"),
+        playerNum: this.playerNum
+      };
+      this.$axios.get("/api/enter/searchSeats", { params }).then(res => {
+        console.log(res.data);
+        let that = this;
+        if (res.data.code === 3) {
+          //剩余座位数充足
+          that.checkList.forEach((item, index) => {
+            that.$set(item, "examFee", that.price);
+          });
+          console.log(that.checkList, "加上价格");
+          let dataObj = {
+            examPlanId: sessionStorage.getItem("examPlanId"),
+            linkMan: that.linkManInfo,
+            phone: that.linkManPhone,
+            totalFee: that.totalPrice,
+            chessPlay: JSON.stringify(that.checkList)
+          };
+          sessionStorage.setItem("chessPlayersInfo", JSON.stringify(dataObj));
+          this.$router.push({ name: "orderDetails" });
+        } else if (res.data.code === 2) {
+          alert(res.data.msg); //剩余座位数不足
+        } else {
+          alert(res.data.msg); // 无剩余座位数
         }
-        this.$axios.get('/api/enter/searchSeats',{params}).then( (res) => {
-          console.log(res.data)
-          let that = this;
-          if(res.data.code === 3){   //剩余座位数充足
-                that.checkList.forEach( (item,index) => {
-                    that.$set(item,'examFee',that.price)
-                })
-                console.log(that.checkList,'加上价格')
-               let dataObj ={
-                  examPlanId:sessionStorage.getItem('examPlanId'),   
-                  linkMan:that.linkManInfo,
-                  phone:that.linkManPhone,
-                  totalFee:that.totalPrice,
-                  chessPlay:JSON.stringify(that.checkList)
-                }
-                sessionStorage.setItem('chessPlayersInfo',JSON.stringify(dataObj));
-                this.$router.push({name:'orderDetails'})
-          }else if(res.data.code === 2){
-              alert(res.data.msg) //剩余座位数不足
-          }else{
-            alert(res.data.msg) // 无剩余座位数
-          }
-        })
+      });
     },
     log() {},
     handleOpen(index) {
@@ -366,7 +376,7 @@ export default {
       this.currentLinkManId = index;
       this.linkManInfo = item.linkman;
       this.linkManPhone = item.phone;
-      console.log(this.linkManPhone,11)
+      console.log(this.linkManPhone, 11);
       setTimeout(() => {
         this.showLinkMan = false;
         this.currentLinkManId = "";
@@ -391,12 +401,8 @@ export default {
         this.disabled = false;
       }
     },
-    onCancel(){
-
-    },
-    onConfirm(){
-
-    }
+    onCancel() {},
+    onConfirm() {}
   },
   mounted() {
     //路由传值方式
@@ -406,22 +412,22 @@ export default {
     // this.time = this.$route.params.examTime;
     // this.price = this.$route.params.price;
     //缓存方式
-    this.examLevelTitle = sessionStorage.getItem('examLevelTitle');
-    this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName
-    this.address = JSON.parse(sessionStorage.getItem('currentItem')).address
-    this.time = sessionStorage.getItem('examTime');
-    this.price = sessionStorage.getItem('price');
+    this.examLevelTitle = sessionStorage.getItem("examLevelTitle");
+    this.examRoomName = JSON.parse(
+      sessionStorage.getItem("currentItem")
+    ).examRoomName;
+    this.address = JSON.parse(sessionStorage.getItem("currentItem")).address;
+    this.time = sessionStorage.getItem("examTime");
+    this.price = sessionStorage.getItem("price");
     this.getLinkManList();
     this.getPlayerList();
-    this.examLevelList = JSON.parse(sessionStorage.getItem('examLevelList'))
-    console.log(this.examLevelList,'000')
-
-
+    this.examLevelList = JSON.parse(sessionStorage.getItem("examLevelList"));
+    console.log(this.examLevelList, "000");
   }
 };
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 @import "../../style/mixin.scss";
 .submitOrderPage {
   width: 375px;
@@ -477,11 +483,11 @@ export default {
   }
   .showSelectPlayerList {
     border-radius: 14px;
-    .selectChessPlayer {
+    & > .selectChessPlayer {
       height: 20px;
       display: flex;
-      // background: #ED1A23;
       border-radius: 14px 14px 0 0;
+      border-bottom: 1px solid #E5E5E5;
       justify-content: space-between;
       margin-top: 12px;
       & > span {
@@ -494,6 +500,57 @@ export default {
         font-size: 16px;
         color: rgba(32, 105, 229, 1);
         line-height: 22px;
+      }
+    }
+
+    & /deep/ .vux-swipeout-item{
+      border-bottom: .5px solid #E5E5E5;
+    }
+    // swiperOut 样式
+    .vux-swipeout-content {
+      & > div {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        // background: red;
+        .icon-shanchu {
+          position: absolute;
+          left: 16px;
+          top: 45px;
+          margin-right: 12px;
+          font-size: 20px;
+          color: rgba(32, 105, 229, 1);
+        }
+        .activeTs {
+          display: block;
+          transform: rotateZ(0deg);
+          transition: all 500ms;
+        }
+        .deactiveTs {
+          display: block;
+          transform: rotateZ(90deg);
+          transition: all 500ms;
+        }
+        .infoBox {
+          padding-left: 34px;
+          & > p {
+            margin-bottom: 8px;
+            &:last-child {
+              margin-bottom: 0px;
+            }
+            & > span {
+              font-size: 14px;
+              font-family: PingFang-SC-Medium;
+              font-weight: 500;
+              color: #666666;
+              line-height: 20px;
+              &:nth-of-type(1) {
+                color: #333333;
+                margin-right: 12px;
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -533,11 +590,10 @@ export default {
     }
   }
   .playerBar {
-    // background: sandybrown;
     & > button {
       border: none;
       width: 156px;
-      height: 44px;
+      height: 42px;
       padding: 0;
       border-radius: 22px;
       border: 1px solid rgba(32, 105, 229, 1);
@@ -547,6 +603,9 @@ export default {
       text-align: center;
       color: rgba(32, 105, 229, 1);
       line-height: 22px;
+      &:nth-of-type(1) {
+        margin-right: 15px;
+      }
     }
   }
 }
@@ -693,11 +752,11 @@ export default {
       .imgA {
         background: url("../../assets/imgs/A.svg") no-repeat;
       }
-      .imgB{
+      .imgB {
         background: url("../../assets/imgs/ling.svg") no-repeat;
       }
     }
-    &>p:nth-of-type(2){
+    & > p:nth-of-type(2) {
       margin-top: 4px;
     }
   }
@@ -706,54 +765,6 @@ export default {
   }
   & > li:nth-child(2) {
     margin-bottom: 20px;
-  }
-}
-
-// swiperOut 样式
-.vux-swipeout-content {
-  & > div {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    border-top: 1px solid #e5e5e5;
-    .icon-shanchu {
-      position: absolute;
-      left: 16px;
-      top: 45px;
-      margin-right: 12px;
-      font-size: 20px;
-      color: rgba(32, 105, 229, 1);
-    }
-    .active1 {
-    display: block;
-    transform: rotateZ(0deg);
-    transition: all 500ms;
-    }
-    .deactive1 {
-    display: block;
-    transform: rotateZ(90deg);
-    transition: all 500ms;
-    }
-    .infoBox {
-        padding-left: 34px;
-        & > p {
-            margin-bottom: 8px;
-            &:last-child {
-            margin-bottom: 0px;
-            }
-        & > span {
-          font-size: 14px;
-          font-family: PingFang-SC-Medium;
-          font-weight: 500;
-          color: #666666;
-          line-height: 20px;
-          &:nth-of-type(1) {
-            color: #333333;
-            margin-right: 12px;
-          }
-        }
-      }
-    }
   }
 }
 </style>

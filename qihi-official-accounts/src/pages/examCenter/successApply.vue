@@ -58,7 +58,7 @@ export default {
     height: calc(100% -40px);
     padding: 20px;
     background:rgba(244,244,244,1);
-    .innerBox{
+    &>.innerBox{
         width: 100%;
         height: 100%;
         overflow: hidden;
@@ -67,12 +67,14 @@ export default {
         background:rgba(255,255,255,1);
         box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
         border-radius:14px;
-        .bannderBox{
+        &>.bannderBox{
+            width: 336px;
             height:30px;
+            // height: 124px;
             padding-top: 40px;
             padding-bottom: 54px;
-            width: 336px;
-            background: url('../../assets/imgs/success.png') no-repeat;
+            background-color: red; 
+            background: url('../../assets/imgs/success.svg') no-repeat;
             background-size: 100% 100%;
             &>.imgBox{
                 width: 30px;
@@ -95,10 +97,10 @@ export default {
             }
         }
         //步骤线样式
-        .stepLine{
+        &>.stepLine{
             width: 100%;
-            .vux-timeline{
-                padding: 47px 24px 6px 24px;
+            &>.vux-timeline{
+                padding: 47px 24px 0px 24px;
                 & /deep/  .vux-timeline-item-checked.weui-icon-success-no-circle:before{
                     content: ''!important;
                     color: blue;
@@ -159,11 +161,12 @@ export default {
             & /deep/ .vux-timeline-item-tail{
                 width: 1px;
             }
-            
         }
         .btnGroup{
             width: calc(100% - 56px);
             padding: 0 28px;
+            flex: 1;
+            // padding: 44px 28px 40px 28px;
             display: flex;
             align-items: center;
             button{

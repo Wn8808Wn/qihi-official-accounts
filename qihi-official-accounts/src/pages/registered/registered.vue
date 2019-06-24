@@ -7,18 +7,17 @@
             <p>赶快去报名段级位考试吧！</p>
       </div>
       <!-- 有数据 -->
-  
       <div  v-else-if="list.length !== 0" class="registeredList registeredWrapper" ref="registeredWrapper">
         <ul class="content">
           <div v-for="(item,index) in list" :key="index">
               <p>
-                <span class="firstSpan">{{item.examRoomName}}</span>
-                <span v-if="item.examStatus === 0">待考试</span>
-                <span v-if="item.examStatus === 1" style="color:#666666;">考试结束</span>
+                <span class="firstSpan">{{item.roomName}}</span>
+                <span v-if="item.state === 0">待考试</span>
+                <span v-if="item.state === 1" style="color:#666666;">考试结束</span>
               </p>
               <p class="commonTagP">
                 <span>考试级别</span>
-                <span>{{item.examLevel}}</span>
+                <span>{{item.examLevels}}</span>
               </p>
               <p class="commonTagP">
                 <span>考试地点</span>
@@ -30,9 +29,12 @@
               </p>
               <p class="commonTagP">
                 <span>报名棋手</span>
-                <span>{{item.player}}</span>
+                <!-- <span>{{item.playerList}}</span> -->
+                <span v-if="item.playerList.length === 1">{{item.playerList[0].playerName}}</span>
+                <!-- <span v-if="item.playerList.length === 2">{{item.playerList[0].playerName}} {{item.playerList[1].playerName}}</span> -->
+                <span v-if="item.playerList.length >= 2">{{item.playerList[0].playerName}} 等{{item.playerList.length}}人</span>
               </p>
-              <button v-if="item.registeredType ===0">准考证</button>
+              <button v-if="item.state === 0" @click="checkTicket">准考证</button>
               <div v-else class="btnGrps">
                   <button @click="handleScores">棋手成绩</button>
                   <button class="bgBtn">证书申领</button>
@@ -44,7 +46,6 @@
         </ul>
         
       </div>
- 
       <commonTabbar></commonTabbar>
     </div>
 </template>
@@ -59,57 +60,59 @@ export default {
   data(){
     return{
       list:[
-        {
-          examRoomName:'龙岗区考场',
-          examStatus:0,
-          examLevel:'10级',
-          address:'黑龙江省哈尔滨市围棋协会二楼130',
-          examTime:'2019.02.18 9:00',
-          player:'网三',
-          registeredType:0
-        },
-        {
-          examRoomName:'龙岗区考场',
-          examStatus:1,
-          examLevel:'10级',
-          address:'黑龙江省哈尔滨市围棋协会二楼130',
-          examTime:'2019.02.18 9:00',
-          player:'网三',
-          registeredType:1
-        },
-         {
-          examRoomName:'龙岗区考场',
-          examStatus:1,
-          examLevel:'10级',
-          address:'黑龙江省哈尔滨市围棋协会二楼130',
-          examTime:'2019.02.18 9:00',
-          player:'网三',
-          registeredType:1
-        },
-         {
-          examRoomName:'龙岗区考场',
-          examStatus:1,
-          examLevel:'10级',
-          address:'黑龙江省哈尔滨市围棋协会二楼130',
-          examTime:'2019.02.18 9:00',
-          player:'网三',
-          registeredType:1
-        },
-         {
-          examRoomName:'龙岗区考场',
-          examStatus:1,
-          examLevel:'10级',
-          address:'黑龙江省哈尔滨市围棋协会二楼130',
-          examTime:'2019.02.18 9:00',
-          player:'网三',
-          registeredType:1
-        },
+        // {
+        //   roomName:'龙岗区考场',
+        //   examStatus:0,
+        //   examLevel:'10级',
+        //   address:'黑龙江省哈尔滨市围棋协会二楼130',
+        //   examTime:'2019.02.18 9:00',
+        //   playerName:'网三',
+        // },
+        // {
+        //   roomName:'龙岗区考场',
+        //   examStatus:1,
+        //   examLevel:'10级',
+        //   address:'黑龙江省哈尔滨市围棋协会二楼130',
+        //   examTime:'2019.02.18 9:00',
+        //   playerName:'网三',
+        //   registeredType:1
+        // },
+        //  {
+        //   roomName:'龙岗区考场',
+        //   examStatus:1,
+        //   examLevel:'10级',
+        //   address:'黑龙江省哈尔滨市围棋协会二楼130',
+        //   examTime:'2019.02.18 9:00',
+        //   playerName:'网三',
+        //   registeredType:1
+        // },
+        //  {
+        //   roomName:'龙岗区考场',
+        //   examStatus:1,
+        //   examLevel:'10级',
+        //   address:'黑龙江省哈尔滨市围棋协会二楼130',
+        //   examTime:'2019.02.18 9:00',
+        //   playerName:'网三',
+        //   registeredType:1
+        // },
+        //  {
+        //   roomName:'龙岗区考场',
+        //   examStatus:1,
+        //   examLevel:'10级',
+        //   address:'黑龙江省哈尔滨市围棋协会二楼130',
+        //   examTime:'2019.02.18 9:00',
+        //   playerName:'网三',
+        //   registeredType:1
+        // },
       ]
     }
   },
   methods:{
      handleScores(){
       this.$router.push({name:'chessplayerScores'})
+    },
+    checkTicket(){
+        this.$router.push({name:'ticketsPdf'})
     }
   },
   created(){
@@ -118,11 +121,16 @@ export default {
       }
      this.$axios.get('/api//enroll/enroll_list',{params}).then( res =>{
         console.log(res)
+        if(res.data.code ===0 ){
+          this.list =res.data.data.info;
+        }
+
+         this.$nextTick(() => {
+          this.scroll = new Bscroll(this.$refs.registeredWrapper, {click:true})
+        })
 
      })
-     this.$nextTick(() => {
-          this.scroll = new Bscroll(this.$refs.registeredWrapper, {click:true})
-     })
+    
   }
 }
 </script>
@@ -132,8 +140,8 @@ export default {
 @import "../../style/mixin.scss";
 .registeredPage{
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  height: calc( 100% - 12px);
+  padding-top: 12px;
   background: #F4F4F4;
   &>.listNull{
     padding-top: 124px;
@@ -152,9 +160,7 @@ export default {
         height: 100%;
         object-fit: cover;
       } 
-
     }
-    
     &>p{
       font-size:16px;
       width: 192px;
@@ -173,29 +179,30 @@ export default {
    .registeredList {
     display: flex;
     width: 100%;
-    height: 480px;
+    height: 618px;
+    overflow: hidden;
     flex-direction: column;
     align-items: center;
-    margin-top: 12px;
     &>.content{
       & > div {
       width: 327px;
-      height: 186px;
+      // height: 186px;
+      overflow: hidden;
       padding: 16px;
       margin-top: 12px;
       background: rgba(255, 255, 255, 1);
       box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
       border-radius: 14px;
-        &:nth-of-type(1){
+      &:nth-of-type(1){
           margin-top:0;
-        }
-        & > p:nth-of-type(1) {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+      }
+      & > p:nth-of-type(1) {
+          width:100%;
+          height: 22px;
           & >.firstSpan{
             font-size: 16px;
             height: 22px;
+            float: left;
             font-family: PingFangSC-Semibold;
             font-weight: 600;
             color: rgba(51, 51, 51, 1);
@@ -205,6 +212,7 @@ export default {
             font-size:16px;
             font-family:PingFang-SC-Medium;
             font-weight:500;
+            float: right;
             color:rgba(237,26,35,1);
             line-height:22px;
           }

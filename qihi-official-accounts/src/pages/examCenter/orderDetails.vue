@@ -56,16 +56,16 @@
             <div class="applyPlayerList">
                     <div v-for="(item,index) in playerslist" :key="index" class="commonBox">
                         <p>
-                        <span>{{item.playerName}}</span>
+                        <span class="firstSpan">{{item.playerName}}</span>
                         <span>{{item.certificateNo}}</span>
                         </p>
-                        <p>
+                        <p class="commonTagP">
                             <span>电话号码</span>
                             <span>{{item.phone}}</span>
                         </p>
-                        <p>
+                        <p class="commonTagP">
                             <span>报名费用</span>
-                            <span>¥{{item.examFee}}</span>
+                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{item.examFee}}</span>
                         </p>
 
                     </div>
@@ -308,19 +308,54 @@ export default {
             background:rgba(255,255,255,1);
             box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
             border-radius:14px;
-            // background: skyblue;
             position: absolute;
             left: 8px;
             top: 480px;
-            &>p:first-child{
-                &>span{
-                    font-size:16px;
-                    font-family:PingFangSC-Semibold;
-                    font-weight:600;
-                    color:rgba(51,51,51,1);
-                    line-height:22px;
+            &>.commonBox{
+                border-bottom: 1px solid #E5E5E5;
+                &>p:nth-of-type(1){
+                    width: 100%;
+                    height: 22px;
+                    margin-bottom: 16px;
+                    &>span{
+                        font-size:16px;
+                        font-family:PingFangSC-Semibold;
+                        font-weight:600;
+                        float: left;
+                        color:rgba(51,51,51,1);
+                        line-height:22px;
+                    }
+                    &>.firstSpan{
+                        width: 64px;
+                        height: 22px;
+                        overflow: hidden;
+                        margin-right: 8px;
+                        text-overflow:ellipsis;
+                        white-space: nowrap;
+                    }
                 }
-
+                .commonTagP {
+                        height: 20px;
+                        margin-bottom: 8px;
+                    & > span {
+                        font-size: 14px;
+                        font-weight: 500;
+                        line-height: 20px;
+                    }
+                    & > span:nth-of-type(1) {
+                        color: #666666;
+                        margin-right: 16px;
+                        float: left;
+                    }
+                    & > span:nth-of-type(2) {
+                        color: #333333;
+                        width: 249px;
+                        display: inline-block;
+                    }
+                    &:nth-last-of-type(1){
+                        margin-bottom: 0px;
+                    }
+                }
             }
         }
     }    

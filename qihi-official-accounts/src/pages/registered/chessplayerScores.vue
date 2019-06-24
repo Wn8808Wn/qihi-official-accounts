@@ -4,8 +4,11 @@
           <div v-for="(item,index) in chessplayerScoresList" :key="index">
               <p>
                 <span class="firstSpan">{{item.playerName}}</span>
-                <span v-if="item.examStatus === 0">未认证</span>
-                <span v-if="item.examStatus === 1" style="color:#666666;">已认证</span>
+                <span v-if="item.scores >=60" style="color:#19A91A;font-weight:600">通过 ({{item.scores}}分)</span>
+                 <span v-if="item.scores <60" style="color:#ED1A23;font-weight:600">未通过 ({{item.scores}}分)</span>
+                <span v-if="item.examStatus === 0" style="color:#ED1A23;font-weight:500;float:right">未认证</span>
+                <span v-if="item.examStatus === 1" style="color:#666666;font-weight:500;float:right">已认证</span>
+                <span v-if="item.examStatus === 2" style="float:right"></span>
               </p>
               <p class="commonTagP">
                 <span>证件号码</span>
@@ -19,14 +22,14 @@
                 <span>考试级别</span>
                 <span>{{item.examLevel}}</span>
               </p>
-            
-               <div v-else class="btnGrps" v-if="item.registeredType ===0">
+
+              <div class="btnGrps" v-if="item.examStatus === 0">
                   <button @click="handleScores">对弈报告</button>
                   <button class="bgBtn">证书申领</button>
               </div>   
-              <div v-else-if="item.registeredType ===1" class="btnGrps">
-                  <button @click="handleScores">对弈报告</button>
-                  <button @click="handleScores">电子证书</button>
+              <div class="btnGrps" v-if="item.examStatus === 1">
+                  <button>对弈报告</button>
+                  <button style="margin-right:8px;">电子证书</button>
               </div>
           </div>
           <p class="bottomBar">
@@ -44,23 +47,36 @@ export default {
     return {
       chessplayerScoresList: [
             {
-                name:'张三',
+                playerName:'张三',
                 examStatus:0,
                 idNum:1123131232131231123,
                 phone:123123123213,
                 examLevel:'25级',
-                registeredType:0
+                scores:70,
             },
             {
-                name:'张三',
+                playerName:'张三疯呀',
                 examStatus:1,
                 idNum:1123131232131231123,
                 phone:123123123213,
                 examLevel:'25级',
-                registeredType:1
+                scores:90,
+            },
+            {
+                playerName:'李思康敲试试',
+                examStatus:2,
+                scores:50,
+                idNum:1123131232131231123,
+                phone:123123123213,
+                examLevel:'25级',
             }
           ]
-    };
+    }
+  },
+   methods:{
+      handleScores(){
+        
+      }
   }
 };
 </script>
@@ -69,34 +85,39 @@ export default {
 @import "../../style/mixin.scss";
 .chessplayerScoresPages {
   width: 100%;
-  height: 100%;
+  height: calc( 100% - 12px);
   background: #f4f4f4;
+  padding-top: 12px;
   .chessplayerScoresListBox {
     display: flex;
     flex: 1;
     width: 100%;
     flex-direction: column;
     align-items: center;
-    margin-top: 12px;
     & > div {
       width: 327px;
       padding: 16px;
       margin-top: 12px;
       background: rgba(255, 255, 255, 1);
-      // background: skyblue;
       box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
       border-radius: 14px;
       &:nth-of-type(1) {
         margin-top: 0;
       }
       & > p:nth-of-type(1) {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        width:100%;
+        height: 22px;
         & > .firstSpan {
           font-size: 16px;
+          width: 64px;
+          height: 22px;
+          float: left;
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
           font-family: PingFangSC-Semibold;
           font-weight: 600;
+          margin-right: 8px;
           color: rgba(51, 51, 51, 1);
           line-height: 22px;
         }
@@ -109,10 +130,11 @@ export default {
         }
       }
       & > p:nth-of-type(2) {
-        margin-top: 13px;
-        margin-bottom: 8px;
+        margin-top: 16px;
       }
       .commonTagP {
+        height: 20px;
+        margin-bottom: 8px;
         & > span {
           font-size: 14px;
           font-weight: 500;
@@ -127,6 +149,9 @@ export default {
           color: #333333;
           width: 249px;
           display: inline-block;
+        }
+        &:nth-last-of-type(1){
+          margin-bottom: 0px;
         }
       }
       & > button {
