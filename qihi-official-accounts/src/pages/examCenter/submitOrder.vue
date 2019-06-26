@@ -650,7 +650,7 @@ export default {
           height: 20px;
           border-radius: 50%;
           margin-right: 8px;
-          background: url("../../assets/imgs/noSelect.png");
+          background: url("../../assets/imgs/noSelect.svg");
           background-size: cover;
           content: "";
           left: 0;
@@ -666,7 +666,7 @@ export default {
           left: 0;
           top: 0;
           position: absolute;
-          background: url("../../assets/imgs/selected.png");
+          background: url("../../assets/imgs/selected.svg");
           background-size: cover;
         }
       }

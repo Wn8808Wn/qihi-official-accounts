@@ -23,9 +23,9 @@
                 <swiper :options="swiperOption">
                     <swiper-slide v-for="(item, index) in swiperSlides" :key="index" @click.native="selectDate(item,index)" :class="{'activeSlides':index === currentIndex}">
                         <div class="dateBox">   
-                            <span class="firstSpan">{{format(item.examDate)}}</span>
+                            <span class="firstSpan">{{format(item.examDate.replace(/-/g,'/'))}}</span>
                             <span>
-                               {{format(new Date()) === format(item.examDate)?'今天':dayList[new Date(item.examDate).getDay()]}}
+                               {{format(new Date()) === format(item.examDate.replace(/-/g,'/'))?'今天':dayList[new Date(item.examDate.replace(/-/g,'/')).getDay()]}}
                             </span>
                             
                         </div>
@@ -40,8 +40,8 @@
                         <p><i class="iconfont icon-zuowei"></i><span>剩余</span><span>{{item.remainSeat}}</span></p>
                     </div>
                     <div class="examTimeListRight">
-                        <div v-if="item.remainSeat>0">
-                            <input  type="radio" name="examroom" :id='item.id'  @click="selectCurrentRadio(item)">
+                        <div v-if="item.remainSeat>0" @click="selectCurrentRadio(item)">
+                            <input  type="radio" name="examroom" :id='item.id'  >
                             <label  :for='item.id'></label>
                         </div>
                         <!-- item.examTime 字符串非时间对象 -->
@@ -130,14 +130,14 @@ export default {
     },
     methods:{
         longTimeAgo(dateStr,timeStr,long){
-            let s = dateStr+' '+timeStr;
+            let s = dateStr.split(' ')[0]+' '+timeStr;
             var new_time_str = s.replace(/-/g, '/')
             var now = new Date(new_time_str);
             var time = now.getTime() + 1000*60*long;
             return this.formatDate(time,'hh:mm')
         },
         selectDate(item,index){
-            // console.log(item,item.examDate)
+            console.log(item,item.examDate)
             this.examDateCommon = item.examDate;
             this.currentIndex = index;
             let  params = {
@@ -148,6 +148,7 @@ export default {
                 this.timeList =[];
                 if(res.data.code === 0){
                     this.timeList = res.data.data;
+                    console.log(res.data.data,'101010')
                     // console.log(res.data.data,'考试计划id')
                     // let params ={
                     //     examPlanId:res.data.data[0].id,
@@ -196,6 +197,7 @@ export default {
         this.$axios.get('/api/enter/get_calendar',{params}).then( res =>{
             if(res.data.code === 0){
                this.swiperSlides = res.data.data;
+               console.log(res.data.data,'ios')
             }
         })
         //请求报考价格
@@ -380,7 +382,7 @@ export default {
                                 height:20px;
                                 border-radius: 50%;
                                 margin-right: 8px;
-                                background: url('../../assets/imgs/noSelect.png');
+                                background: url('../../assets/imgs/noSelect.svg');
                                 background-size: cover;
                                 content: "";
                                 left:0;
@@ -396,7 +398,7 @@ export default {
                                 left:0;
                                 top: 0;
                                 position: absolute;
-                                background: url('../../assets/imgs/selected.png');                             
+                                background: url('../../assets/imgs/selected.svg');                             
                                 background-size: cover;
                             }
                         }

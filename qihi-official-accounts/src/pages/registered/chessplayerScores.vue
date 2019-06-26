@@ -1,18 +1,18 @@
 <template>
     <div class="chessplayerScoresPages">
         <div class="chessplayerScoresListBox">
-          <div v-for="(item,index) in chessplayerScoresList" :key="index">
+          <div v-for="(item,index) in playerList" :key="index">
               <p>
                 <span class="firstSpan">{{item.playerName}}</span>
-                <span v-if="item.scores >=60" style="color:#19A91A;font-weight:600">通过 ({{item.scores}}分)</span>
-                 <span v-if="item.scores <60" style="color:#ED1A23;font-weight:600">未通过 ({{item.scores}}分)</span>
-                <span v-if="item.examStatus === 0" style="color:#ED1A23;font-weight:500;float:right">未认证</span>
-                <span v-if="item.examStatus === 1" style="color:#666666;font-weight:500;float:right">已认证</span>
-                <span v-if="item.examStatus === 2" style="float:right"></span>
+                <span v-if="item.examResult === 0" style="color:#19A91A;font-weight:600">通过 ({{item.score}}分)</span>
+                 <span v-if="item.examResult === 1" style="color:#ED1A23;font-weight:600">未通过 ({{item.score}}分)</span>
+                <span v-if="item.certificationType === 0 &&item.examResult === 0" style="color:#ED1A23;font-weight:500;float:right">未认证</span>
+                <span v-if="item.certificationType === 1 &&item.examResult === 0" style="color:#666666;font-weight:500;float:right">已认证</span>
+                <!-- <span v-if="item.examStatus === 2" style="float:right"></span> -->
               </p>
               <p class="commonTagP">
                 <span>证件号码</span>
-                <span>{{item.idNum}}</span>
+                <span>{{item.certificateNo}}</span>
               </p>
               <p class="commonTagP">
                 <span>电话号码</span>
@@ -20,14 +20,14 @@
               </p>
               <p class="commonTagP">
                 <span>考试级别</span>
-                <span>{{item.examLevel}}</span>
+                <span>{{item.leveNames}}</span>
               </p>
 
-              <div class="btnGrps" v-if="item.examStatus === 0">
+              <div class="btnGrps" v-if="item.examResult === 0 && item.certificationType === 0">
                   <button @click="handleScores">对弈报告</button>
                   <button class="bgBtn">证书申领</button>
               </div>   
-              <div class="btnGrps" v-if="item.examStatus === 1">
+              <div class="btnGrps" v-if="item.examResult === 0 && item.certificationType === 1 ">
                   <button>对弈报告</button>
                   <button style="margin-right:8px;">电子证书</button>
               </div>
@@ -45,31 +45,33 @@
 export default {
   data() {
     return {
-      chessplayerScoresList: [
-            {
-                playerName:'张三',
-                examStatus:0,
-                idNum:1123131232131231123,
-                phone:123123123213,
-                examLevel:'25级',
-                scores:70,
-            },
-            {
-                playerName:'张三疯呀',
-                examStatus:1,
-                idNum:1123131232131231123,
-                phone:123123123213,
-                examLevel:'25级',
-                scores:90,
-            },
-            {
-                playerName:'李思康敲试试',
-                examStatus:2,
-                scores:50,
-                idNum:1123131232131231123,
-                phone:123123123213,
-                examLevel:'25级',
-            }
+      playerList: [
+            // {
+            //     playerName:'张三',
+            //     examResult:0,
+            //     orderNo:1123131232131231123,
+            //     phone:123123123213,
+            //     leveNames:'25级',
+            //     score:70,
+            //     certificationType:1
+            // },
+            // {
+            //     playerName:'张三疯呀',
+            //     examResult:0,
+            //     phone:12321321321,
+            //     orderNo:1123131232131231123,
+            //     leveNames:'25级',
+            //     score:90,
+            //     certificationType:0
+            // },
+            // {
+            //     playerName:'李思康敲试试',
+            //     examResult:1,
+            //     score:50,
+            //     orderNo:1123131232131231123,
+            //     phone:123123123213,
+            //     leveNames:'25级'
+            // }
           ]
     }
   },
@@ -77,6 +79,18 @@ export default {
       handleScores(){
         
       }
+  },
+  created(){
+    let examPlanId = this.$route.query.examPlanId;
+    let  params= {
+        examPlanId:examPlanId
+    }
+    this.$axios.get('/api/enroll/grade_list',{params}).then( (res) => {
+        if( res.data.code === 0){
+          this.playerList = res.data.data;
+          console.log(res.data.data)
+        }
+     })
   }
 };
 </script>

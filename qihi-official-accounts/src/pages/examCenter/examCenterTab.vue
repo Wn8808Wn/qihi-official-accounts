@@ -134,7 +134,7 @@
                 </p>
                 <p class="commonTagP">
                   <span>考试时间</span>
-                  <span>{{item.examBeginDate.replace(/-/g,'.')}} 至 {{item.examEndDate.replace(/-/g,'.')}}</span>
+                  <span>{{item.examBeginDate.split(' ')[0].replace(/-/g,'.')}} 至 {{item.examEndDate.split(' ')[0].replace(/-/g,'.')}}</span>
                 </p>
             </div>
             <p class="bottomBar">
@@ -259,6 +259,7 @@ export default {
           if (res.data.code === 0) {
             console.log(res.data.data, "json");
             this.examRoomList = res.data.data;
+            console.log( res.data.data,'000')
           } else {
             console.log(res.data.msg);
           }

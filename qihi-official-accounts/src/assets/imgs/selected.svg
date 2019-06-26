@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>考试中心-段级位考试-报名</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="1.87183887%" y1="1.87183887%" x2="97.6469448%" y2="97.6469448%" id="linearGradient-1">
+            <stop stop-color="#459CFF" offset="0%"></stop>
+            <stop stop-color="#2069E5" offset="100%"></stop>
+        </linearGradient>
+        <polygon id="path-2" points="0 0 12 0 12 7.7 0 7.7"></polygon>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="考试中心-段级位考试-报名" transform="translate(-307.000000, -386.000000)">
+            <g id="分组-5" transform="translate(307.000000, 386.000000)">
+                <g id="分组-4">
+                    <circle id="椭圆形-copy-6" fill="url(#linearGradient-1)" cx="10" cy="10" r="10"></circle>
+                    <g id="duigou-copy" transform="translate(4.000000, 7.000000)">
+                        <mask id="mask-3" fill="white">
+                            <use xlink:href="#path-2"></use>
+                        </mask>
+                        <g id="Clip-2"></g>
+                        <path d="M4.29315702,7.7 C4.13332253,7.7 3.97348804,7.64361062 3.85150423,7.53092526 L0.183038574,4.14057191 C-0.0610128579,3.91506108 -0.0610128579,3.5495109 0.183038574,3.32406235 C0.427090005,3.09856708 0.822393313,3.09862936 1.06636093,3.32400007 L4.29315702,6.3061142 L10.9336391,0.169121447 C11.1776235,-0.0563738157 11.5729938,-0.0563738157 11.8169614,0.169121447 C12.0610129,0.394554435 12.0610129,0.760120181 11.8169614,0.985615444 L4.73489364,7.53086298 C4.61284278,7.64361062 4.45300828,7.7 4.29315702,7.7 Z" id="Fill-1" fill="#FFFFFF" mask="url(#mask-3)"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

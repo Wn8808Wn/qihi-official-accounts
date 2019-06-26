@@ -36,8 +36,8 @@
               </p>
               <button v-if="item.state === 0" @click="checkTicket">准考证</button>
               <div v-else class="btnGrps">
-                  <button @click="handleScores">棋手成绩</button>
-                  <button class="bgBtn">证书申领</button>
+                  <button @click="handleScores(item.playerList[0].examPlanId)">棋手成绩</button>
+                  <button @click="handleCertificate(item.playerList[0].examPlanId)" class="bgBtn">证书申领</button>
               </div>
           </div>
           <p class="bottomBar">
@@ -108,8 +108,11 @@ export default {
     }
   },
   methods:{
-     handleScores(){
-      this.$router.push({name:'chessplayerScores'})
+     handleScores(examPlanId){
+      this.$router.push({name:'chessplayerScores',query:{examPlanId}})
+    },
+    handleCertificate(examPlanId){
+      this.$router.push({name:'certificate',query:{examPlanId}})
     },
     checkTicket(){
         this.$router.push({name:'ticketsPdf'})
@@ -124,8 +127,7 @@ export default {
         if(res.data.code ===0 ){
           this.list =res.data.data.info;
         }
-
-         this.$nextTick(() => {
+        this.$nextTick(() => {
           this.scroll = new Bscroll(this.$refs.registeredWrapper, {click:true})
         })
 
