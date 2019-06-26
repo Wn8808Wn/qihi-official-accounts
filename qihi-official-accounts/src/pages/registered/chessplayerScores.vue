@@ -25,7 +25,7 @@
 
               <div class="btnGrps" v-if="item.examResult === 0 && item.certificationType === 0">
                   <button @click="handleScores">对弈报告</button>
-                  <button class="bgBtn">证书申领</button>
+                  <button class="bgBtn" @click="handleApplyCard(item)">证书申领</button>
               </div>   
               <div class="btnGrps" v-if="item.examResult === 0 && item.certificationType === 1 ">
                   <button>对弈报告</button>
@@ -78,6 +78,10 @@ export default {
    methods:{
       handleScores(){
         
+      },
+      handleApplyCard(item){
+          console.log(item,'啊啊啊')
+          this.$router.push({name:'certificatePerson',query:{item:JSON.stringify(item)}})
       }
   },
   created(){
@@ -88,7 +92,7 @@ export default {
     this.$axios.get('/api/enroll/grade_list',{params}).then( (res) => {
         if( res.data.code === 0){
           this.playerList = res.data.data;
-          console.log(res.data.data)
+          console.log(res.data.data,'asdsad')
         }
      })
   }

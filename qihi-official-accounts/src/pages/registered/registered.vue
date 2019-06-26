@@ -122,8 +122,7 @@ export default {
       let params = {
          userId:1
       }
-     this.$axios.get('/api//enroll/enroll_list',{params}).then( res =>{
-        console.log(res)
+     this.$axios.get('/api/enroll/enroll_list',{params}).then( res =>{
         if(res.data.code ===0 ){
           this.list =res.data.data.info;
         }

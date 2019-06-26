@@ -28,30 +28,26 @@
         </div>
         <!-- 列表渲染 -->
         <div class="listBox">
-            <div v-for="(item,index) in certificateList" :key="index">
+            <div>
               <p>
-                <span class="firstSpan">{{item.playerName}}</span>
-                <span>{{item.certificateNo}}</span>
-                <span class="playCheckBox">
-                    <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentPlayer(item,index)">
-                    <label  :for='item.id'></label>
-                </span>
+                <span class="firstSpan">{{list[0].playerName}}</span>
+                <span>{{list[0].certificateNo}}</span>
               </p>
                <p class="commonTagP">
                 <span>电话号码</span>
-                <span>{{item.phone}}</span>
+                <span>{{list[0].phone}}</span>
               </p>
               <p class="commonTagP">
                 <span>考试级别</span>
-                <span>{{item.leveNames}}</span>
+                <span>{{list[0].leveNames}}</span>
               </p>
               <p class="commonTagP">
                 <span>考试结果</span>
-                <span v-if="item.examResult === 0">考试通过</span>
-                <span v-if="item.examResult === 1">考试未通过</span>
+                <span v-if="list[0].examResult === 0">考试通过</span>
+                <span v-if="list[0].examResult === 1">考试未通过</span>
               </p>
               <p class="commonTagP">
-                <span>认证服务费</span><span>¥ {{item.certificationServiceFee}}</span>
+                <span>认证服务费</span><span>¥ {{list[0].certificationServiceFee}}</span>
               </p>
              
           </div>
@@ -66,13 +62,9 @@
           </div>
           <div class="payBtns">
               <p class="firstP">
-                <span class="playCheckBox">
-                    <input type="checkbox" id='checkAll'  @change="selectAll">
-                    <label  for='checkAll'></label>
-                </span>
-                <span>全选</span><span style="color:#ED1A23;margin-left:4px;font-weight:600;">¥ {{totalPrice}}</span>
+                <span></span><span style="color:#ED1A23;margin-left:4px;font-weight:600;">¥ {{list[0].certificationServiceFee}}</span>
               </p>
-              <button class="submitP" :disabled ="disabled" @click="hanleApply(this.checkList)">证书申领</button>
+              <button class="submitP" :disabled ="disabled">证书申领</button>
           </div>
         </div>
 
@@ -92,38 +84,12 @@ export default {
   data() {
     return {
       showPopup: false,
-      currentIndex:0,
-      checkList:[],
       disabled:true,
-      certificateList: [
-        // {
-        //   playerName: "展三",
-        //   certificateNo: 130133198010022566,
-        //   phone: 11231231231,
-        //   leveNames: "25级",
-        //   examResult: 1,
-        //   certificationServiceFee: 200
-        // },
-        // {
-        //   playerName: "展三",
-        //   certificateNo: 130133198010022566,
-        //   phone: 11231231231,
-        //   leveNames: "25级",
-        //   examResult: 1,
-        //   certificationServiceFee: 200
-        // },
-       
-      ],
+      list:[{
+        playerName:'',
+        certificationServiceFee:null
+      }],
     };
-  },
-  computed:{
-      totalPrice(){
-        let total = 0;
-        this.checkList.forEach( item => {
-            total+=item.certificationServiceFee
-        });
-        return total;
-      }
   },
   methods: {
     showPopupPage() {
@@ -133,37 +99,20 @@ export default {
     cancleBtn() {
       this.showPopup = false;
     },
-    selectCurrentPlayer(item,index){
-      console.log(item,index,this.checkList.length===this.certificateList.length)
-      if(this.checkList == this.certificateList){
-        console.log('全选')
-      }
-    },
-    //全选按钮
-    selectAll(){
-      if(this.checkList === this.certificateList){
-        this.checkList =[];
-
-      }else{
-        this.checkList =this.certificateList
-      }
-    },
-    hanleApply(item){
-      console.log(item)
-      // this.$router.push({name:'',})
-    }
   },
-  created() {
-    let examPlanId = this.$route.query.examPlanId;
+  created(){
+    console.log(JSON.parse(this.$route.query.item),'111')
+    let obj = JSON.parse(this.$route.query.item);
     let params = {
-      examPlanId: examPlanId,
-      examLevel: 1
-    };
-    this.$axios.get("/api/enroll/certificateApply", { params }).then(res => {
-      if (res.data.code === 0) {
-        this.certificateList = res.data.data;
-      }
-    });
+        examPlanId:obj.examPlanId,
+        examLevel:obj.examlevel,
+        playerId:obj.id
+    }
+    this.$axios.get('/api/enroll/certificateApply_list',{params}).then( res => {
+        if( res.data.code === 0){
+          this.list = res.data.data;
+        }
+    })
   }
 };
 </script>

@@ -79,6 +79,14 @@ export default new Router({
       component: () => import('../pages/registered/certificate.vue'), // 段级位考试=>已报名=>证书申领
     },
     {
+      path: '/examCenter/examinationLevel/registered/certificatePerson',
+      name: 'certificatePerson',
+      meta: {
+        title: '证书申领'
+      },
+      component: () => import('../pages/registered/certificatePerson.vue'), // 段级位考试=>已报名=>个人证书申领
+    },
+    {
       path: '/examCenter/examinationLevel/registered/ticketsPdf',
       name: 'ticketsPdf',
       meta: {

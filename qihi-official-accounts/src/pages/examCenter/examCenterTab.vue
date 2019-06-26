@@ -2,10 +2,10 @@
     <div class="examinationLevelPage">
         <div class="wrap pageTop">
             <div class="contentLf" @click="showPopupPage">
-              <div>
-                  <img  src="../../assets/imgs/bmxz.svg" alt="报名须知">
-              </div>
-              <span>报名须知</span>
+                <div>
+                    <img  src="../../assets/imgs/bmxz.svg" alt="报名须知">
+                </div>
+                <span>报名须知</span>
             </div>
             <div class="contentRg">
                <div>
@@ -24,20 +24,20 @@
                     </div>
                 <ul class="popupContent">
                     <li>
-                      <h3>会员报名</h3>
-                      <p>报名前,请先<span>成为会员</span>,如果已经是会员，请忽略。</p>
+                        <h3>会员报名</h3>
+                        <p>报名前,请先<span>成为会员</span>,如果已经是会员，请忽略。</p>
                     </li>
                     <li>
-                      <h3>跨级考试</h3>
-                      <p>所选地区不支持18岁以下棋手跨级别考试。需要跨级考试，需提交<span>跨级别考试申请</span>。</p>
+                        <h3>跨级考试</h3>
+                        <p>所选地区不支持18岁以下棋手跨级别考试。需要跨级考试，需提交<span>跨级别考试申请</span>。</p>
                     </li>
                     <li>
-                      <h3>请选择会员所属地区报名</h3>
-                      <p>不支持跨地区考试，棋手目前只能选择会员归属地报名考试。</p>
+                        <h3>请选择会员所属地区报名</h3>
+                        <p>不支持跨地区考试，棋手目前只能选择会员归属地报名考试。</p>
                     </li>
                     <li>
-                      <h3>提前14天开放报名</h3>
-                      <p>14天前的早8:00开始报名。</p>
+                        <h3>提前14天开放报名</h3>
+                        <p>14天前的早8:00开始报名。</p>
                     </li>
                 </ul>
               </div>
@@ -79,8 +79,8 @@
                         <div class="sixProvince">  
                             <button  v-if="historyAreaList.length>0"   
                             v-for="(item,index) in historyAreaList" :key="index" 
-                            @click="selectCurrent(item,index)" 
-                            :class="{'activeBtn':index===currentHistoryProvinceID}">
+                            @click="selectCurrentHistoryArea(item,index)" 
+                            :class="{'activeBtn': index === currentHistoryProvinceID}">
                                   {{item.areaName}}
                             </button>
                         </div>
@@ -152,228 +152,212 @@ import { location } from "../../utils/map.js";
 import commonTabbar from "../../components/commonTabbar";
 import { TransferDom, Popup, Cell, CellBox, Group, XButton } from "vux";
 export default {
-  directives: {
-    TransferDom
-  },
-  components: {
-    commonTabbar,
-    Popup,
-    Group,
-    Cell,
-    CellBox,
-    XButton
-  },
-  data() {
-    return {
-      showPopup: false,
-      showExamArea: false,
-      showExamLevel: false,
-      examAreaTitle: "北京市",
-      examLevelTitle: "5级",
-      currentHistoryProvinceID: null,
-      currentProvinceID: null,
-      currentLevelID: null,
-      historyAreaList: [],
-      examAreaList: [],
-      examLevelList: [],
-      examRoomList: [
-        // {
-        //   examRoomId: 1,
-        //   examRoomName: "龙岗区考场",
-        //   examStatus: 0,
-        //   address: "黑龙江省哈尔滨市围棋协会二楼130",
-        //   examBeginDate: "2019.02.18",
-        //   examEndDate:"2019.03.04"
-        // },
-      ]
-    };
-  },
-  methods: {
-    // 判断关键字是否存在，存在就移除添加在首位
-    setHistoryItems(row) {
-      let historyItem = localStorage.getItem("historyItem");
-      if (historyItem === null) {
-        localStorage.historyItem = JSON.stringify(row);
-      } else {
-        let historyItemArr = historyItem.split("|");
-        let historyItemArrs = historyItemArr.map(e => JSON.parse(e));
-        // console.log(historyItemArrs)
-        let isExists = historyItemArrs.filter(item => item.id === row.id)
-          .length;
-        if (isExists) {
-          // historyItem = JSON.stringify(row) + "|" + historyItemArrs.filter(e => e.id !== row.id).join("|");
-        } else {
-          historyItem += "|" + JSON.stringify(row);
-        }
-        localStorage.historyItem = historyItem;
-        this.historyAreaList = window.localStorage
-          .getItem("historyItem")
-          .split("|")
-          .map(item => JSON.parse(item));
-        if (this.historyAreaList.length > 6) {
-          this.historyAreaList = this.historyAreaList.slice(-6);
-        }
+    directives: {
+        TransferDom
+    },
+    components: {
+        commonTabbar,
+        Popup,
+        Group,
+        Cell,
+        CellBox,
+        XButton
+    },
+    data() {
+        return {
+            showPopup: false,
+            showExamArea: false,
+            showExamLevel: false,
+            examAreaTitle: "北京市",
+            examLevelTitle: "5级",
+            currentHistoryProvinceID: null,
+            currentProvinceID: null,
+            currentLevelID: null,
+            historyAreaList: [],
+            examAreaList: [],
+            examLevelList: [],
+            examRoomList: [
+              // {
+              //   examRoomId: 1,
+              //   examRoomName: "龙岗区考场",
+              //   examStatus: 0,
+              //   address: "黑龙江省哈尔滨市围棋协会二楼130",
+              //   examBeginDate: "2019.02.18",
+              //   examEndDate:"2019.03.04"
+              // },
+            ]
+        };
+    },
+    methods: {
+      // 判断关键字是否存在，存在就移除添加在首位
+      setHistoryItems(row) {
+          let historyItem = localStorage.getItem("historyItem");
+          if (historyItem === null) {
+              let  arr = [];
+              arr.push(row)
+              localStorage.setItem('historyItem',JSON.stringify(arr));
+              this.historyAreaList=JSON.parse(localStorage.getItem('historyItem'));
+          } else {
+              let historyItemArr = JSON.parse(historyItem)
+              let isExists = historyItemArr.filter(item => item.id === row.id).length;
+              if (isExists) {
+                  let newArr = historyItemArr.filter(e => e.id !== row.id)
+                  newArr.unshift(row)
+                  localStorage.setItem('historyItem',JSON.stringify(newArr))
+                  this.historyAreaList=JSON.parse(localStorage.getItem('historyItem'));
+              } else {
+                  historyItemArr.unshift(row);
+                  localStorage.setItem('historyItem',JSON.stringify(historyItemArr))
+                  this.historyAreaList=JSON.parse(localStorage.getItem('historyItem'));
+                  let arr1 = JSON.parse(localStorage.getItem('historyItem'));
+                  if(arr1.length>=6){
+                      let arr2 =  arr1.splice(0,6)
+                      console.log(arr2,'000')
+                      localStorage.setItem('historyItem',JSON.stringify(arr2));
+                      this.historyAreaList=JSON.parse(localStorage.getItem('historyItem'));
+                  }
+              }
+          }
+      },
+      //获取地理定位
+      getLocation() {
+        let geolocation = location.initMap("map-container"); //定位
+        AMap.event.addListener(geolocation, "complete", result => {
+          this.examAreaTitle = result.addressComponent.province;
+          console.log("定位结果为" + result.addressComponent.province);
+          this.getList().then(() => {
+            // console.log('123')
+            let defualtProvince = this.examAreaList.filter(
+              e => e.areaName == this.examAreaTitle
+            )[0].id;
+            let defualtLevel = this.examLevelList.filter(
+              e => e.levelName == this.examLevelTitle
+            )[0].id;
+            let params = {
+              provinceCode: defualtProvince,
+              examLevel: defualtLevel
+            };
+            this.getRoomList(params);
+          });
+        });
+      },
+      //获取考试地区和级别列表
+      getList() {
+        return this.$axios.get("/api/enter/get_examArea").then(res => {
+          // console.log(res, "获取列表");
+          if (res.data.code === 0) {
+            this.examAreaList = res.data.data.areaList;
+            this.examLevelList = res.data.data.levelType;
+            sessionStorage.setItem("examLevelList",JSON.stringify(res.data.data.levelType));
+          }
+        });
+      },
+      getRoomList(params) {
+        return this.$axios.get("/api/enter/get_examRoom", { params }).then(res => {
+            this.examRoomList = [];
+            if (res.data.code === 0) {
+                this.examRoomList = res.data.data;
+            } else {
+                console.log(res.data.msg);
+            }
+          });
+      },
+      // 点击图标显示弹层
+      showPopupPage() {
+        this.showPopup = true;
+      },
+      // 弹层取消
+      cancleBtn() {
+        this.showPopup = false;
+      },
+      log(aa) {
+        // console.log(aa);
+      },
+      //点击考试地区显示弹层
+      showExamAreaPage() {
+        this.showExamArea = !this.showExamArea;
+      },
+      cancleBtnArea() {
+        this.showExamArea = false;
+        this.currentHistoryProvinceID = null;
+        this.currentProvinceID = null;
+      },
+      //点击考试级别显示弹层
+      showExamLevelPage() {
+        this.showExamLevel = !this.showExamLevel;
+      },
+      cancleBtnLevel() {
+        this.showExamLevel = false;
+      },
+      selectCurrentHistoryArea(row, index) {
+        this.currentHistoryProvinceID = index;
+        this.examAreaTitle = row.areaName;
+        let params = {
+          provinceCode: row.id,
+          examLevel: this.examLevelList.filter(e => e.levelName === this.examLevelTitle)[0].id
+        };
+        setTimeout(() => {
+          this.showExamArea = false;
+          this.getRoomList(params);
+          this.currentHistoryProvinceID = null;
+        }, 1000);
+      },
+      selectCurrentProvince(row, index) {
+        this.setHistoryItems(row);
+        this.examAreaTitle = row.areaName;
+        this.currentProvinceID = index;
+        let params = {
+          provinceCode: row.id,
+          examLevel: this.examLevelList.filter(e => e.levelName === this.examLevelTitle)[0].id
+        };
+        setTimeout(() => {
+          this.showExamArea = false;
+          this.getRoomList(params);
+          //  this.currentProvinceID = null;
+        }, 1000);
+      },
+      selectCurrentLevel(row, index) {
+        this.examLevelTitle = row.levelName;
+        this.currentLevelID = index;
+        let params = {
+          examLevel: row.id,
+          provinceCode: this.examAreaList.filter(e => e.areaName === this.examAreaTitle)[0].id
+        };
+        setTimeout(() => {
+          this.showExamLevel = false;
+          this.getRoomList(params);
+        }, 200);
+      },
+      handleSignUp(item) {
+        let examLevelId = this.examLevelList.filter(e => e.levelName == this.examLevelTitle)[0].id;
+        sessionStorage.setItem("examLevelTitle", this.examLevelTitle);
+        sessionStorage.setItem("currentItem", JSON.stringify(item));
+        sessionStorage.setItem("examLevelId", examLevelId);
+        //路由传值
+        // this.$router.push({name:'examRoomDetails',query:{currentItem:JSON.stringify(item),level:this.examLevelTitle,examLevelId}})
+        this.$router.push({ name: "examRoomDetails" });
       }
     },
-    //获取地理定位
-    getLocation() {
-      let geolocation = location.initMap("map-container"); //定位
-      AMap.event.addListener(geolocation, "complete", result => {
-        this.examAreaTitle = result.addressComponent.province;
-        console.log("定位结果为" + result.addressComponent.province);
-        this.getList().then(() => {
-          // console.log('123')
-          let defualtProvince = this.examAreaList.filter(
-            e => e.areaName == this.examAreaTitle
-          )[0].id;
-          let defualtLevel = this.examLevelList.filter(
-            e => e.levelName == this.examLevelTitle
-          )[0].id;
-          let params = {
-            provinceCode: defualtProvince,
-            examLevel: defualtLevel
-          };
-          this.getRoomList(params);
-        });
-      });
-    },
-    //获取考试地区和级别列表
-    getList() {
-      return this.$axios.get("/api/enter/get_examArea").then(res => {
-        // console.log(res, "获取列表");
+    created() {
+      this.$axios.get("/api/enter/get_examArea").then(res => {
         if (res.data.code === 0) {
           this.examAreaList = res.data.data.areaList;
           this.examLevelList = res.data.data.levelType;
-          sessionStorage.setItem(
-            "examLevelList",
-            JSON.stringify(res.data.data.levelType)
-          );
+          this.$nextTick(() => {
+            this.scroll = new Bscroll(this.$refs.areaWrapper, { click: true });
+          });
+          this.$nextTick(() => {
+            this.scroll = new Bscroll(this.$refs.levelWrapper, { click: true });
+          });
+          sessionStorage.setItem("examLevelList",JSON.stringify(res.data.data.levelType));
         }
       });
-    },
-    getRoomList(params) {
-      return this.$axios
-        .get("/api/enter/get_examRoom", { params })
-        .then(res => {
-          this.examRoomList = [];
-          if (res.data.code === 0) {
-            console.log(res.data.data, "json");
-            this.examRoomList = res.data.data;
-            console.log( res.data.data,'000')
-          } else {
-            console.log(res.data.msg);
-          }
-        });
-    },
-    // 点击图标显示弹层
-    showPopupPage() {
-      this.showPopup = true;
-    },
-    // 弹层取消
-    cancleBtn() {
-      this.showPopup = false;
-    },
-    log(aa) {
-      // console.log(aa);
-    },
-    //点击考试地区显示弹层
-    showExamAreaPage() {
-      this.showExamArea = !this.showExamArea;
-    },
-    cancleBtnArea() {
-      this.showExamArea = false;
-    },
-    //点击考试级别显示弹层
-    showExamLevelPage() {
-      this.showExamLevel = !this.showExamLevel;
-    },
-    cancleBtnLevel() {
-      this.showExamLevel = false;
-    },
-    selectCurrent(row, index) {
-      this.currentHistoryProvinceID = index;
-      this.examAreaTitle = row.areaName;
-      let params = {
-        provinceCode: row.id,
-        examLevel: this.examLevelList.filter(
-          e => e.levelName === this.examLevelTitle
-        )[0].id
-      };
-      setTimeout(() => {
-        this.showExamArea = false;
-        this.getRoomList(params);
-      }, 200);
-    },
-    selectCurrentProvince(row, index) {
-      this.setHistoryItems(row);
-      this.examAreaTitle = row.areaName;
-      this.currentProvinceID = index;
-      let params = {
-        provinceCode: row.id,
-        examLevel: this.examLevelList.filter(
-          e => e.levelName === this.examLevelTitle
-        )[0].id
-      };
-      setTimeout(() => {
-        this.showExamArea = false;
-        this.getRoomList(params);
-      }, 200);
-    },
-    selectCurrentLevel(row, index) {
-      this.examLevelTitle = row.levelName;
-      this.currentLevelID = index;
-      let params = {
-        examLevel: row.id,
-        provinceCode: this.examAreaList.filter(
-          e => e.areaName === this.examAreaTitle
-        )[0].id
-      };
-      setTimeout(() => {
-        this.showExamLevel = false;
-        this.getRoomList(params);
-      }, 200);
-    },
-    handleSignUp(item) {
-      let examLevelId = this.examLevelList.filter(
-        e => e.levelName == this.examLevelTitle
-      )[0].id;
-      sessionStorage.setItem("examLevelTitle", this.examLevelTitle);
-      sessionStorage.setItem("currentItem", JSON.stringify(item));
-      sessionStorage.setItem("examLevelId", examLevelId);
-      //路由传值
-      // this.$router.push({name:'examRoomDetails',query:{currentItem:JSON.stringify(item),level:this.examLevelTitle,examLevelId}})
-      this.$router.push({ name: "examRoomDetails" });
-    }
-  },
-  created() {
-    this.$axios.get("/api/enter/get_examArea").then(res => {
-      if (res.data.code === 0) {
-        this.examAreaList = res.data.data.areaList;
-        this.examLevelList = res.data.data.levelType;
-        this.$nextTick(() => {
-          this.scroll = new Bscroll(this.$refs.areaWrapper, { click: true });
-        });
-        this.$nextTick(() => {
-          this.scroll = new Bscroll(this.$refs.levelWrapper, { click: true });
-        });
-        sessionStorage.setItem(
-          "examLevelList",
-          JSON.stringify(res.data.data.levelType)
-        );
-      }
-    });
 
-    this.getLocation();
-    if (window.localStorage.getItem("historyItem") !== null) {
-      this.historyAreaList = window.localStorage
-        .getItem("historyItem")
-        .split("|")
-        .map(item => JSON.parse(item));
-      if (this.historyAreaList.length > 6) {
-        this.historyAreaList = this.historyAreaList.slice(-6);
+      this.getLocation();
+      if (window.localStorage.getItem("historyItem") !== null) {
+        this.historyAreaList = JSON.parse(window.localStorage.getItem("historyItem"))
       }
     }
-  }
 };
 </script>
 
@@ -640,9 +624,9 @@ export default {
             margin-right: 0px;
           }
         }
-      }
-      .activeBtn {
-        background: $bg-blue;
+        .activeBtn {
+          background: $bg-blue;
+        }
       }
     }
   }

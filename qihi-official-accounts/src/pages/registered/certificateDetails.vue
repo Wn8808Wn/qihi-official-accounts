@@ -72,7 +72,7 @@
                 </span>
                 <span>全选</span><span style="color:#ED1A23;margin-left:4px;font-weight:600;">¥ {{totalPrice}}</span>
               </p>
-              <button class="submitP" :disabled ="disabled" @click="hanleApply(this.checkList)">证书申领</button>
+              <button class="submitP" :disabled ="disabled">证书申领</button>
           </div>
         </div>
 
@@ -147,10 +147,8 @@ export default {
       }else{
         this.checkList =this.certificateList
       }
-    },
-    hanleApply(item){
-      console.log(item)
-      // this.$router.push({name:'',})
+     
+  
     }
   },
   created() {
@@ -439,3 +437,4 @@ export default {
   }
 }
 </style>
+
