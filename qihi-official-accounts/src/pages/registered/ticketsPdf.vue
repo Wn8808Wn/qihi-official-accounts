@@ -179,7 +179,7 @@ export default {
           width: 20px;
           height: 20px;
           border-radius: 50%;
-          background: url("../../assets/imgs/noSelect.png");
+          background: url("../../assets/imgs/noSelect.svg");
           background-size: cover;
           content: "";
           left: 16px;
@@ -194,7 +194,7 @@ export default {
           left: 16px;
           top: 16px;
           position: absolute;
-          background: url("../../assets/imgs/selected.png");
+          background: url("../../assets/imgs/selected.svg");
           background-size: cover;
         }
       }
@@ -222,7 +222,7 @@ export default {
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        background: url("../../assets/imgs/noSelect.png");
+        background: url("../../assets/imgs/noSelect.svg");
         background-size: cover;
         content: "";
         left: 16px;
@@ -237,7 +237,7 @@ export default {
         left: 16px;
         top: 16px;
         position: absolute;
-        background: url("../../assets/imgs/selected.png");
+        background: url("../../assets/imgs/selected.svg");
         background-size: cover;
       }
 

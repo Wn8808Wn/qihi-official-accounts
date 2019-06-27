@@ -2,7 +2,7 @@
     <div class="sucessApplyPage">
         <div class="innerBox">
             <div class="bannderBox">
-                <div class="imgBox"><img src="../../assets/imgs/duigou.png" alt="" ></div>
+                <div class="imgBox"><img src="../../assets/imgs/duigou.svg" alt="" ></div>
                 <span>报名成功</span>
             </div>
             <div class="stepLine">

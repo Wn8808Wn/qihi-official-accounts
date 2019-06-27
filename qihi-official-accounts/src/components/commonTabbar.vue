@@ -60,6 +60,7 @@ export default {
     width: 100%;
     background: #ffffff;
     overflow: visible;
+    
     .weui-tabbar__item {
       padding: 0;
       & /deep/ .weui-tabbar__icon {
@@ -82,7 +83,7 @@ export default {
       height: 13px;
       position: absolute;
       top: -12px;
-      background: url('../assets/imgs/active-border1.png') no-repeat;
+      background: url('../assets/imgs/active-border.svg') no-repeat;
       background-size: cover;
     }
     .weui-bar__item_on{
@@ -93,6 +94,22 @@ export default {
           margin-bottom: 4px;
         }
     }
+    .weui-tabbar:before{
+
+    }
+  }
+  .weui-tabbar:before{
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 2px;
+    border-top: 2px solid #E5E5E5;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
   }
 }
 </style>

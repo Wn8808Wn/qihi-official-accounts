@@ -1,7 +1,7 @@
 <template>
     <div class="registeredPage">
       <!-- 没有数据 -->
-      <div v-if="list.length === 0" class="listNull">
+      <div v-if="showNoApplyPage" class="listNull">
             <div><img src="@/assets/imgs/no-apply.svg" alt=""></div>
             <p>还没有报名考试，</p>
             <p>赶快去报名段级位考试吧！</p>
@@ -59,6 +59,7 @@ export default {
   },
   data(){
     return{
+      showNoApplyPage:false,
       list:[
         // {
         //   roomName:'龙岗区考场',
@@ -125,6 +126,10 @@ export default {
      this.$axios.get('/api/enroll/enroll_list',{params}).then( res =>{
         if(res.data.code ===0 ){
           this.list =res.data.data.info;
+          console.log(res.data.data.info,'DNF')
+          if(this.list === []){
+            this.showNoApplyPage = true;
+          }
         }
         this.$nextTick(() => {
           this.scroll = new Bscroll(this.$refs.registeredWrapper, {click:true})

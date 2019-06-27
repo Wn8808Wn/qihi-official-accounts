@@ -316,7 +316,7 @@ export default {
       &>.firstP{
         width:171px;
         padding-left: 24px;
-        height:52px;
+        height:53px;
         display: flex;
         align-items: center;
         background:rgba(255,255,255,1);
@@ -413,7 +413,7 @@ export default {
   & > li {
     margin-left: 34px;
     margin-right: 16px;
-    list-style-image: url("../../assets/imgs/point.png");
+    list-style-image: url("../../assets/imgs/point.svg");
     margin-bottom: 16px;
     & > h3 {
       height: 22px;

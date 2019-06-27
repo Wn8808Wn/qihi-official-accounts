@@ -362,7 +362,7 @@ export default {
   & > li {
     margin-left: 34px;
     margin-right: 16px;
-    list-style-image: url("../../assets/imgs/point.png");
+    list-style-image: url("../../assets/imgs/point.svg");
     margin-bottom: 16px;
     & > h3 {
       height: 22px;

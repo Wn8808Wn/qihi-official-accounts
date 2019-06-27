@@ -300,7 +300,7 @@ export default {
           this.showExamArea = false;
           this.getRoomList(params);
           this.currentHistoryProvinceID = null;
-        }, 1000);
+        }, 200);
       },
       selectCurrentProvince(row, index) {
         this.setHistoryItems(row);
@@ -313,8 +313,8 @@ export default {
         setTimeout(() => {
           this.showExamArea = false;
           this.getRoomList(params);
-          //  this.currentProvinceID = null;
-        }, 1000);
+           this.currentProvinceID = null;
+        }, 200);
       },
       selectCurrentLevel(row, index) {
         this.examLevelTitle = row.levelName;
@@ -326,6 +326,7 @@ export default {
         setTimeout(() => {
           this.showExamLevel = false;
           this.getRoomList(params);
+          this.currentLevelID = null;
         }, 200);
       },
       handleSignUp(item) {
@@ -406,12 +407,12 @@ export default {
         margin-left: 39px;
         margin-top: 12px;
         margin-right: 12px;
-        background: linear-gradient(
-          135deg,
-          rgba(77, 232, 208, 1) 0%,
-          rgba(31, 211, 189, 1) 100%
-        );
-        box-shadow: 0px 3px 5px 0px rgba(0, 233, 204, 0.5);
+        // background: linear-gradient(
+        //   135deg,
+        //   rgba(77, 232, 208, 1) 0%,
+        //   rgba(31, 211, 189, 1) 100%
+        // );
+        // box-shadow: 0px 3px 5px 0px rgba(0, 233, 204, 0.5);
         & > img {
           width: 100%;
           height: 100%;
@@ -426,12 +427,12 @@ export default {
         margin-left: 18px;
         margin-top: 12px;
         margin-right: 12px;
-        background: linear-gradient(
-          138deg,
-          rgba(251, 207, 6, 1) 0%,
-          rgba(255, 166, 9, 1) 100%
-        );
-        box-shadow: 0px 3px 4px 0px rgba(255, 180, 0, 0.5);
+        // background: linear-gradient(
+        //   138deg,
+        //   rgba(251, 207, 6, 1) 0%,
+        //   rgba(255, 166, 9, 1) 100%
+        // );
+        // box-shadow: 0px 3px 4px 0px rgba(255, 180, 0, 0.5);
         & > img {
           width: 100%;
           height: 100%;
@@ -664,7 +665,7 @@ export default {
   & > li {
     margin-left: 34px;
     margin-right: 16px;
-    list-style-image: url("../../assets/imgs/point.png");
+    list-style-image: url("../../assets/imgs/point.svg");
     margin-bottom: 16px;
     & > h3 {
       height: 22px;
