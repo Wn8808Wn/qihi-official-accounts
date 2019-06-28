@@ -26,53 +26,93 @@
               </div>
             </popup>
         </div>
+        
+          <!-- 选择联系人发票信息 -->
+        <div class="linkManPart">
+           <div class="seletLinkman bottomBorder">
+                <p>是否需要纸质证书</p>  
+                <p> <inline-x-switch v-model="value"></inline-x-switch></p>
+            </div>
+            <div class="seletLinkman bottomBorder"  v-if="!value">
+                <p>联系人</p>  
+                <p><span class="defaultSpan">默认</span> <span>{{linkManInfo}}</span> <span>{{linkManPhone}}</span> <i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i> </p>
+            </div>
+            <div class="seletLinkman bottomBorder">
+                <p>发票信息</p> 
+                <p> <span style="color:#B0B0B0;">非必填，可补开</span><i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i></p> 
+            </div>
+            <div class="seletLinkman" v-if="value">
+                <p>收件地址</p> 
+                <p><span style="color:#B0B0B0;">请添加收件地址</span><i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i></p> 
+            </div>
+        </div>  
+        <div class="infoTop">
+             <p>中国围棋协会段级位认证服务</p><span>认证级别:{{leveNames}}</span> <span>{{totalPerson}}人</span>
+        </div>
+       
+         <!-- 点击联系人弹层 -->
+        <div v-transfer-dom>
+            <popup v-model="showLinkMan" @on-hide="log('hide')" @on-show="log('show')" height='100%' position='bottom'>
+              <div class="popupPage">
+                <div class="PopupTop">
+                    <p>选择联系人</p>
+                    <span @click="cancleBtn">取消</span>
+                </div>
+                <!-- 获取联系人列表 -->
+                <div class="linkManListBox" v-if='true'>
+                        <li v-for="(item,index) in linkManList" :key="index"
+                        @click="selectCurrentLinkMan(item,index)" 
+                        >
+                            <p :class="{activeLinkManStyle:currentLinkManId === index}">
+                                <span>{{item.linkman}}</span>
+                                <span class="mtop4px">{{item.phone}}</span>
+                                <span v-if="item.email" class="mtop4px">{{item.email}}</span>
+                            </p>
+                            <i class="iconfont icon-xiugai"></i>
+                    </li>
+                </div>
+                <div v-if="false" class="noLinkManBox">
+                    <p>还没有创建常用联系人</p>
+                </div>
+                <div class="btmBar">
+                    <button>新增联系人</button>
+                </div>
+              </div>
+            </popup>
+        </div>
+
         <!-- 列表渲染 -->
         <div class="listBox">
             <div v-for="(item,index) in certificateList" :key="index">
               <p>
                 <span class="firstSpan">{{item.playerName}}</span>
                 <span>{{item.certificateNo}}</span>
-                <span class="playCheckBox">
-                    <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentPlayer(item,index)">
-                    <label  :for='item.id'></label>
-                </span>
               </p>
                <p class="commonTagP">
                 <span>电话号码</span>
                 <span>{{item.phone}}</span>
               </p>
               <p class="commonTagP">
-                <span>考试级别</span>
-                <span>{{item.leveNames}}</span>
-              </p>
-              <p class="commonTagP">
-                <span>考试结果</span>
-                <span v-if="item.examResult === 0">考试通过</span>
-                <span v-if="item.examResult === 1">考试未通过</span>
-              </p>
-              <p class="commonTagP">
                 <span>认证服务费</span><span>¥ {{item.certificationServiceFee}}</span>
               </p>
-             
           </div>
-          <p class="bottomBar">
+          <p class="bottomTips">
               已加载全部
           </p>
         </div>
         <div class="bottomBar">
           <div class="tips">
-            <i class="iconfont icon-zhushi"></i>
-            <p>通过考试的棋手请在2019年02月06日23:59:00前完成证 书申领，否则认证资格将作废。</p>
+              <span class="playCheckBox">
+                  <input type="checkbox" id='checkAll'  @change="mustBtn">
+                  <label  for='checkAll'></label>
+              </span>
+            <p>勾选表示已阅读并同意<a href="" style="color:#2069e5;">《服务协议》</a></p>
           </div>
           <div class="payBtns">
               <p class="firstP">
-                <span class="playCheckBox">
-                    <input type="checkbox" id='checkAll'  @change="selectAll">
-                    <label  for='checkAll'></label>
-                </span>
-                <span>全选</span><span style="color:#ED1A23;margin-left:4px;font-weight:600;">¥ {{totalPrice}}</span>
+                <span>合计:</span><span style="color:#ED1A23;margin-left:4px;font-weight:600;font-size:18px;">¥ {{totalPrice}}</span>
               </p>
-              <button class="submitP" :disabled ="disabled">证书申领</button>
+              <button class="submitP" :disabled ="disabled" @click="submitOrder" :class="{'darkBtn':disabled === true}">提交订单</button>
           </div>
         </div>
 
@@ -80,21 +120,22 @@
 </template>
 
 <script>
-import { TransferDom, Popup, CheckIcon } from "vux";
+import qs from 'qs' // qs在安装axios后会自动安装，只需要组件里import一下即可
+import { TransferDom, Popup,InlineXSwitch} from "vux";
 export default {
   directives: {
     TransferDom
   },
   components: {
     Popup,
-    CheckIcon
+    InlineXSwitch
   },
   data() {
     return {
       showPopup: false,
-      currentIndex:0,
-      checkList:[],
-      disabled:true,
+      currentIndex: 0,
+      checkList: [],
+      disabled: true,
       certificateList: [
         // {
         //   playerName: "展三",
@@ -112,18 +153,26 @@ export default {
         //   examResult: 1,
         //   certificationServiceFee: 200
         // },
-       
       ],
+      linkManInfo: "棋智科技",
+      linkManPhone:'',
+      showLinkMan: false,
+      linkManList: [],
+      currentLinkManId: null,
+      value:false,
+      totalPerson:null,
+      leveNames:'',
+      examlevel:'',
     };
   },
-  computed:{
-      totalPrice(){
-        let total = 0;
-        this.checkList.forEach( item => {
-            total+=item.certificationServiceFee
-        });
-        return total;
-      }
+  computed: {
+    totalPrice() {
+      let total = 0;
+      this.certificateList.forEach(item => {
+        total += item.certificationServiceFee;
+      });
+      return total;
+    }
   },
   methods: {
     showPopupPage() {
@@ -132,34 +181,49 @@ export default {
     log() {},
     cancleBtn() {
       this.showPopup = false;
+      this.showLinkMan = false;
     },
-    selectCurrentPlayer(item,index){
-      console.log(item,index,this.checkList.length===this.certificateList.length)
-      if(this.checkList == this.certificateList){
-        console.log('全选')
-      }
+    showLinkManPopupsPage() {
+      this.showLinkMan = true;
     },
-    //全选按钮
-    selectAll(){
-      if(this.checkList === this.certificateList){
-        this.checkList =[];
-
-      }else{
-        this.checkList =this.certificateList
+    selectCurrentLinkMan(item, index) {
+      this.currentLinkManId = index;
+      this.linkManInfo = item.linkman;
+      this.linkManPhone = item.phone;
+      // console.log(this.linkManPhone,'aaa')
+      setTimeout(() => {
+        this.showLinkMan = false;
+        this.currentLinkManId = "";
+      }, 1000);
+    },
+    submitOrder(){
+      let params = {
+        examPlanId:134,
+        linkMan:this.linkManInfo,
+        phone:this.linkManPhone,
+        totalFee:this.totalPrice,
+        chessPlay:JSON.stringify(this.certificateList),
+        examLevel:this.examlevel,
       }
-     
-  
+      this.$router.push({name:'certificatePay',query:{'params':JSON.stringify(params)}})
+    },
+    mustBtn(){
+        this.disabled =  !this.disabled;
     }
   },
   created() {
-    let examPlanId = this.$route.query.examPlanId;
+    this.certificateList = JSON.parse(this.$route.query.checkList);
+    console.log(this.certificateList,'1122')
+    this.leveNames = this.certificateList[0].leveNames;
+    this.examlevel = this.certificateList[0].examlevel;
+    this.totalPerson = this.certificateList.length;
     let params = {
-      examPlanId: examPlanId,
-      examLevel: 1
+      userId: 1
     };
-    this.$axios.get("/api/enroll/certificateApply", { params }).then(res => {
+    this.$axios.get("/api/linkman/linkman_list", { params }).then(res => {
       if (res.data.code === 0) {
-        this.certificateList = res.data.data;
+        this.linkManList = res.data.data;
+        console.log(res);
       }
     });
   }
@@ -192,7 +256,90 @@ export default {
       color: rgba(51, 51, 51, 1);
     }
   }
-
+  & > .linkManPart {
+    width: 359px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
+    border-radius: 14px;
+    // overflow: hidden;
+    // margin-top: 12px;
+    .bottomBorder {
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .seletLinkman {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      & > p {
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(102, 102, 102, 1);
+        line-height: 20px;
+        & > span {
+          color: #333333;
+        }
+        .defaultSpan {
+          font-size: 12px;
+          font-family: PingFang-SC-Medium;
+          font-weight: 500;
+          padding: 1px 6px;
+          color: rgba(255, 255, 255, 1);
+          line-height: 17px;
+          background: rgba(32, 105, 229, 1);
+          border-radius: 10px;
+        }
+        // switch按钮样式
+        & /deep/ .weui-switch, .weui-switch-cp__box{
+            height: 14px;
+            width: 40px;
+        }
+        & /deep/  .weui-switch-cp__input:checked~.weui-switch-cp__box, .weui-switch:checked{
+          background-color: #2069E5;
+          border: none;
+          height: 14px;
+          width: 40px;
+        }
+        // & /deep/ .weui-switch-cp__input:checked~.weui-switch-cp__box:after, .weui-switch:checked:after{
+        //   content: '';
+        // }
+        & /deep/ .weui-switch-cp__box:before, .weui-switch:before{
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 14px;
+            border-radius: 14px;
+            background-color: #B0B0B0;
+        }
+        & /deep/ .weui-switch-cp__box:after, .weui-switch:after{
+              width: 24px;
+              height: 24px;
+              top: -6px;
+              left: -2px;
+              content: '';
+        }
+      }
+    }
+  }
+  &>.infoTop{
+    width:calc(100% - 16px);
+    height: 52px;
+    padding-left: 16px;
+    line-height: 52px;
+    &>p{
+      font-size:14px;
+      float: left;
+      color:rgba(51,51,51,1);
+    }
+    &>span{
+      float: left;
+      margin-left: 12px;
+      font-size: 12px;
+      color:#666666;
+    }
+  }
   & > .listBox {
     display: flex;
     flex: 1;
@@ -233,14 +380,11 @@ export default {
           float: left;
           line-height: 22px;
         }
-        &>.playCheckBox{
-            float: right;
-        }
       }
       & > p:nth-of-type(2) {
         margin-top: 16px;
       }
-      &>.commonTagP {
+      & > .commonTagP {
         height: 20px;
         margin-bottom: 8px;
         & > span {
@@ -260,16 +404,16 @@ export default {
         }
         &:nth-last-of-type(1) {
           margin-bottom: 0px;
-          &>span:nth-of-type(1) {
+          & > span:nth-of-type(1) {
             margin-right: 8px;
           }
-          &>span:nth-of-type(2) {
-            color: #ED1A23;
+          & > span:nth-of-type(2) {
+            color: #ed1a23;
           }
         }
       }
     }
-    .bottomBar {
+    .bottomTips {
       display: flex;
       justify-content: center;
       font-size: 12px;
@@ -281,79 +425,39 @@ export default {
     }
   }
 
-  &>.bottomBar{
+  & > .bottomBar {
     position: fixed;
     width: 100%;
-    height: 105px;
+    height: 86px;
     left: 0;
     bottom: 0;
-    background: salmon;
-    &>.tips{
-      height: 36px;
-      width: calc(100% - 54px);
-      background: #FFF8E6;
-      padding: 8px 31px 8px  24px;
-      &>i{
-        font-size: 13px;
+    & > .tips {
+      height: 15px;
+      width: calc(100% - 24px);
+      background: #fff8e6;
+      padding: 8px 0px 8px 24px;
+      & > p {
+        width: 300px;
+        height: 18px;
         float: left;
-        margin-right: 8px;
-        margin-top: 4px;
+        font-size: 12px;
+        color: rgba(51, 51, 51, 1);
+        line-height: 18px;
       }
-      &>p{
-        width:300px;
-        height:18px;
+      & > .playCheckBox {
+        width: 14px;
+        height: 14px;
         float: left;
-        font-size:12px;
-        color:rgba(51,51,51,1);
-        line-height:18px;
-      }
-    }
-    &>.payBtns{
-      display: flex;
-      align-items: center;
-      &>.firstP{
-        width:171px;
-        padding-left: 24px;
-        height:52px;
-        display: flex;
-        align-items: center;
-        background:rgba(255,255,255,1);
-        box-shadow:0px -1px 0px 0px rgba(240,240,240,1);
-        &>.playCheckBox{
-          margin-right: 8px;
-        }
-        &>span{
-          font-size: 14px;
-        }
-      }
-      &>.submitP{
-        border: none;
-        width:180px;
-        height:52px;
-        text-align: center;
-        line-height: 52px;
-        font-weight: 600;
-        color: #ffffff;
-        font-size:16px;
-        background:linear-gradient(135deg,rgba(243,93,46,1) 0%,rgba(237,26,35,1) 100%);
-      }
-    }
-
-  }
-}
-//check 按钮样式
- .playCheckBox {
-        width: 20px;
-        height: 20px;
-       
+        margin-top: 3px;
         overflow: hidden;
+        margin-right: 6px;
         position: relative;
         input[type="checkbox"] {
           display: none;
         }
         input[type="checkbox"] + label::before {
-          width: 20px;
-          height: 20px;
+          width: 14px;
+          height: 14px;
           border-radius: 50%;
           margin-right: 8px;
           background: url("../../assets/imgs/noSelect.svg");
@@ -364,8 +468,8 @@ export default {
           position: absolute;
         }
         input[type="checkbox"]:checked + label::before {
-          width: 20px;
-          height: 20px;
+          width: 14px;
+          height: 14px;
           border-radius: 50%;
           margin-right: 8px;
           content: "";
@@ -375,7 +479,133 @@ export default {
           background: url("../../assets/imgs/selected.svg");
           background-size: cover;
         }
+      }
+    }
+    
+    & > .payBtns {
+      display: flex;
+      align-items: center;
+      & > .firstP {
+        width: 171px;
+        padding-left: 24px;
+        height: 53px;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0px -1px 0px 0px rgba(240, 240, 240, 1);
+        & > .playCheckBox {
+          margin-right: 8px;
+        }
+        & > span {
+          font-size: 16px;
+        }
+      }
+      & > .submitP {
+        border: none;
+        width: 180px;
+        height: 53px;
+        text-align: center;
+        line-height: 53px;
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 16px;
+        background: linear-gradient(135deg, rgba(243, 93, 46, 1) 0%, rgba(237, 26, 35, 1) 100%);
+      }
+      .darkBtn{
+          background: #B0B0B0;
+        }
+    }
   }
+}
+//联系人列表样式
+.linkManListBox {
+  width: 375px;
+  & > li {
+    padding: 0 17px 0px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e5e5;
+    & > p {
+      padding: 12px 0;
+      & > span {
+        display: block;
+        height: 20px;
+        font-size: 14px;
+        color: #333333;
+        line-height: 20px;
+      }
+      .mtop4px {
+        margin-top: 4px;
+        color: #666666;
+      }
+    }
+    .icon-xiugai {
+      font-size: 30px;
+    }
+  }
+  .activeLinkManStyle {
+    & > span {
+      color: #2069e5 !important;
+    }
+  }
+}
+
+.popupPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .noLinkManBox {
+    margin-top: 30%;
+    & > p {
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(51, 51, 51, 1);
+      line-height: 20px;
+    }
+  }
+  .btmBar {
+    width: 100%;
+    height: 44px;
+    position: fixed;
+    bottom: 0;
+    padding: 16px 0;
+    background: #ffffff;
+    text-align: center;
+    & > button {
+      border: none;
+      padding: 11px 100px;
+      border-radius: 22px;
+      border: 1px solid rgba(32, 105, 229, 1);
+      background: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(32, 105, 229, 1);
+      line-height: 22px;
+    }
+  }
+  .playerBar {
+    & > button {
+      border: none;
+      width: 156px;
+      height: 42px;
+      padding: 0;
+      border-radius: 22px;
+      border: 1px solid rgba(32, 105, 229, 1);
+      background: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      color: rgba(32, 105, 229, 1);
+      line-height: 22px;
+      &:nth-of-type(1) {
+        margin-right: 15px;
+      }
+    }
+  }
+}
+
 //弹窗样式
 .vux-popup-dialog {
   height: 386px;

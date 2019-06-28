@@ -9,27 +9,10 @@
                 </div>
             </div>
             <div class="infoBox">
-                <h3>{{examRoomName}}</h3>
                 <div class="bottomBorderBox">
                     <p>
-                        <span>考试地点</span>
-                        <span>{{address}}</span>
-                     </p>
-                    <p>
-                        <span>考试级别</span>
-                        <span>{{examLevelTitle}}</span>
-                    </p>
-                    <p>
-                        <span>考试时间</span>
-                        <span>{{examTime}}</span>
-                    </p>
-
-                </div>
-
-                <div class="bottomBorderBox">
-                    <p>
-                        <span>联&nbsp;&nbsp;系&nbsp;&nbsp;人</span>
-                        <span>{{linkman}}{{phone}}</span>
+                        <span>收件信息</span>
+                        <span><span>默认</span>1111</span>
                      </p>
                     <p>
                         <span>发票信息</span>
@@ -53,8 +36,14 @@
                     <p><i class="iconfont icon-chakandingdan"></i><span>取消订单</span></p>
                 </div>
             </div>
+
+            <div class="infoTop">
+             <p>中国围棋协会段级位认证服务</p><span>认证级别:{{leveNames}}</span> <span>{{totalPerson}}人</span>
+            </div>
+
+
             <div class="applyPlayerList">
-                    <div v-for="(item,index) in playerslist" :key="index" class="commonBox">
+                    <div v-for="(item,index) in certificateList" :key="index" class="commonBox">
                         <p>
                         <span class="firstSpan">{{item.playerName}}</span>
                         <span>{{item.certificateNo}}</span>
@@ -64,8 +53,8 @@
                             <span>{{item.phone}}</span>
                         </p>
                         <p class="commonTagP">
-                            <span>报名费用</span>
-                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{item.examFee}}</span>
+                            <span>认证服务费</span>
+                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{item.certificationServiceFee}}</span>
                         </p>
 
                     </div>
@@ -75,7 +64,7 @@
          <div class="fixedBox">
             <p><span>合计:</span> <i>¥</i><span>{{totalPrice}}</span></p>
             <button @click="submitExamTime" :class="{'allowClick':disabled === false}" :disabled="disabled" >
-                提交订单
+               立即支付
             </button>
         </div>
         <!-- 确认删除吗 -->
@@ -86,7 +75,7 @@
           @on-confirm="onConfirm"
           confirm-text='继续支付'
           >
-            <p style="font-size:16px;font-weight:400;color:rgba(102,102,102,1);line-height:22px;">报名成功后,退款将收取30%的手续费（距考试开始不足48小时将不再支持退款）。</p>
+            <p>证书费支付完成后，不支持退款。</p>
           </confirm>
         </div>
      
@@ -110,31 +99,31 @@ export default {
     data(){
         return{
             time1: this.formatDate(new Date(), "YYYY-MM-DD hh:mm:ss"),
-            examRoomName:'',
-            examLevelTitle:'',
-            examTime:'',
-            address:'',
+            leveNames:'',
+            totalPerson:null,
             linkman:'',
             phone:'',
             orderNo:'',
             createdTime:'',
             disabled:false,
             showCofirm:false,
-            totalPrice:'',
-            playerslist:[
+            certificateList:[
                 // {
                 //     name:'浓哥',
                 //     id:'12321321321313',
                 //     phone:'1231231313213',
                 //     cost:150
                 // },
-                // {
-                //     name:'浓哥',
-                //     id:'11112312321321321313',
-                //     phone:'123123131321',
-                //     cost:150
-                // },
                 ]
+        }
+    },
+    computed: {
+        totalPrice() {
+        let total = 0;
+        this.certificateList.forEach(item => {
+            total += item.certificationServiceFee;
+        });
+        return total;
         }
     },
     methods:{
@@ -148,36 +137,30 @@ export default {
 
         },
         onConfirm(){
-
+            this.$router.push({name:'successPay'})
         }
     },
-    mounted(){
+    created(){
         let t = new Date().getTime()+30*1000*60;
         this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
-        //缓存数据
-        this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName;
-        this.address = JSON.parse(sessionStorage.getItem('currentItem')).address;
-        this.examLevelTitle = sessionStorage.getItem('examLevelTitle')
-        this.examTime = sessionStorage.getItem('examTime')
-        this.linkman = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).linkMan;
-        this.totalPrice = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).totalFee;
-        this.phone = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).phone;
-        this.playerslist = JSON.parse(JSON.parse(sessionStorage.getItem('chessPlayersInfo')).chessPlay)
+        this.certificateList = JSON.parse(JSON.parse(this.$route.query.params).chessPlay);
+        this.totalPerson = this.certificateList.length;
+        this.leveNames =  this.certificateList[0].leveNames;
+        // console.log(this.certificateList,'asda')
         // 请求获取订单编号
-        let dataObj = JSON.parse(sessionStorage.getItem('chessPlayersInfo'))
-        this.$axios.post('/api/enter/signUpOrder',qs.stringify(dataObj)).then( (res) => {
-            console.log(res,'dasdad')
+        let dataObj = JSON.parse(this.$route.query.params)
+        this.$axios.post('/api/enroll/submitOrder',qs.stringify(dataObj)).then( (res) => {
             if( res.data.code === 0){
-                let obj = res.data.data
-                this.orderNo = obj.orderNo;
-                this.createdTime = obj.createdTime;
+            //    console.log(res,'asdsadasdad');
+               let rst = res.data.data;
+               this.orderNo = rst.orderNo;
+               this.createdTime = rst.createdTime;
             }      
         })
        
     }
 }
 </script>
-
 
 <style lang='scss' scoped>
 @import "../../style/mixin.scss";
@@ -300,9 +283,28 @@ export default {
                     &>i{
                         color:rgba(32,105,229,1);
                         font-size: 16px;
-                        margin-right: 2px;
+                        margin-right: 8px;
                     }
                 }
+            }
+        }
+        &>.infoTop{
+            width:calc(100% - 24px);
+            height: 52px;
+            position: absolute;
+            top: 279px;
+            padding-left: 24px;
+            line-height: 52px;
+            &>p{
+                font-size:14px;
+                float: left;
+                color:rgba(51,51,51,1);
+            }
+            &>span{
+                float: left;
+                margin-left: 12px;
+                font-size: 12px;
+                color:#666666;
             }
         }
         &>.applyPlayerList{
@@ -312,7 +314,7 @@ export default {
             border-radius:14px;
             position: absolute;
             left: 8px;
-            top: 480px;
+            top: 332px;
             &>.commonBox{
                 border-bottom: 1px solid #E5E5E5;
                 &>p:nth-of-type(1){
@@ -321,14 +323,13 @@ export default {
                     margin-bottom: 16px;
                     &>span{
                         font-size:16px;
-                        font-family:PingFangSC-Semibold;
                         font-weight:600;
                         float: left;
                         color:rgba(51,51,51,1);
                         line-height:22px;
                     }
                     &>.firstSpan{
-                        width: 64px;
+                        width: 70px;
                         height: 22px;
                         overflow: hidden;
                         margin-right: 8px;
@@ -337,22 +338,24 @@ export default {
                     }
                 }
                 .commonTagP {
+                        width: 100%;
                         height: 20px;
                         margin-bottom: 8px;
                     & > span {
+                        width: 70px;
                         font-size: 14px;
                         font-weight: 500;
+                        float: left;
                         line-height: 20px;
                     }
                     & > span:nth-of-type(1) {
                         color: #666666;
-                        margin-right: 16px;
-                        float: left;
+                        margin-right: 8px;
                     }
                     & > span:nth-of-type(2) {
                         color: #333333;
-                        width: 249px;
-                        display: inline-block;
+                        width: 240px;
+                        float: left;
                     }
                     &:nth-last-of-type(1){
                         margin-bottom: 0px;

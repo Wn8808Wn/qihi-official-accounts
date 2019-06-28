@@ -62,7 +62,7 @@
           </div>
           <div class="payBtns">
               <p class="firstP">
-                <span></span><span style="color:#ED1A23;margin-left:4px;font-weight:600;">¥ {{list[0].certificationServiceFee}}</span>
+                <span style="color:#ED1A23;font-weight:600;font-size:18px;">¥ {{list[0].certificationServiceFee}}</span>
               </p>
               <button class="submitP" :disabled ="disabled">证书申领</button>
           </div>
@@ -86,8 +86,8 @@ export default {
       showPopup: false,
       disabled:true,
       list:[{
-        playerName:'',
-        certificationServiceFee:null
+        // playerName:'',
+        // certificationServiceFee:null
       }],
     };
   },
@@ -101,15 +101,16 @@ export default {
     },
   },
   created(){
-    console.log(JSON.parse(this.$route.query.item),'111')
+    // console.log(JSON.parse(this.$route.query.item),'111')
     let obj = JSON.parse(this.$route.query.item);
     let params = {
         examPlanId:obj.examPlanId,
         examLevel:obj.examlevel,
-        playerId:obj.id
+        playerId:obj.playerId
     }
     this.$axios.get('/api/enroll/certificateApply_list',{params}).then( res => {
         if( res.data.code === 0){
+          // console.log(res.data.data,'2222')
           this.list = res.data.data;
         }
     })
@@ -263,18 +264,15 @@ export default {
       display: flex;
       align-items: center;
       &>.firstP{
-        width:171px;
-        padding-left: 24px;
-        height:52px;
+        width:195px;
+        height:53px;
         display: flex;
+        justify-content: center;
         align-items: center;
         background:rgba(255,255,255,1);
         box-shadow:0px -1px 0px 0px rgba(240,240,240,1);
-        &>.playCheckBox{
-          margin-right: 8px;
-        }
         &>span{
-          font-size: 14px;
+          font-size: 18px;
         }
       }
       &>.submitP{
@@ -292,41 +290,6 @@ export default {
 
   }
 }
-//check 按钮样式
- .playCheckBox {
-        width: 20px;
-        height: 20px;
-       
-        overflow: hidden;
-        position: relative;
-        input[type="checkbox"] {
-          display: none;
-        }
-        input[type="checkbox"] + label::before {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          margin-right: 8px;
-          background: url("../../assets/imgs/noSelect.svg");
-          background-size: cover;
-          content: "";
-          left: 0;
-          top: 0;
-          position: absolute;
-        }
-        input[type="checkbox"]:checked + label::before {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          margin-right: 8px;
-          content: "";
-          left: 0;
-          top: 0;
-          position: absolute;
-          background: url("../../assets/imgs/selected.svg");
-          background-size: cover;
-        }
-  }
 //弹窗样式
 .vux-popup-dialog {
   height: 386px;

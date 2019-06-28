@@ -70,9 +70,9 @@
                     <input type="checkbox" id='checkAll'  @change="selectAll">
                     <label  for='checkAll'></label>
                 </span>
-                <span>全选</span><span style="color:#ED1A23;margin-left:4px;font-weight:600;">¥ {{totalPrice}}</span>
+                <span>全选</span><span style="color:#ED1A23;margin-left:4px;font-weight:600;font-size:18px;">¥ {{totalPrice}}</span>
               </p>
-              <button class="submitP" :disabled ="disabled" @click="hanleApply(this.checkList)">证书申领</button>
+              <button class="submitP" :disabled ="disabled" :class="{'deactiveBtn':disabled === true}" @click="hanleApply">证书申领</button>
           </div>
         </div>
 
@@ -94,6 +94,7 @@ export default {
       showPopup: false,
       currentIndex:0,
       checkList:[],
+      checkListCopy:[],
       disabled:true,
       certificateList: [
         // {
@@ -134,34 +135,36 @@ export default {
       this.showPopup = false;
     },
     selectCurrentPlayer(item,index){
-      console.log(item,index,this.checkList.length===this.certificateList.length)
-      if(this.checkList == this.certificateList){
-        console.log('全选')
-      }
+      this.disabled = false;
+      // this.checkListCopy = Object.assign(this.checkList)
+      // console.log(this.checkListCopy,'copy')
     },
     //全选按钮
     selectAll(){
       if(this.checkList === this.certificateList){
         this.checkList =[];
-
+        this.disabled = true;
       }else{
         this.checkList =this.certificateList
+        this.disabled = false;
       }
     },
-    hanleApply(item){
-      console.log(item)
-      // this.$router.push({name:'',})
+    hanleApply(){
+      this.$router.push({name:'certificateDetails',query:{"checkList":JSON.stringify(this.checkList)}})
     }
   },
   created() {
     let examPlanId = this.$route.query.examPlanId;
+    let examLevel = this.$route.query.examLevel;
+    console.log(examPlanId,'adsasd')
     let params = {
       examPlanId: examPlanId,
-      examLevel: 1
+      examLevel: examLevel
     };
     this.$axios.get("/api/enroll/certificateApply", { params }).then(res => {
       if (res.data.code === 0) {
         this.certificateList = res.data.data;
+        console.log(res.data.data,'???')
       }
     });
   }
@@ -331,13 +334,16 @@ export default {
       &>.submitP{
         border: none;
         width:180px;
-        height:52px;
+        height:53px;
         text-align: center;
         line-height: 52px;
         font-weight: 600;
         color: #ffffff;
         font-size:16px;
         background:linear-gradient(135deg,rgba(243,93,46,1) 0%,rgba(237,26,35,1) 100%);
+      }
+      &>.deactiveBtn{
+        background: #B0B0B0;
       }
     }
 
@@ -347,7 +353,6 @@ export default {
  .playCheckBox {
         width: 20px;
         height: 20px;
-       
         overflow: hidden;
         position: relative;
         input[type="checkbox"] {

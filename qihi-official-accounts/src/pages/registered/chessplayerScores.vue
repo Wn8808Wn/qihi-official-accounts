@@ -71,6 +71,58 @@ export default {
             //     orderNo:1123131232131231123,
             //     phone:123123123213,
             //     leveNames:'25级'
+            // },
+            //  {
+            //     playerName:'张三',
+            //     examResult:0,
+            //     orderNo:1123131232131231123,
+            //     phone:123123123213,
+            //     leveNames:'25级',
+            //     score:70,
+            //     certificationType:1
+            // },
+            // {
+            //     playerName:'张三疯呀',
+            //     examResult:0,
+            //     phone:12321321321,
+            //     orderNo:1123131232131231123,
+            //     leveNames:'25级',
+            //     score:90,
+            //     certificationType:0
+            // },
+            // {
+            //     playerName:'李思康敲试试',
+            //     examResult:1,
+            //     score:50,
+            //     orderNo:1123131232131231123,
+            //     phone:123123123213,
+            //     leveNames:'25级'
+            // },
+            //  {
+            //     playerName:'张三',
+            //     examResult:0,
+            //     orderNo:1123131232131231123,
+            //     phone:123123123213,
+            //     leveNames:'25级',
+            //     score:70,
+            //     certificationType:1
+            // },
+            // {
+            //     playerName:'张三疯呀',
+            //     examResult:0,
+            //     phone:12321321321,
+            //     orderNo:1123131232131231123,
+            //     leveNames:'25级',
+            //     score:90,
+            //     certificationType:0
+            // },
+            // {
+            //     playerName:'李思康敲试试',
+            //     examResult:1,
+            //     score:50,
+            //     orderNo:1123131232131231123,
+            //     phone:123123123213,
+            //     leveNames:'25级'
             // }
           ]
     }
@@ -80,7 +132,6 @@ export default {
         
       },
       handleApplyCard(item){
-          console.log(item,'啊啊啊')
           this.$router.push({name:'certificatePerson',query:{item:JSON.stringify(item)}})
       }
   },
@@ -106,6 +157,7 @@ export default {
   height: calc( 100% - 12px);
   background: #f4f4f4;
   padding-top: 12px;
+  overflow-y: hidden;
   .chessplayerScoresListBox {
     display: flex;
     flex: 1;

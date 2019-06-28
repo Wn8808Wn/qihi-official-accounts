@@ -169,49 +169,52 @@ $bg-color:#F4F4F4; //背景色
 }
 
 //confirm弹层样式
-.weui-dialog{
-	width:340px!important;
-	height:147px!important;
-	margin:185px 18px 335px!important; 
-	max-width:none!important;
-	background:rgba(255,255,255,1);
-	border-radius:14px!important;
-	& /deep/ .weui-dialog__bd:first-child{
-		height: 23px!important;
-		min-height: 0!important;
-		padding: 32px 100px 32px 96px!important;
+.v-transfer-dom{
+	& /deep/ .weui-dialog{
+		width:340px!important;
+		margin:185px 18px 335px!important; 
+		max-width:none!important;
+		background:rgba(255,255,255,1);
+		border-radius:14px!important;
+	}
+	& /deep/ .weui-dialog__hd{
+		font-size:16px;
+		text-align: center;
+		padding:  32px  0px;
+		font-family:PingFangSC-Semibold;
+		font-weight:600;
+		color:rgba(102,102,102,1);
+		line-height:22px;
+	}
+	& /deep/ .weui-dialog__bd{
+		min-height:0;
+		padding: 0 30px 44px 30px;
 		&>p{
 			font-size:16px;
 			font-family:PingFangSC-Semibold;
-			font-weight:600;
+			font-weight:500;
 			color:rgba(102,102,102,1);
 			line-height:22px;
+			text-align: left;
 		}
 	}
-}
-.weui-dialog__hd{
-	font-size:16px;
-	text-align: center;
-	padding:  32px  0px;
-	font-family:PingFangSC-Semibold;
-	font-weight:600;
-	color:rgba(102,102,102,1);
-	line-height:22px;
-}
-.weui-dialog__ft{
-	height: 60px;
-	line-height: 1;
-}
-.weui-dialog__btn_primary{
-	font-size:16px;
-	font-weight:600;
-	line-height: 60px;
-	color:rgba(32,105,229,1)!important;
-}
-.weui-dialog__btn_default{
-	font-size:16px;
-	font-weight:600;
-	line-height: 60px;
-	color: #666666!important;
+	& /deep/ .weui-dialog__ft{
+		height: 60px;
+		line-height: 1;
+	}
+	& /deep/ .weui-dialog__btn_primary{
+		font-size:16px;
+		font-weight:600;
+		line-height: 60px;
+		color:rgba(32,105,229,1)!important;
+	}
+	& /deep/ .weui-dialog__btn_default{
+		font-size:16px;
+		font-weight:600;
+		line-height: 60px;
+		color: #666666!important;
+	}
+	
+
 }
 

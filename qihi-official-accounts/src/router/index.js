@@ -47,8 +47,8 @@ export default new Router({
       component: () => import('../pages/examCenter/orderDetails.vue'),  // 段级位考试=>考试中心=>订单详情页
     },
     {
-      path: '/examCenter/examinationLevel/orderDetails/successPay',
-      name: 'successPay',
+      path: '/examCenter/examinationLevel/orderDetails/successApply',
+      name: 'successApply',
       meta: {
         title: '订单详情'
       },
@@ -77,6 +77,30 @@ export default new Router({
         title: '证书申领'
       },
       component: () => import('../pages/registered/certificate.vue'), // 段级位考试=>已报名=>证书申领
+    },
+    {
+      path: '/examCenter/examinationLevel/registered/certificateDetails',
+      name: 'certificateDetails',
+      meta: {
+        title: '证书申领'
+      },
+      component: () => import('../pages/registered/certificateDetails.vue'), // 段级位考试=>已报名=>证书申领详情页
+    },
+    {
+      path: '/examCenter/examinationLevel/registered/certificatePay',
+      name: 'certificatePay',
+      meta: {
+        title: '订单详情'
+      },
+      component: () => import('../pages/registered/certificatePay.vue'), // 段级位考试=>已报名=>证书申领=>证书申领支付页面
+    },
+    {
+      path: '/examCenter/examinationLevel/registered/successPay',
+      name: 'successPay',
+      meta: {
+        title: '订单详情'
+      },
+      component: () => import('../pages/registered/successPay.vue'), // 段级位考试=>已报名=>证书申领=>证书申领支付成功页面
     },
     {
       path: '/examCenter/examinationLevel/registered/certificatePerson',
