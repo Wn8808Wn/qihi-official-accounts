@@ -2,10 +2,10 @@
     <div class="orderDetailsPage">
         <div class="waitPayTop">
             <div class="waitPay">
-                <img src="../../assets/imgs/timer.svg">
+                <img src="../../assets/imgs/duigou.svg">
                 <div>
-                    <p>等待付款</p>
-                    <p>座位已成功锁定,请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
+                    <p>已付款</p>
+                    <p v-if="noRefundStatus">超过退款时限，此订单报名费不再支持退款</p>
                 </div>
             </div>
             <div class="infoBox">
@@ -28,12 +28,13 @@
 
                 <div class="bottomBorderBox">
                     <p>
-                        <span>联&nbsp;&nbsp;系&nbsp;&nbsp;人</span>
-                        <span>{{linkman}}{{phone}}</span>
-                     </p>
+                        <span>通知手机</span>
+                        <span>{{phone}}</span>
+                    </p>
                     <p>
                         <span>发票信息</span>
                         <span>[企业]棋智科技有限公司</span>
+                        <x-button plain type="primary" style="border-radius:14px;">申请发票</x-button>
                     </p>
                 </div>
 
@@ -47,10 +48,13 @@
                         <span>下单时间</span>
                         <span>{{createdTime}}</span>
                     </p>
+                     <p>
+                        <span>付款时间</span>
+                        <span>{{payOffTime}}</span>
+                    </p>
                 </div>
                 <div class="bottomBar">
                     <p><i class="iconfont icon-lianxikefu"></i><span>联系客服</span></p>
-                    <p><i class="iconfont icon-chakandingdan"></i><span>取消订单</span></p>
                 </div>
             </div>
             <div class="applyPlayerList">
@@ -72,24 +76,9 @@
 
             </div>
         </div>
-         <div class="fixedBox">
-            <p><span>合计:</span> <i>¥</i><span>{{totalPrice}}</span></p>
-            <button @click="showCofirmPage" :class="{'allowClick':disabled === false}" :disabled="disabled" >
-                立即支付
-            </button>
+         <div class="totalBox">
+           <span>费用合计</span> <span>¥{{totalPrice}}</span>
         </div>
-        <!-- 确认支付吗 -->
-        <div v-transfer-dom>
-          <confirm v-model="showCofirm"
-          title="提示"
-          @on-cancel="onCancel"
-          @on-confirm="onConfirm"
-          confirm-text='继续支付'
-          >
-            <p style="font-size:16px;font-weight:400;color:rgba(102,102,102,1);line-height:22px;">报名成功后,退款将收取30%的手续费（距考试开始不足48小时将不再支持退款）。</p>
-          </confirm>
-        </div>
-     
     </div>
 </template>
 
@@ -109,7 +98,8 @@ export default {
     },
     data(){
         return{
-            time1: this.formatDate(new Date(), "YYYY-MM-DD hh:mm:ss"),
+            // time1: this.formatDate(new Date(), "YYYY-MM-DD hh:mm:ss"),
+            noRefundStatus:true,
             examRoomName:'',
             examLevelTitle:'',
             examTime:'',
@@ -117,10 +107,10 @@ export default {
             linkman:'',
             phone:'',
             orderNo:'',
+            orderId:null,
             createdTime:'',
-            disabled:false,
-            showCofirm:false,
-            totalPrice:'',
+            payOffTime:'',
+            totalPrice:'500',
             playerslist:[
                 // {
                 //     name:'浓哥',
@@ -141,20 +131,15 @@ export default {
         showTitle(){
             alert('请重新下单')
         },
-        showCofirmPage(){
-            this.showCofirm = true;
-        },
         onCancel(){
-            alert('跳转到我的订单代付款页面')
+
         },
         onConfirm(){
-            this.$router.push({name:'successApply'})
+
         }
     },
     mounted(){
-        let t = new Date().getTime()+30*1000*60;
-        this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
-        //缓存数据
+      //  缓存数据
         this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName;
         this.address = JSON.parse(sessionStorage.getItem('currentItem')).address;
         this.examLevelTitle = sessionStorage.getItem('examLevelTitle')
@@ -163,20 +148,18 @@ export default {
         this.totalPrice = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).totalFee;
         this.phone = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).phone;
         this.playerslist = JSON.parse(JSON.parse(sessionStorage.getItem('chessPlayersInfo')).chessPlay)
-        // 请求获取订单编号
-        let dataObj = JSON.parse(sessionStorage.getItem('chessPlayersInfo'))
-        this.$axios.post('/api/enter/signUpOrder',qs.stringify(dataObj)).then( (res) => {
-            console.log(res,'dasdad')
-            if( res.data.code === 0){
-                let obj = res.data.data
-                this.orderNo = obj.orderNo;
-                this.createdTime = obj.createdTime;
-                sessionStorage.setItem('createdTime',JSON.stringify(obj.createdTime))
-                sessionStorage.setItem('orderNo',JSON.stringify(obj.orderNo))
-                sessionStorage.setItem('orderId',JSON.stringify(obj.id))
-            }      
+        this.orderNo = JSON.parse(sessionStorage.getItem('orderNo'));
+        this.createdTime = JSON.parse(sessionStorage.getItem('createdTime'));
+        this.orderId = JSON.parse(sessionStorage.getItem('orderId'));
+        let params = {
+            orderId:this.orderId,
+            payFee:this.totalPrice,
+        }
+        this.$axios.post('/api/order/OrderPayment',qs.stringify(params)).then( res => {
+            if(res.data.code === 0){
+                this.payOffTime = res.data.data;
+            }
         })
-       
     }
 }
 </script>
@@ -186,9 +169,8 @@ export default {
 @import "../../style/mixin.scss";
 .orderDetailsPage{
     width: 375px;
-    height: calc(100% - 120px);
+    height: 100%;
     background: $bg-color;
-    padding-bottom: 120px;
     overflow: hidden;
     &>.waitPayTop{
         position: relative;
@@ -245,6 +227,7 @@ export default {
                 border-bottom: 1px solid #E5E5E5;
                 &>p{
                     margin-bottom:8px;
+                    position: relative;
                     & > span {
                         font-size: 14px;
                         font-weight: 500;
@@ -264,6 +247,22 @@ export default {
                     
                     &:last-child{
                         margin-bottom: 0px;
+                    }
+                    .weui-btn_plain-primary{
+                        color: #2069E5;
+                        font-size:14px;
+                        font-family:PingFang-SC-Medium;
+                        font-weight:500;
+                        line-height:20px;
+                        border:1px  solid #2069E5;
+                    }
+                    button.weui-btn, input.weui-btn{
+                        height: 28px;
+                        width: 78px;
+                        padding: 0;
+                        position: absolute;
+                        right: 0;
+                        top: -5px;
                     }
                 }
                 .orderNumberP{
@@ -301,9 +300,9 @@ export default {
                         color:rgba(32,105,229,1);
                         line-height:20px;
                     }
-                    &>i{
+                    &>.icon-lianxikefu{
                         color:rgba(32,105,229,1);
-                        font-size: 16px;
+                        font-size: 18px;
                         margin-right: 2px;
                     }
                 }
@@ -316,7 +315,7 @@ export default {
             border-radius:14px;
             position: absolute;
             left: 8px;
-            top: 480px;
+            top: 506px;
             &>.commonBox{
                 border-bottom: 1px solid #E5E5E5;
                 &>p:nth-of-type(1){
@@ -364,6 +363,30 @@ export default {
                 }
             }
         }
-    }    
+    }  
+    &>.totalBox{
+        width:327px;
+        height:20px;
+        padding: 16px;
+        background:rgba(255,255,255,1);
+        // background: skyblue;
+        box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
+        border-radius:14px;
+        position: fixed;
+        bottom: 12px;
+        left: 8px;
+        &>span{
+            height: 20px;
+            font-size: 14px;
+            color: #666666;
+            margin-right: 16px;
+            &:nth-of-type(2){
+                font-size:14px;
+                font-family:PingFang-SC-Medium;
+                color:rgba(237,26,35,1);
+            }
+        }
+
+    }  
 }
 </style>

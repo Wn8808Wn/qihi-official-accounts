@@ -25,8 +25,8 @@
                 </timeline>
             </div>
             <div class="btnGroup">
-                  <button  class="seeOrder">查看订单</button>
-                  <button  class="seeTicket">查看准考证</button>
+                  <button  class="seeOrder" @click="handelOrderDetails">查看订单</button>
+                  <button  class="seeTicket" @click="handelTickets">查看准考证</button>
             </div>
         </div>
 
@@ -47,7 +47,12 @@ export default {
         }
     },
     methods:{
-
+        handelOrderDetails(){
+            this.$router.push({name:'checkOrder'})
+        },
+        handelTickets(){
+            alert('功能开发中')
+        }
     }
 }
 </script>

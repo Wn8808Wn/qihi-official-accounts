@@ -38,11 +38,11 @@
                 <span>已选择{{this.checkList.length}}人</span>
                 <p @click="showPlayerPopups">选择棋手</p>
             </div>    
-            <!-- 已选择联系人列表 -->
+            <!-- 报名棋手选择列表 -->
             <swipeout>
                 <swipeout-item @on-close="handleOpen(index)" @on-open="handleClose(index)" transition-mode="follow"  v-for="(item,index) in checkList" :key="index" >
                 <div slot="right-menu">
-                    <swipeout-button @click.native="onButtonClick(index)" type="primary">删除</swipeout-button>
+                    <swipeout-button @click.native="onButtonClick(item)" type="primary">删除</swipeout-button>
                 </div>
                 <div slot="content">
                     <i slot="icon" class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'activeTs':'deactiveTs'"></i>
@@ -61,7 +61,7 @@
         <!-- 底部bar -->
         <div class="fixedBox">
             <p><span>报名费:</span> <i>¥</i><span>{{totalPrice}}</span></p>
-            <button @click="submitExamTime" :class="{'allowClick':disabled === false}" :disabled="disabled" >
+            <button @click="submitOrder" :class="{'allowClick':disabled === false}" :disabled="disabled" >
                 提交订单
             </button>
         </div>
@@ -72,7 +72,7 @@
               <div class="popupPage">
                 <div class="PopupTop">
                     <p>选择联系人</p>
-                    <span @click="cancleBtn">取消</span>
+                    <span @click="cancleLinkmanBtn">取消</span>
                 </div>
                 <!-- 获取联系人列表 -->
                 <div class="linkManListBox" v-if='true'>
@@ -102,7 +102,7 @@
                 <div class="popupPage">
                     <div class="PopupTop">
                         <p>选择棋手</p>
-                        <span @click="cancleBtn">取消</span>
+                        <span @click="canclePlayerBtn">取消</span>
                     </div>
                     <!-- 有棋手展示 -->
                     <div class="linkManListBox chessPlayerBox" v-if='true'>
@@ -128,7 +128,7 @@
                         <p>还没有创建棋手</p>
                     </div>
                 
-                    <div class="information commonQuestion" @click="showPopupPage">
+                    <div class="information commonQuestion" @click="showCommonQuestionPage">
                         <i class="iconfont icon-zhushi"></i><span>常见问题说明</span>
                     </div>
                     <div class="btmBar playerBar">
@@ -141,11 +141,11 @@
         </div>
         <!-- 点击常见问题弹层 -->
         <div v-transfer-dom>
-            <popup v-model="showPopup">
+            <popup v-model="showCommonQuestion">
                 <div class="popupPage">
                     <div class="PopupTop">
                         <p>常见问题说明</p>
-                        <span @click="cancleBtn">取消</span>
+                        <span @click="cancleCommonQuestionBtn">取消</span>
                     </div>
                     <ul class="popupContentImg">
                         <li>
@@ -170,7 +170,7 @@
             </popup>
         </div>
         <!-- 确认删除吗 -->
-        <div v-transfer-dom>
+        <div v-transfer-dom class="delPlayers">
           <confirm v-model="showCofirm"
           @on-cancel="onCancel"
           @on-confirm="onConfirm"
@@ -183,16 +183,7 @@
 </template>
 
 <script>
-import {
-  PopupPicker,
-  Group,
-  TransferDom,
-  Popup,
-  Swipeout,
-  SwipeoutItem,
-  SwipeoutButton,
-  Confirm
-} from "vux";
+import {PopupPicker,Group,TransferDom,Popup,Swipeout,SwipeoutItem,SwipeoutButton,Confirm} from "vux";
 import appointmentInfo from "./popups/appointmentInfo.vue";
 export default {
   directives: {
@@ -217,6 +208,7 @@ export default {
       time: "",
       price: "",
       showPopup: false,
+      showCommonQuestion:false,
       currentLinkManId: "",
       linkManInfo: "棋智科技",
       currentPlayerId: "",
@@ -252,39 +244,12 @@ export default {
         //      phone:1822112289,
         //      unitName:'黑龙江棋院'
         //  },
-        //  {
-        //      id:3,
-        //      playerName:'尼古拉斯',
-        //      certificateNo:111231312313213123,
-        //      playerName:1822112289,
-        //      unitName:'黑龙江棋院'
-        //  },
-        //  {
-        //      id:5,
-        //      playerName:'尼古拉斯',
-        //      certificateNo:111231312313213123,
-        //      phone:1822112289,
-        //      unitName:'黑龙江棋院'
-        //  },
-        //  {
-        //      id:6,
-        //      playerName:'尼古拉斯',
-        //      certificateNo:111231312313213123,
-        //      phone:1822112289,
-        //      unitName:'黑龙江棋院'
-        //  },
-        //  {
-        //      id:7,
-        //      playerName:'尼古拉斯',
-        //      certificateNo:111231312313213123,
-        //      playerName:1822112289,
-        //      unitName:'黑龙江棋院'
-        //  }
       ],
       activeId: null,
       btnActive: 1,
       showCofirm: false,
-      linkManPhone: ""
+      linkManPhone: "",
+      delCurrentplayerId:null,
     };
   },
   computed: {
@@ -304,6 +269,8 @@ export default {
         }
       });
     },
+
+    //获取棋手列表
     getPlayerList() {
       let params = {
         userId: 1,
@@ -311,20 +278,20 @@ export default {
         chessLevel: 1
       };
       this.$axios.get("/api/enter/choosePlayer", { params }).then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 0) {
           this.playerList = res.data.data;
         }
       });
     },
-    submitExamTime() {
+    submitOrder() {
       // //提交前先看座位数够不够
       let params = {
         examPlanId: sessionStorage.getItem("examPlanId"),
         playerNum: this.playerNum
       };
       this.$axios.get("/api/enter/searchSeats", { params }).then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         let that = this;
         if (res.data.code === 3) {
           //剩余座位数充足
@@ -350,33 +317,36 @@ export default {
     },
     log() {},
     handleOpen(index) {
-      console.log(index, "open");
       this.btnActive = 0;
     },
     handleClose(index) {
-      console.log(index, "close");
       this.btnActive = 1;
       this.activeId = index;
     },
-    onButtonClick(index) {
-      console.log(index);
+    onButtonClick(item) {
+      // console.log(item);
       this.showCofirm = true;
+      this.delCurrentplayerId = item.id;
     },
     onChange() {},
     showLinkManPopupsPage() {
       this.showLinkMan = true;
     },
-    cancleBtn() {
+    cancleCommonQuestionBtn() {
+      this.showCommonQuestion = false;
+    },
+    cancleLinkmanBtn(){
       this.showLinkMan = false;
-      this.showPlayer = false;
-      this.showPopup = false;
-      this.checkList = [];
+    },
+    canclePlayerBtn(){
+       this.showPlayer = false;
+       this.checkList = [];
     },
     selectCurrentLinkMan(item, index) {
       this.currentLinkManId = index;
       this.linkManInfo = item.linkman;
       this.linkManPhone = item.phone;
-      console.log(this.linkManPhone, 11);
+      // console.log(this.linkManPhone, 11);
       setTimeout(() => {
         this.showLinkMan = false;
         this.currentLinkManId = "";
@@ -388,8 +358,8 @@ export default {
     selectCurrentPlayer(item) {
       console.log(this.checkList, "dasda");
     },
-    showPopupPage() {
-      this.showPopup = true;
+    showCommonQuestionPage() {
+      this.showCommonQuestion = true;
     },
     confirmBtn() {
       this.showPlayer = false;
@@ -401,8 +371,18 @@ export default {
         this.disabled = false;
       }
     },
-    onCancel() {},
-    onConfirm() {}
+    onCancel() {
+      this.showCofirm =false;
+    },
+    onConfirm() {
+      // console.log(this.checkList,'000')
+      this.checkList = this.checkList.filter((item,index) => item.id !== this.delCurrentplayerId)
+      if(this.checkList.length === 0){
+        this.disabled = true;
+      }else{
+        this.disabled = false;
+      }
+    }
   },
   mounted() {
     //路由传值方式
@@ -422,7 +402,7 @@ export default {
     this.getLinkManList();
     this.getPlayerList();
     this.examLevelList = JSON.parse(sessionStorage.getItem("examLevelList"));
-    console.log(this.examLevelList, "000");
+    // console.log(this.examLevelList, "000");
   }
 };
 </script>

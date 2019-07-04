@@ -87,10 +87,10 @@
                       </div>  
                   <!-- 获取考试地区列表 -->
                       <div class="examListPart">
-                          <li v-if="examAreaList.length>0"
-                                v-for="(item,index) in examAreaList" :key="index" 
-                                @click="selectCurrentProvince(item,index)" 
-                                :class="{'activeProvince':index===currentProvinceID}">
+                          <li v-if="examAreaList.length>0"  
+                            v-for="(item,index) in examAreaList" :key="index" 
+                            @click="selectCurrentProvince(item,index)" 
+                            :class="{'activeProvince':index===currentProvinceID}">
                                 {{item.areaName}}
                           </li>
                       </div>
@@ -108,7 +108,7 @@
                     <span @click="cancleBtnLevel">取消</span>
                 </div>
                 <!-- 获取考试级别列表 -->
-                <div class="examListPart wrapper1" ref="levelWrapper">
+                <div class="examListPart levelWrapper" ref="levelWrapper">
                    <ul class="content">
                         <li v-for="(item,index) in examLevelList" :key="index"
                         @click="selectCurrentLevel(item,index)" 
@@ -224,7 +224,8 @@ export default {
         let geolocation = location.initMap("map-container"); //定位
         AMap.event.addListener(geolocation, "complete", result => {
           this.examAreaTitle = result.addressComponent.province;
-          console.log("定位结果为" + result.addressComponent.province);
+          // console.log("定位结果为" + result.addressComponent.province);
+          alert("定位结果为" + result.addressComponent.province);
           this.getList().then(() => {
             // console.log('123')
             let defualtProvince = this.examAreaList.filter(
@@ -578,7 +579,7 @@ export default {
   overflow: hidden;
 }
 
-.wrapper1 {
+.levelWrapper {
   width: 100%;
   height: 620px;
   overflow: hidden;

@@ -128,7 +128,7 @@ export default {
      this.$axios.get('/api/enroll/enroll_list',{params}).then( res =>{
         if(res.data.code ===0 ){
           this.list =res.data.data.info;
-          // console.log(res.data.data.info,'DNF')
+          console.log(res.data.data.info,'DNF')
           if(this.list === []){
             this.showNoApplyPage = true;
           }

@@ -17,7 +17,6 @@ $bg-color:#F4F4F4; //背景色
 	line-height:$line-height;
 }
 
-
 //iconfont 图标自定义颜色
 .icon-zhushi{
 	color:#FF9400;
@@ -27,9 +26,6 @@ $bg-color:#F4F4F4; //背景色
 	margin-left: 16px;
 	color: #8E8E93;
 }
-
-
-
 
 .wrap{
 	border-radius: 14px;
@@ -169,6 +165,13 @@ $bg-color:#F4F4F4; //背景色
 }
 
 //confirm弹层样式
+.delPlayers{
+	& /deep/ .weui-dialog__bd{
+		min-height:0!important;
+		height: 22px!important;
+		padding: 32px 0!important;
+	}
+}
 .v-transfer-dom{
 	& /deep/ .weui-dialog{
 		width:340px!important;
@@ -176,45 +179,44 @@ $bg-color:#F4F4F4; //背景色
 		max-width:none!important;
 		background:rgba(255,255,255,1);
 		border-radius:14px!important;
-	}
-	& /deep/ .weui-dialog__hd{
-		font-size:16px;
-		text-align: center;
-		padding:  32px  0px;
-		font-family:PingFangSC-Semibold;
-		font-weight:600;
-		color:rgba(102,102,102,1);
-		line-height:22px;
-	}
-	& /deep/ .weui-dialog__bd{
-		min-height:0;
-		padding: 0 30px 44px 30px;
-		&>p{
+		& /deep/ .weui-dialog__hd{
 			font-size:16px;
+			text-align: center;
+			padding:  32px  0px;
 			font-family:PingFangSC-Semibold;
-			font-weight:500;
+			font-weight:600;
 			color:rgba(102,102,102,1);
 			line-height:22px;
-			text-align: left;
+		}
+		
+		& /deep/ .weui-dialog__bd{
+			min-height:0;
+			padding: 0 30px 44px 30px;
+			&>p{
+				font-size:16px;
+				font-family:PingFangSC-Semibold;
+				font-weight:500;
+				color:rgba(102,102,102,1);
+				line-height:22px;
+				text-align: left;
+			}
+		}
+		& /deep/ .weui-dialog__ft{
+			height: 60px;
+			line-height: 1;
+		}
+		& /deep/ .weui-dialog__btn_primary{
+			font-size:16px;
+			font-weight:600;
+			line-height: 60px;
+			color:rgba(32,105,229,1)!important;
+		}
+		& /deep/ .weui-dialog__btn_default{
+			font-size:16px;
+			font-weight:600;
+			line-height: 60px;
+			color: #666666!important;
 		}
 	}
-	& /deep/ .weui-dialog__ft{
-		height: 60px;
-		line-height: 1;
-	}
-	& /deep/ .weui-dialog__btn_primary{
-		font-size:16px;
-		font-weight:600;
-		line-height: 60px;
-		color:rgba(32,105,229,1)!important;
-	}
-	& /deep/ .weui-dialog__btn_default{
-		font-size:16px;
-		font-weight:600;
-		line-height: 60px;
-		color: #666666!important;
-	}
-	
-
 }
 

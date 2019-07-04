@@ -20,6 +20,12 @@ button{
     touch-action: none;
 } */
 
+::-webkit-scrollbar  
+{  
+	display: none!important;
+    width: 0px;  
+    height: 0px;  
+}
 /*移动端默认样式*/
 /*清除掉按下时会有一个灰色阴影*/
 a,input,button{

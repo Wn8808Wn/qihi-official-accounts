@@ -55,6 +55,14 @@ export default new Router({
       component: () => import('../pages/examCenter/successApply.vue'),  // 段级位考试=>考试中心=>订单详情页=>支付成功页面
     },
     {
+      path: '/examCenter/examinationLevel/orderDetails/checkOrder',
+      name: 'checkOrder',
+      meta: {
+        title: '订单详情'
+      },
+      component: () => import('../pages/examCenter/checkOrder.vue'),  // 段级位考试=>考试中心=>订单详情页=>支付成功页面=>查看订单页面
+    },
+    {
       path: '/examCenter/examinationLevel/registered',
       name: 'registered',
       meta: {

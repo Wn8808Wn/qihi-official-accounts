@@ -64,7 +64,7 @@
               <p class="firstP">
                 <span style="color:#ED1A23;font-weight:600;font-size:18px;">¥ {{list[0].certificationServiceFee}}</span>
               </p>
-              <button class="submitP" :disabled ="disabled">证书申领</button>
+              <button class="submitP"  @click="handerCertificatePerson">证书申领</button>
           </div>
         </div>
 
@@ -84,7 +84,7 @@ export default {
   data() {
     return {
       showPopup: false,
-      disabled:true,
+ 
       list:[{
         // playerName:'',
         // certificationServiceFee:null
@@ -99,6 +99,10 @@ export default {
     cancleBtn() {
       this.showPopup = false;
     },
+    handerCertificatePerson(){
+      this.$router.push({name:'certificateDetails',query:{"checkList":JSON.stringify(this.list)}})
+    
+    }
   },
   created(){
     // console.log(JSON.parse(this.$route.query.item),'111')
