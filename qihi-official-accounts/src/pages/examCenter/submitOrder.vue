@@ -40,21 +40,24 @@
             </div>    
             <!-- 报名棋手选择列表 -->
             <swipeout>
-                <swipeout-item @on-close="handleOpen(index)" @on-open="handleClose(index)" transition-mode="follow"  v-for="(item,index) in checkList" :key="index" >
-                <div slot="right-menu">
-                    <swipeout-button @click.native="onButtonClick(item)" type="primary">删除</swipeout-button>
-                </div>
-                <div slot="content">
-                    <i slot="icon" class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'activeTs':'deactiveTs'"></i>
-                    <div class="infoBox">
-                        <p><span>棋手姓名</span> <span>{{item.playerName}}</span></p>
-                        <p><span>段位等级</span>
-                        <span>{{examLevelList.filter( item1 => item1.id === item.chessLevel)[0].levelName}}</span>
-                        </p>
-                        <p><span>证件号码</span> <span>{{item.certificateNo}}</span></p>
-                    </div>
-                </div>
+                <div  class="swipeBox" v-for="(item,index) in checkList" :key="index">
+                    <div class="iBox"><i class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'activeTs':'deactiveTs'"></i></div>
+                     <swipeout-item @on-close="handleOpen(index)" @on-open="handleClose(index)" transition-mode="follow"  >
+                          <div slot="right-menu">
+                              <swipeout-button @click.native="onButtonClick(item)" type="primary">删除</swipeout-button>
+                          </div>
+                          <div slot="content">
+                              <div class="infoBox">
+                                  <p><span>棋手姓名</span> <span>{{item.playerName}}</span></p>
+                                  <p><span>段位等级</span>
+                                  <span>{{examLevelList.filter( item1 => item1.id === item.chessLevel)[0].levelName}}</span>
+                                  </p>
+                                  <p><span>证件号码</span> <span>{{item.certificateNo}}</span></p>
+                              </div>
+                          </div>
                 </swipeout-item>
+                </div>
+               
             </swipeout>
         </div>
 
@@ -183,7 +186,16 @@
 </template>
 
 <script>
-import {PopupPicker,Group,TransferDom,Popup,Swipeout,SwipeoutItem,SwipeoutButton,Confirm} from "vux";
+import {
+  PopupPicker,
+  Group,
+  TransferDom,
+  Popup,
+  Swipeout,
+  SwipeoutItem,
+  SwipeoutButton,
+  Confirm
+} from "vux";
 import appointmentInfo from "./popups/appointmentInfo.vue";
 export default {
   directives: {
@@ -208,7 +220,7 @@ export default {
       time: "",
       price: "",
       showPopup: false,
-      showCommonQuestion:false,
+      showCommonQuestion: false,
       currentLinkManId: "",
       linkManInfo: "棋智科技",
       currentPlayerId: "",
@@ -222,11 +234,6 @@ export default {
         // {
         //   linkman: "老王",
         //   phone: 18811111188
-        // },
-        // {
-        //   linkman: "隔壁老王",
-        //   phone: 18811111188,
-        //   email: "18811111188@163.com"
         // },
       ],
       playerList: [
@@ -249,7 +256,7 @@ export default {
       btnActive: 1,
       showCofirm: false,
       linkManPhone: "",
-      delCurrentplayerId:null,
+      delCurrentplayerId: null
     };
   },
   computed: {
@@ -335,12 +342,12 @@ export default {
     cancleCommonQuestionBtn() {
       this.showCommonQuestion = false;
     },
-    cancleLinkmanBtn(){
+    cancleLinkmanBtn() {
       this.showLinkMan = false;
     },
-    canclePlayerBtn(){
-       this.showPlayer = false;
-       this.checkList = [];
+    canclePlayerBtn() {
+      this.showPlayer = false;
+      this.checkList = [];
     },
     selectCurrentLinkMan(item, index) {
       this.currentLinkManId = index;
@@ -372,14 +379,16 @@ export default {
       }
     },
     onCancel() {
-      this.showCofirm =false;
+      this.showCofirm = false;
     },
     onConfirm() {
       // console.log(this.checkList,'000')
-      this.checkList = this.checkList.filter((item,index) => item.id !== this.delCurrentplayerId)
-      if(this.checkList.length === 0){
+      this.checkList = this.checkList.filter(
+        (item, index) => item.id !== this.delCurrentplayerId
+      );
+      if (this.checkList.length === 0) {
         this.disabled = true;
-      }else{
+      } else {
         this.disabled = false;
       }
     }
@@ -461,15 +470,17 @@ export default {
       }
     }
   }
-  .showSelectPlayerList {
+  & > .showSelectPlayerList {
+    width: 359px;
+    background: #2069e5;
+    margin-top: 12px;
     border-radius: 14px;
     & > .selectChessPlayer {
       height: 20px;
       display: flex;
       border-radius: 14px 14px 0 0;
-      border-bottom: 1px solid #E5E5E5;
+      border-bottom: 1px solid #e5e5e5;
       justify-content: space-between;
-      margin-top: 12px;
       & > span {
         font-size: 14px;
         font-weight: 500;
@@ -482,51 +493,65 @@ export default {
         line-height: 22px;
       }
     }
-
-    & /deep/ .vux-swipeout-item{
-      border-bottom: .5px solid #E5E5E5;
-    }
-    // swiperOut 样式
-    .vux-swipeout-content {
-      & > div {
-        display: flex;
-        align-items: center;
-        padding: 16px;
-        // background: red;
-        .icon-shanchu {
+    & /deep/ .vux-swipeout {
+      width: 100%;
+      & /deep/.swipeBox {
+        width: 100%;
+        position: relative;
+        & > .iBox {
+          display: block;
+          width: 48px;
+          height: 105px;
+          background: #ffffff;
           position: absolute;
-          left: 16px;
-          top: 45px;
-          margin-right: 12px;
-          font-size: 20px;
-          color: rgba(32, 105, 229, 1);
+          left: 0px;
+          top: 0px;
+          text-align: center;
+          line-height: 107px;
+          z-index: 2;
+          &>i{
+            font-size: 20px;
+            color: rgba(32, 105, 229, 1);
+          }
+           .activeTs {
+            display: block;
+            transform: rotateZ(0deg);
+            transition: all 500ms;
+          }
+          .deactiveTs {
+            display: block;
+            transform: rotateZ(90deg);
+            transition: all 500ms;
+          }
         }
-        .activeTs {
-          display: block;
-          transform: rotateZ(0deg);
-          transition: all 500ms;
-        }
-        .deactiveTs {
-          display: block;
-          transform: rotateZ(90deg);
-          transition: all 500ms;
-        }
-        .infoBox {
-          padding-left: 34px;
-          & > p {
-            margin-bottom: 8px;
-            &:last-child {
-              margin-bottom: 0px;
-            }
-            & > span {
-              font-size: 14px;
-              font-family: PingFang-SC-Medium;
-              font-weight: 500;
-              color: #666666;
-              line-height: 20px;
-              &:nth-of-type(1) {
-                color: #333333;
-                margin-right: 12px;
+      }
+      & /deep/ .vux-swipeout-item {
+        border-bottom: 1px solid #e5e5e5;
+      }
+      // swiperOut 样式
+      & /deep/.vux-swipeout-content {
+        & > div {
+          display: flex;
+          align-items: center;
+          padding: 16px;
+          &>.infoBox {
+            // background: #2069e5;
+            padding-left: 34px;
+            & > p {
+              margin-bottom: 8px;
+              &:last-child {
+                margin-bottom: 0px;
+              }
+              & > span {
+                font-size: 14px;
+                font-family: PingFang-SC-Medium;
+                font-weight: 500;
+                color: #666666;
+                line-height: 20px;
+                &:nth-of-type(1) {
+                  color: #333333;
+                  margin-right: 12px;
+                }
               }
             }
           }

@@ -5,14 +5,14 @@
                 <img src="../../assets/imgs/timer.svg">
                 <div>
                     <p>等待付款</p>
-                    <p>座位已成功锁定,请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
+                    <p>请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
                 </div>
             </div>
             <div class="infoBox">
                 <div class="bottomBorderBox">
                     <p>
                         <span>收件信息</span>
-                        <span><span>默认</span>1111</span>
+                        <span><span class="defaultSpan">默认</span>小智15613119863<span style="display:block;">北京市朝阳区砖角楼南里5号楼南里902</span></span>
                      </p>
                     <p>
                         <span>发票信息</span>
@@ -239,6 +239,19 @@ export default {
                         color: #333333;
                         width: 249px;
                         display: inline-block;
+                        .defaultSpan{
+                            font-size: 12px;
+                            font-weight: 500;
+                            height: 18px;
+                            width: 36px;
+                            float: left;
+                            text-align: center;
+                            line-height: 21px;
+                            margin-right: 4px;
+                            color: rgba(255, 255, 255, 1);
+                            background: rgba(32, 105, 229, 1);
+                            border-radius: 10px;
+                        }
                     }
                     
                     &:last-child{
@@ -292,7 +305,7 @@ export default {
             width:calc(100% - 24px);
             height: 52px;
             position: absolute;
-            top: 279px;
+            top: 299px;
             padding-left: 24px;
             line-height: 52px;
             &>p{
@@ -314,8 +327,10 @@ export default {
             border-radius:14px;
             position: absolute;
             left: 8px;
-            top: 332px;
+            overflow: hidden;
+            top: 346px;
             &>.commonBox{
+                border-radius: 0;
                 border-bottom: 1px solid #E5E5E5;
                 &>p:nth-of-type(1){
                     width: 100%;

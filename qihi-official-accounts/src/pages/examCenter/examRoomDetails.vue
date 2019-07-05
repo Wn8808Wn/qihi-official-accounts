@@ -131,16 +131,10 @@ export default {
       });
     },
     selectCurrentRadio(item) {
-      // 判断当前时间  和考试时间 弹层显示 不能报考
       //利用 sessionStorage 存储examPlanId
       sessionStorage.setItem("examPlanId", item.id);
       this.disabled = false;
-      this.examTime =
-        item.examDate.split(" ")[0].replace(/-/g, ".") +
-        " " +
-        item.examTime +
-        "-" +
-        this.longTimeAgo(this.examDateCommon, item.examTime, 30);
+      this.examTime =item.examDate.split(" ")[0].replace(/-/g, ".") +" " +item.examTime +"-" +this.longTimeAgo(this.examDateCommon, item.examTime, 30);
     },
     submitExamTime() {
       sessionStorage.setItem("examTime", this.examTime);

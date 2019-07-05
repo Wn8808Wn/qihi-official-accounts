@@ -19,8 +19,8 @@
                 </timeline>
             </div>
             <div class="btnGroup">
-                  <button  class="seeOrder">查看订单</button>
-                  <button  class="seeTicket">证书查询</button>
+                  <button  class="seeOrder" @click="handelCheckOrder">查看订单</button>
+                  <button  class="seeTicket" @click="handelCertificate">证书查询</button>
             </div>
         </div>
 
@@ -41,7 +41,12 @@ export default {
         }
     },
     methods:{
-
+        handelCheckOrder(){
+            alert('跳转页面')
+        },
+        handelCertificate(){
+            alert('功能开发中')
+        }
     }
 }
 </script>

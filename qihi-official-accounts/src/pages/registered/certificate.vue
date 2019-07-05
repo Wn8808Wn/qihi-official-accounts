@@ -67,7 +67,7 @@
           <div class="payBtns">
               <p class="firstP">
                 <span class="playCheckBox">
-                    <input type="checkbox" id='checkAll'  @change="selectAll">
+                    <input type="checkbox" id='checkAll' v-model="allChoose"  @click="selectAll">
                     <label  for='checkAll'></label>
                 </span>
                 <span>全选</span><span style="color:#ED1A23;margin-left:4px;font-weight:600;font-size:18px;">¥ {{totalPrice}}</span>
@@ -94,7 +94,7 @@ export default {
       showPopup: false,
       currentIndex:0,
       checkList:[],
-      checkListCopy:[],
+      allChoose:false,
       disabled:true,
       certificateList: [
         // {
@@ -136,17 +136,21 @@ export default {
     },
     selectCurrentPlayer(item,index){
       this.disabled = false;
-      // this.checkListCopy = Object.assign(this.checkList)
-      // console.log(this.checkListCopy,'copy')
+      if(this.checkList.length === this.certificateList.length){
+          this.allChoose = true;
+      }else{
+        this.allChoose = false;
+      }
     },
     //全选按钮
     selectAll(){
-      if(this.checkList === this.certificateList){
+      this.allChoose = !this.allChoose;
+      if(this.allChoose){
+        this.checkList = this.certificateList;
+        this.disabled = false;
+      }else{
         this.checkList =[];
         this.disabled = true;
-      }else{
-        this.checkList =this.certificateList
-        this.disabled = false;
       }
     },
     hanleApply(){
@@ -156,10 +160,12 @@ export default {
   created() {
     let examPlanId = this.$route.query.examPlanId;
     let examLevel = this.$route.query.examLevel;
+    let orderNo = this.$route.query.orderNo;
     console.log(examPlanId,'adsasd')
     let params = {
-      examPlanId: examPlanId,
-      examLevel: examLevel
+      examPlanId,
+      examLevel,
+      orderNo
     };
     this.$axios.get("/api/enroll/certificateApply", { params }).then(res => {
       if (res.data.code === 0) {

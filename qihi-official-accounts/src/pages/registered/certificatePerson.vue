@@ -105,16 +105,16 @@ export default {
     }
   },
   created(){
-    // console.log(JSON.parse(this.$route.query.item),'111')
     let obj = JSON.parse(this.$route.query.item);
     let params = {
         examPlanId:obj.examPlanId,
         examLevel:obj.examlevel,
+        orderNo:obj.orderNo,
         playerId:obj.playerId
     }
     this.$axios.get('/api/enroll/certificateApply_list',{params}).then( res => {
         if( res.data.code === 0){
-          // console.log(res.data.data,'2222')
+          console.log(res.data.data,'2222')
           this.list = res.data.data;
         }
     })

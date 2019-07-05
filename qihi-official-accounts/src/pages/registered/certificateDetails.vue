@@ -31,9 +31,9 @@
         <div class="linkManPart">
            <div class="seletLinkman bottomBorder">
                 <p>是否需要纸质证书</p>  
-                <p> <inline-x-switch v-model="value"></inline-x-switch></p>
+                <p> <inline-x-switch v-model="needPaper"></inline-x-switch></p>
             </div>
-            <div class="seletLinkman bottomBorder"  v-if="!value">
+            <div class="seletLinkman bottomBorder"  v-if="!needPaper">
                 <p>联系人</p>  
                 <p><span class="defaultSpan">默认</span> <span>{{linkManInfo}}</span> <span>{{linkManPhone}}</span> <i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i> </p>
             </div>
@@ -41,7 +41,7 @@
                 <p>发票信息</p> 
                 <p> <span style="color:#B0B0B0;">非必填，可补开</span><i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i></p> 
             </div>
-            <div class="seletLinkman" v-if="value">
+            <div class="seletLinkman" v-if="needPaper">
                 <p>收件地址</p> 
                 <p><span style="color:#B0B0B0;">请添加收件地址</span><i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i></p> 
             </div>
@@ -159,7 +159,7 @@ export default {
       showLinkMan: false,
       linkManList: [],
       currentLinkManId: null,
-      value:false,
+      needPaper:false,
       totalPerson:null,
       leveNames:'',
       examlevel:'',
@@ -213,7 +213,6 @@ export default {
   },
   created() {
     this.certificateList = JSON.parse(this.$route.query.checkList);
-    console.log(this.certificateList,'1122')
     this.leveNames = this.certificateList[0].leveNames;
     this.examlevel = this.certificateList[0].examlevel;
     this.totalPerson = this.certificateList.length;
@@ -258,11 +257,11 @@ export default {
   }
   & > .linkManPart {
     width: 359px;
+    height: 156px;
     background: rgba(255, 255, 255, 1);
     box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
     border-radius: 14px;
-    // overflow: hidden;
-    // margin-top: 12px;
+    overflow: hidden;
     .bottomBorder {
       border-bottom: 1px solid #e5e5e5;
     }
@@ -274,18 +273,22 @@ export default {
       & > p {
         font-size: 14px;
         font-weight: 500;
+        display: flex;
+        align-items: center;
         color: rgba(102, 102, 102, 1);
         line-height: 20px;
         & > span {
           color: #333333;
         }
-        .defaultSpan {
+        &>.defaultSpan {
           font-size: 12px;
-          font-family: PingFang-SC-Medium;
           font-weight: 500;
           padding: 1px 6px;
+          height: 16px;
+          line-height: 20px;
+          margin-right: 4px;
+          border: 1px solid #2069E5;
           color: rgba(255, 255, 255, 1);
-          line-height: 17px;
           background: rgba(32, 105, 229, 1);
           border-radius: 10px;
         }
@@ -432,7 +435,7 @@ export default {
     left: 0;
     bottom: 0;
     & > .tips {
-      height: 15px;
+      height: 17px;
       width: calc(100% - 24px);
       background: #fff8e6;
       padding: 8px 0px 8px 24px;
@@ -448,7 +451,7 @@ export default {
         width: 14px;
         height: 14px;
         float: left;
-        margin-top: 3px;
+        margin-top: 1px;
         overflow: hidden;
         margin-right: 6px;
         position: relative;

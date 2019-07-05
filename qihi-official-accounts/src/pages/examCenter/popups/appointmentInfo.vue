@@ -76,6 +76,7 @@ export default {
         font-size: 14px;
         margin-left: 24px;
         margin-right: 8px;
+        color: #FF9400;
     }
     &>span{
         font-size:12px;
