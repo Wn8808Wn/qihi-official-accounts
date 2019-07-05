@@ -94,7 +94,7 @@
                     <p>还没有创建常用联系人</p>
                 </div>
                 <div class="btmBar">
-                    <button>新增联系人</button>
+                    <button @click="addLinkMan">新增联系人</button>
                 </div>
               </div>
             </popup>
@@ -135,7 +135,7 @@
                         <i class="iconfont icon-zhushi"></i><span>常见问题说明</span>
                     </div>
                     <div class="btmBar playerBar">
-                        <button>新增棋手</button>
+                        <button @click="addChessPlayer">新增棋手</button>
                         <button @click="confirmBtn">确定</button>
                     </div>
             
@@ -276,7 +276,9 @@ export default {
         }
       });
     },
-
+    addLinkMan(){
+        this.$router.push({name:'commonInformation'})
+    },
     //获取棋手列表
     getPlayerList() {
       let params = {
@@ -290,6 +292,9 @@ export default {
           this.playerList = res.data.data;
         }
       });
+    },
+    addChessPlayer(){
+        this.$router.push({name:'commonInformation'})
     },
     submitOrder() {
       // //提交前先看座位数够不够
@@ -357,7 +362,7 @@ export default {
       setTimeout(() => {
         this.showLinkMan = false;
         this.currentLinkManId = "";
-      }, 1000);
+      }, 400);
     },
     showPlayerPopups() {
       this.showPlayer = true;
@@ -472,14 +477,14 @@ export default {
   }
   & > .showSelectPlayerList {
     width: 359px;
-    background: #2069e5;
     margin-top: 12px;
+    border: none;
+    overflow: hidden;   
     border-radius: 14px;
     & > .selectChessPlayer {
       height: 20px;
       display: flex;
       border-radius: 14px 14px 0 0;
-      border-bottom: 1px solid #e5e5e5;
       justify-content: space-between;
       & > span {
         font-size: 14px;
@@ -497,17 +502,20 @@ export default {
       width: 100%;
       & /deep/.swipeBox {
         width: 100%;
+        height: 104px;
+        overflow: hidden;
         position: relative;
+        border-top: 1px solid #e5e5e5;
         & > .iBox {
           display: block;
           width: 48px;
-          height: 105px;
+          height: 104px;
           background: #ffffff;
           position: absolute;
           left: 0px;
           top: 0px;
           text-align: center;
-          line-height: 107px;
+          line-height: 104px;
           z-index: 2;
           &>i{
             font-size: 20px;
@@ -524,9 +532,6 @@ export default {
             transition: all 500ms;
           }
         }
-      }
-      & /deep/ .vux-swipeout-item {
-        border-bottom: 1px solid #e5e5e5;
       }
       // swiperOut 样式
       & /deep/.vux-swipeout-content {

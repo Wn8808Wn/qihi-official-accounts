@@ -119,6 +119,7 @@ export default {
       this.examDateCommon = item.examDate;
       this.currentIndex = index;
       this.timeList = [];
+      this.disabled = true;
       let params = {
         roomId: JSON.parse(sessionStorage.getItem("currentItem")).examRoomId,
         examDate: item.examDate

@@ -2,7 +2,8 @@
     <div class="orderDetailsPage">
         <div class="waitPayTop">
             <div class="waitPay">
-                <img src="../../assets/imgs/timer.svg">
+                <p><img src="../../assets/imgs/timer.svg"></p>
+                
                 <div>
                     <p>等待付款</p>
                     <p>座位已成功锁定,请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
@@ -201,11 +202,15 @@ export default {
             height: 73px;
             display: flex;
             align-items: center;
-                &>img{
+                &>p{
                     width: 32px;
                     height: 32px;
                     margin-left: 23px;
                     margin-right: 7px;
+                    &>img{
+                        width: 100%;
+                        height: 100%;
+                    }
                 }
                 &>div{
                     &>p:first-child{
@@ -314,10 +319,12 @@ export default {
             background:rgba(255,255,255,1);
             box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
             border-radius:14px;
+            overflow: hidden;
             position: absolute;
             left: 8px;
             top: 480px;
             &>.commonBox{
+                border-radius: 0;
                 border-bottom: 1px solid #E5E5E5;
                 &>p:nth-of-type(1){
                     width: 100%;
