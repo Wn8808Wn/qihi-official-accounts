@@ -88,7 +88,6 @@ export default {
     this.$axios.get("/api/enroll/grade_list", { params }).then(res => {
       if (res.data.code === 0) {
         this.playerList = res.data.data;
-        // console.log(res.data.data, "asdsad");
         this.$nextTick(() => {
           this.scroll = new Bscroll(this.$refs.wrapper, {});
         });

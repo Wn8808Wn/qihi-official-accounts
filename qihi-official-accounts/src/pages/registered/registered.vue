@@ -118,7 +118,7 @@ export default {
       let examPlanId =   item.examPlanId;
       let examLevel = item.examLevel;
       let orderNo = item.orderNo;
-
+      console.log(item,'999')
       this.$router.push({name:'certificate',query:{examPlanId,examLevel,orderNo}})
     },
     checkTicket(item){

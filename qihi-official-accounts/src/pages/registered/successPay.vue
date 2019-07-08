@@ -42,7 +42,7 @@ export default {
     },
     methods:{
         handelCheckOrder(){
-            alert('跳转页面')
+            this.$router.push({name:'checkCertificateOrder'})
         },
         handelCertificate(){
             alert('功能开发中')

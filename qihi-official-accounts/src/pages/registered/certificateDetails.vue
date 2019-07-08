@@ -93,7 +93,7 @@
                 <span>{{item.phone}}</span>
               </p>
               <p class="commonTagP">
-                <span>认证服务费</span><span>¥ {{item.certificationServiceFee}}</span>
+                <span>认证服务费</span><span>¥ {{item.examFee}}</span>
               </p>
           </div>
           <p class="bottomTips">
@@ -136,24 +136,7 @@ export default {
       currentIndex: 0,
       checkList: [],
       disabled: true,
-      certificateList: [
-        // {
-        //   playerName: "展三",
-        //   certificateNo: 130133198010022566,
-        //   phone: 11231231231,
-        //   leveNames: "25级",
-        //   examResult: 1,
-        //   certificationServiceFee: 200
-        // },
-        // {
-        //   playerName: "展三",
-        //   certificateNo: 130133198010022566,
-        //   phone: 11231231231,
-        //   leveNames: "25级",
-        //   examResult: 1,
-        //   certificationServiceFee: 200
-        // },
-      ],
+      certificateList: [],
       linkManInfo: "棋智科技",
       linkManPhone:'',
       showLinkMan: false,
@@ -163,13 +146,14 @@ export default {
       totalPerson:null,
       leveNames:'',
       examlevel:'',
+      examPlanId:'',
     };
   },
   computed: {
     totalPrice() {
       let total = 0;
       this.certificateList.forEach(item => {
-        total += item.certificationServiceFee;
+        total += item.examFee;
       });
       return total;
     }
@@ -198,13 +182,14 @@ export default {
     },
     submitOrder(){
       let params = {
-        examPlanId:134,
+        examPlanId:this.examPlanId,
         linkMan:this.linkManInfo,
         phone:this.linkManPhone,
         totalFee:this.totalPrice,
         chessPlay:JSON.stringify(this.certificateList),
         examLevel:this.examlevel,
       }
+      console.log(params,'ppppppp')
       this.$router.push({name:'certificatePay',query:{'params':JSON.stringify(params)}})
     },
     mustBtn(){
@@ -212,17 +197,19 @@ export default {
     }
   },
   created() {
+    console.log( JSON.parse(this.$route.query.checkList),'JSON')
     this.certificateList = JSON.parse(this.$route.query.checkList);
     this.leveNames = this.certificateList[0].leveNames;
     this.examlevel = this.certificateList[0].examlevel;
     this.totalPerson = this.certificateList.length;
+    this.examPlanId = this.certificateList[0].examPlanId
     let params = {
       userId: 1
     };
     this.$axios.get("/api/linkman/linkman_list", { params }).then(res => {
       if (res.data.code === 0) {
         this.linkManList = res.data.data;
-        console.log(res);
+        console.log(res,'123');
       }
     });
   }

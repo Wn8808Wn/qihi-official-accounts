@@ -2,17 +2,35 @@
     <div class="orderDetailsPage">
         <div class="waitPayTop">
             <div class="waitPay">
-                <img src="../../assets/imgs/timer.svg">
+                <p><img src="../../assets/imgs/timer.svg"></p>
+                
                 <div>
                     <p>等待付款</p>
-                    <p>请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
+                    <p>座位已成功锁定,请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
                 </div>
             </div>
             <div class="infoBox">
+                <h3>{{examRoomName}}</h3>
                 <div class="bottomBorderBox">
                     <p>
-                        <span>收件信息</span>
-                        <span><span class="defaultSpan">默认</span>小智15613119863<span style="display:block;">北京市朝阳区砖角楼南里5号楼南里902</span></span>
+                        <span>考试地点</span>
+                        <span>{{address}}</span>
+                     </p>
+                    <p>
+                        <span>考试级别</span>
+                        <span>{{examLevelTitle}}</span>
+                    </p>
+                    <p>
+                        <span>考试时间</span>
+                        <span>{{examTime}}</span>
+                    </p>
+
+                </div>
+
+                <div class="bottomBorderBox">
+                    <p>
+                        <span>联&nbsp;&nbsp;系&nbsp;&nbsp;人</span>
+                        <span>{{linkman}}{{phone}}</span>
                      </p>
                     <p>
                         <span>发票信息</span>
@@ -36,14 +54,8 @@
                     <p><i class="iconfont icon-chakandingdan"></i><span>取消订单</span></p>
                 </div>
             </div>
-
-            <div class="infoTop">
-             <p>中国围棋协会段级位认证服务</p><span>认证级别:{{leveNames}}</span> <span>{{totalPerson}}人</span>
-            </div>
-
-
             <div class="applyPlayerList">
-                    <div v-for="(item,index) in certificateList" :key="index" class="commonBox">
+                    <div v-for="(item,index) in playerslist" :key="index" class="commonBox">
                         <p>
                         <span class="firstSpan">{{item.playerName}}</span>
                         <span>{{item.certificateNo}}</span>
@@ -53,21 +65,20 @@
                             <span>{{item.phone}}</span>
                         </p>
                         <p class="commonTagP">
-                            <span>认证服务费</span>
+                            <span>报名费用</span>
                             <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{item.examFee}}</span>
                         </p>
-
                     </div>
 
             </div>
         </div>
          <div class="fixedBox">
             <p><span>合计:</span> <i>¥</i><span>{{totalPrice}}</span></p>
-            <button @click="submitExamTime" :class="{'allowClick':disabled === false}" :disabled="disabled" >
-               立即支付
+            <button @click="showCofirmPage" :class="{'allowClick':disabled === false}" :disabled="disabled" >
+                立即支付
             </button>
         </div>
-        <!-- 确认删除吗 -->
+        <!-- 确认支付吗 -->
         <div v-transfer-dom>
           <confirm v-model="showCofirm"
           title="提示"
@@ -75,7 +86,7 @@
           @on-confirm="onConfirm"
           confirm-text='继续支付'
           >
-            <p>证书费支付完成后，不支持退款。</p>
+            <p style="font-size:16px;font-weight:400;color:rgba(102,102,102,1);line-height:22px;">报名成功后,退款将收取30%的手续费（距考试开始不足48小时将不再支持退款）。</p>
           </confirm>
         </div>
      
@@ -99,96 +110,77 @@ export default {
     data(){
         return{
             time1: this.formatDate(new Date(), "YYYY-MM-DD hh:mm:ss"),
-            leveNames:'',
-            totalPerson:null,
+            examRoomName:'',
+            examLevelTitle:'',
+            examTime:'',
+            address:'',
             linkman:'',
             phone:'',
             orderNo:'',
             createdTime:'',
-            totalFee:'',
             disabled:false,
             showCofirm:false,
-            certificateList:[
+            totalPrice:'',
+            playerslist:[
                 // {
                 //     name:'浓哥',
                 //     id:'12321321321313',
                 //     phone:'1231231313213',
                 //     cost:150
                 // },
+                // {
+                //     name:'浓哥',
+                //     id:'11112312321321321313',
+                //     phone:'123123131321',
+                //     cost:150
+                // },
                 ]
-        }
-    },
-    computed: {
-        totalPrice() {
-        let total = 0;
-        this.certificateList.forEach(item => {
-            total += item.examFee;
-        });
-        return total;
         }
     },
     methods:{
         showTitle(){
             alert('请重新下单')
         },
-        submitExamTime(){
+        showCofirmPage(){
             this.showCofirm = true;
         },
         onCancel(){
-
+            alert('跳转到我的订单代付款页面')
         },
         onConfirm(){
-            this.$router.push({name:'successPay'})
+            this.$router.push({name:'successApply'})
         }
     },
-    created(){
+    mounted(){
         let t = new Date().getTime()+30*1000*60;
         this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
-        this.certificateList = JSON.parse(JSON.parse(this.$route.query.params).chessPlay);
-        this.totalPerson = this.certificateList.length;
-        this.leveNames =  this.certificateList[0].leveNames;
-        console.log(JSON.parse(this.$route.query.params),'0000')
+        //缓存数据
+        this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName;
+        this.address = JSON.parse(sessionStorage.getItem('currentItem')).address;
+        this.examLevelTitle = sessionStorage.getItem('examLevelTitle')
+        this.examTime = sessionStorage.getItem('examTime')
+        this.linkman = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).linkMan;
+        this.totalPrice = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).totalFee;
+        this.phone = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).phone;
+        this.playerslist = JSON.parse(JSON.parse(sessionStorage.getItem('chessPlayersInfo')).chessPlay)
         // 请求获取订单编号
-        let dataObj = JSON.parse(this.$route.query.params)
-        console.log(dataObj,'参数')
-        if(dataObj.orderNo){
-           this.orderNo = dataObj.orderNo;
-           this.createdTime = dataObj.createdTime;
-           let routerObj ={
-                examLevelTitle:dataObj.examLevelTitle,
-                totalPrice:dataObj.totalFee,
-                playerslist:JSON.parse(dataObj.chessPlay),
-                unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
-                createdTime:dataObj.createdTime,
-                orderNo:dataObj.orderNo,
-                orderId:dataObj.orderId
-            }
-            sessionStorage.setItem('routerObj',JSON.stringify(routerObj)) 
-                  
-        }else{
-            this.$axios.post('/api/enroll/submitOrder',qs.stringify(dataObj)).then( (res) => {
-                if( res.data.code === 0){
-                //    console.log(res,'asdsadasdad');
-                let rst = res.data.data;
-                this.orderNo = rst.orderNo;
-                this.createdTime = rst.createdTime;
-                // 缓存信息用于详情页
-                let routerObj ={
-                        examLevelTitle:dataObj.examLevelTitle,
-                        totalPrice:dataObj.totalFee,
-                        playerslist:JSON.parse(dataObj.chessPlay),
-                        unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
-                        createdTime:rst.createdTime,
-                        orderNo:rst.orderNo,
-                        orderId:rst.id
-                    }
-                    sessionStorage.setItem('routerObj',JSON.stringify(routerObj)) 
-                }      
-            })
-        }
+        let dataObj = JSON.parse(sessionStorage.getItem('chessPlayersInfo'))
+        this.$axios.post('/api/enter/signUpOrder',qs.stringify(dataObj)).then( (res) => {
+            console.log(res,'dasdad')
+            if( res.data.code === 0){
+                let obj = res.data.data
+                this.orderNo = obj.orderNo;
+                this.createdTime = obj.createdTime;
+                sessionStorage.setItem('createdTime',JSON.stringify(obj.createdTime))
+                sessionStorage.setItem('orderNo',JSON.stringify(obj.orderNo))
+                sessionStorage.setItem('orderId',JSON.stringify(obj.id))
+            }      
+        })
+       
     }
 }
 </script>
+
 
 <style lang='scss' scoped>
 @import "../../style/mixin.scss";
@@ -196,7 +188,7 @@ export default {
     width: 375px;
     height: 100%;
     background: $bg-color;
-    overflow: hidden;
+    padding-bottom: 52px;
     &>.waitPayTop{
         position: relative;
         height: 104px;
@@ -208,11 +200,15 @@ export default {
             height: 73px;
             display: flex;
             align-items: center;
-                &>img{
+                &>p{
                     width: 32px;
                     height: 32px;
                     margin-left: 23px;
                     margin-right: 7px;
+                    &>img{
+                        width: 100%;
+                        height: 100%;
+                    }
                 }
                 &>div{
                     &>p:first-child{
@@ -267,19 +263,6 @@ export default {
                         color: #333333;
                         width: 249px;
                         display: inline-block;
-                        .defaultSpan{
-                            font-size: 12px;
-                            font-weight: 500;
-                            height: 18px;
-                            width: 36px;
-                            float: left;
-                            text-align: center;
-                            line-height: 21px;
-                            margin-right: 4px;
-                            color: rgba(255, 255, 255, 1);
-                            background: rgba(32, 105, 229, 1);
-                            border-radius: 10px;
-                        }
                     }
                     
                     &:last-child{
@@ -323,29 +306,12 @@ export default {
                     }
                     &>i{
                         color:rgba(32,105,229,1);
-                        font-size: 16px;
+                        font-size: 14px;
+                        height: 14px;
+                        width: 14px;
                         margin-right: 8px;
                     }
                 }
-            }
-        }
-        &>.infoTop{
-            width:calc(100% - 24px);
-            height: 52px;
-            position: absolute;
-            top: 299px;
-            padding-left: 24px;
-            line-height: 52px;
-            &>p{
-                font-size:14px;
-                float: left;
-                color:rgba(51,51,51,1);
-            }
-            &>span{
-                float: left;
-                margin-left: 12px;
-                font-size: 12px;
-                color:#666666;
             }
         }
         &>.applyPlayerList{
@@ -353,10 +319,10 @@ export default {
             background:rgba(255,255,255,1);
             box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
             border-radius:14px;
+            overflow: hidden;
             position: absolute;
             left: 8px;
-            overflow: hidden;
-            top: 346px;
+            top: 480px;
             &>.commonBox{
                 border-radius: 0;
                 border-bottom: 1px solid #E5E5E5;
@@ -366,13 +332,14 @@ export default {
                     margin-bottom: 16px;
                     &>span{
                         font-size:16px;
+                        font-family:PingFangSC-Semibold;
                         font-weight:600;
                         float: left;
                         color:rgba(51,51,51,1);
                         line-height:22px;
                     }
                     &>.firstSpan{
-                        width: 70px;
+                        width: 64px;
                         height: 22px;
                         overflow: hidden;
                         margin-right: 8px;
@@ -381,24 +348,22 @@ export default {
                     }
                 }
                 .commonTagP {
-                        width: 100%;
                         height: 20px;
                         margin-bottom: 8px;
                     & > span {
-                        width: 70px;
                         font-size: 14px;
                         font-weight: 500;
-                        float: left;
                         line-height: 20px;
                     }
                     & > span:nth-of-type(1) {
                         color: #666666;
-                        margin-right: 8px;
+                        margin-right: 16px;
+                        float: left;
                     }
                     & > span:nth-of-type(2) {
                         color: #333333;
-                        width: 240px;
-                        float: left;
+                        width: 249px;
+                        display: inline-block;
                     }
                     &:nth-last-of-type(1){
                         margin-bottom: 0px;

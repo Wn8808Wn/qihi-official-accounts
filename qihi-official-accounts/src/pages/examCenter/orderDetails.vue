@@ -1,78 +1,80 @@
 <template>
-    <div class="orderDetailsPage">
-        <div class="waitPayTop">
-            <div class="waitPay">
-                <p><img src="../../assets/imgs/timer.svg"></p>
-                
-                <div>
-                    <p>等待付款</p>
-                    <p>座位已成功锁定,请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
+    <div class="orderDetailsPage orderDetailsPageWrapper"  ref="orderDetailsPageWrapper">
+        <div class="content">
+            <div class="waitPayTop">
+                <div class="waitPay">
+                    <p><img src="../../assets/imgs/timer.svg"></p>
+                    <div>
+                        <p>等待付款</p>
+                        <p>座位已成功锁定,请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
+                    </div>
                 </div>
-            </div>
-            <div class="infoBox">
-                <h3>{{examRoomName}}</h3>
-                <div class="bottomBorderBox">
-                    <p>
-                        <span>考试地点</span>
-                        <span>{{address}}</span>
-                     </p>
-                    <p>
-                        <span>考试级别</span>
-                        <span>{{examLevelTitle}}</span>
-                    </p>
-                    <p>
-                        <span>考试时间</span>
-                        <span>{{examTime}}</span>
-                    </p>
-
-                </div>
-
-                <div class="bottomBorderBox">
-                    <p>
-                        <span>联&nbsp;&nbsp;系&nbsp;&nbsp;人</span>
-                        <span>{{linkman}}{{phone}}</span>
-                     </p>
-                    <p>
-                        <span>发票信息</span>
-                        <span>[企业]棋智科技有限公司</span>
-                    </p>
-                </div>
-
-                <div class="bottomBorderBox">
-                    <p class="orderNumberP">
-                        <span>订单编号</span>
-                        <span>{{orderNo}}</span>
-                         <x-button plain type="primary" style="border-radius:14px;">复制</x-button>
-                     </p>
-                    <p>
-                        <span>下单时间</span>
-                        <span>{{createdTime}}</span>
-                    </p>
-                </div>
-                <div class="bottomBar">
-                    <p><i class="iconfont icon-lianxikefu"></i><span>联系客服</span></p>
-                    <p><i class="iconfont icon-chakandingdan"></i><span>取消订单</span></p>
-                </div>
-            </div>
-            <div class="applyPlayerList">
-                    <div v-for="(item,index) in playerslist" :key="index" class="commonBox">
+                <div class="infoBox">
+                    <h3>{{examRoomName}}</h3>
+                    <div class="bottomBorderBox">
                         <p>
-                        <span class="firstSpan">{{item.playerName}}</span>
-                        <span>{{item.certificateNo}}</span>
+                            <span>考试地点</span>
+                            <span>{{address}}</span>
                         </p>
-                        <p class="commonTagP">
-                            <span>电话号码</span>
-                            <span>{{item.phone}}</span>
+                        <p>
+                            <span>考试级别</span>
+                            <span>{{examLevelTitle}}</span>
                         </p>
-                        <p class="commonTagP">
-                            <span>报名费用</span>
-                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{unitPrice}}</span>
+                        <p>
+                            <span>考试时间</span>
+                            <span>{{examTime}}</span>
+                        </p>
+
+                    </div>
+
+                    <div class="bottomBorderBox">
+                        <p>
+                            <span>联&nbsp;&nbsp;系&nbsp;&nbsp;人</span>
+                            <span>{{linkman}}{{phone}}</span>
+                        </p>
+                        <p>
+                            <span>发票信息</span>
+                            <span>[企业]棋智科技有限公司</span>
                         </p>
                     </div>
 
+                    <div class="bottomBorderBox">
+                        <p class="orderNumberP">
+                            <span>订单编号</span>
+                            <span>{{orderNo}}</span>
+                            <x-button plain type="primary" style="border-radius:14px;">复制</x-button>
+                        </p>
+                        <p>
+                            <span>下单时间</span>
+                            <span>{{createdTime}}</span>
+                        </p>
+                    </div>
+                    <div class="bottomBar">
+                        <p><i class="iconfont icon-lianxikefu"></i><span>联系客服</span></p>
+                        <p><i class="iconfont icon-chakandingdan"></i><span>取消订单</span></p>
+                    </div>
+                </div>
+                <div class="applyPlayerList">
+                        <div v-for="(item,index) in playerslist" :key="index" class="commonBox">
+                            <p>
+                            <span class="firstSpan">{{item.playerName}}</span>
+                            <span>{{item.certificateNo}}</span>
+                            </p>
+                            <p class="commonTagP">
+                                <span>电话号码</span>
+                                <span>{{item.phone}}</span>
+                            </p>
+                            <p class="commonTagP">
+                                <span>报名费用</span>
+                                <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{unitPrice}}</span>
+                            </p>
+                        </div>
+
+                </div>
             </div>
         </div>
-         <div class="fixedBox">
+       
+        <div class="fixedBox">
             <p><span>合计:</span> <i>¥</i><span>{{totalPrice}}</span></p>
             <button @click="showCofirmPage" :class="{'allowClick':disabled === false}" :disabled="disabled" >
                 立即支付
@@ -94,6 +96,7 @@
 </template>
 
 <script>
+import BScroll from 'better-scroll';
 import qs from 'qs' // qs在安装axios后会自动安装，只需要组件里import一下即可
 import { Clocker, Cell, Group,XButton,Confirm,TransferDom} from 'vux'
 export default {
@@ -122,20 +125,7 @@ export default {
             showCofirm:false,
             totalPrice:'',
             unitPrice:'',
-            playerslist:[
-                // {
-                //     name:'浓哥',
-                //     id:'12321321321313',
-                //     phone:'1231231313213',
-                //     cost:150
-                // },
-                // {
-                //     name:'浓哥',
-                //     id:'11112312321321321313',
-                //     phone:'123123131321',
-                //     cost:150
-                // },
-                ]
+            playerslist:[]
         }
     },
     methods:{
@@ -152,11 +142,13 @@ export default {
             this.$router.push({name:'successApply'})
         }
     },
-    mounted(){
+    created(){
+        this.$nextTick(() => {
+            this.scroll = new BScroll(this.$refs.orderDetailsPageWrapper, {})
+        })
         let t = new Date().getTime()+30*1000*60;
         this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
         let dataObj = this.$route.query;
-        // console.log(dataObj)
          //路由传值
         this.examRoomName = dataObj.examRoomName;
         this.address = dataObj.address;
@@ -167,24 +159,40 @@ export default {
         this.phone = dataObj.phone;
         this.playerslist = JSON.parse(dataObj.chessPlay);
         this.unitPrice  = dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length);
-    
-        // 请求获取订单编号
-        let params = {
-            examPlanId: dataObj.examPlanId,
-            linkMan: dataObj.linkMan,
-            phone: dataObj.phone,
-            totalFee: dataObj.totalFee,
-            chessPlay: JSON.stringify(JSON.parse(dataObj.chessPlay))
-          };
-        this.$axios.post('/api/enter/signUpOrder',qs.stringify(params)).then( (res) => {
-            console.log(res,'dasdad')
-            if( res.data.code === 0){
-                let obj = res.data.data
-                this.orderNo = obj.orderNo;
-                this.createdTime = obj.createdTime;
-                // sessionStorage.setItem('createdTime',JSON.stringify(obj.createdTime))
-                // sessionStorage.setItem('orderNo',JSON.stringify(obj.orderNo))
-                // sessionStorage.setItem('orderId',JSON.stringify(obj.id))
+        // 判断路由
+        if(dataObj.orderNo){
+           this.orderNo = dataObj.orderNo;
+           this.createdTime = dataObj.createdTime;
+           let routerObj ={
+                examRoomName:dataObj.examRoomName,
+                address:dataObj.address,
+                examLevelTitle:dataObj.examLevelTitle,
+                examTime:dataObj.time,
+                linkMan:dataObj.linkMan,
+                totalPrice:dataObj.totalFee,
+                phone:dataObj.phone,
+                playerslist:JSON.parse(dataObj.chessPlay),
+                unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
+                createdTime:dataObj.createdTime,
+                orderNo:dataObj.orderNo,
+                orderId:dataObj.orderId
+            }
+                sessionStorage.setItem('routerObj',JSON.stringify(routerObj))
+        }else{
+             // 请求获取订单编号
+            let params = {
+                examPlanId: dataObj.examPlanId,
+                linkMan: dataObj.linkMan,
+                phone: dataObj.phone,
+                totalFee: dataObj.totalFee,
+                chessPlay: JSON.stringify(JSON.parse(dataObj.chessPlay))
+            };
+            this.$axios.post('/api/enter/signUpOrder',qs.stringify(params)).then( (res) => {
+                console.log(res,'dasdad')
+                if( res.data.code === 0){
+                    let obj = res.data.data
+                    this.orderNo = obj.orderNo;
+                    this.createdTime = obj.createdTime;
                 let routerObj ={
                     examRoomName:dataObj.examRoomName,
                     address:dataObj.address,
@@ -200,8 +208,16 @@ export default {
                     orderId:obj.id
                 }
                 sessionStorage.setItem('routerObj',JSON.stringify(routerObj))
+
+                this.$nextTick(() => {
+                    this.scroll = new BScroll(this.$refs.orderDetailsPageWrapper, {})
+                })
             }      
         })
+
+        }
+       
+       
        
     }
 }
@@ -212,10 +228,12 @@ export default {
 @import "../../style/mixin.scss";
 .orderDetailsPage{
     width: 375px;
-    height: 100%;
+    height: 667px;
     background: $bg-color;
-    padding-bottom: 52px;
-    &>.waitPayTop{
+    &>.content{
+        height: 620px;
+        overflow: hidden;
+        &>.waitPayTop{
         position: relative;
         height: 104px;
         width: 375px;
@@ -398,5 +416,8 @@ export default {
             }
         }
     }    
+
+    }
+   
 }
 </style>

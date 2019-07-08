@@ -91,12 +91,6 @@ export default {
     };
   },
   methods: {
-    // getTotalPrice(list){
-    //   let price =0;
-    //      list.forEach(e => {
-    //         price+=e.
-    //     });
-    // },
     getList(params){
         this.$axios.get('/api/order/orderAll_list',{params}).then( res =>{
         if(res.data.code ===0 ){
@@ -135,7 +129,9 @@ export default {
       alert('功能开发中')
     },
     handlePay(item){
-      let dataObj = {
+      console.log(item,'item')
+      if(item.orderType === 0){
+        let dataObj = {
             examPlanId:item.playerList[0].examPlanId,
             linkMan:item.playerList[0].linkman,
             phone:item.playerList[0].phone,
@@ -145,9 +141,27 @@ export default {
             examLevelTitle:item.examLevels,
             address:item.address,
             time:item.examTime,
-      };
-      // console.log(dataObj,'00000')
-      this.$router.push({ path: '/examCenter/examinationLevel/orderDetails',query:dataObj});
+            orderNo:item.orderNo?item.orderNo:'',
+            createdTime:item.createdTime?item.createdTime:'',
+            orderId:item.orderId?item.orderId:''
+        };
+        console.log(dataObj,'0')
+        this.$router.push({ name:'orderDetails',query:dataObj});
+      }else{
+        let params = {
+            examPlanId:item.playerList[0].examPlanId,
+            linkMan:item.playerList[0].linkman,
+            phone:item.playerList[0].phone,
+            totalFee:item.totalFee,
+            chessPlay:JSON.stringify(item.playerList),
+            examLevel:item.examLevel,
+            orderNo:item.orderNo?item.orderNo:'',
+            createdTime:item.createdTime?item.createdTime:'',
+            orderId:item.orderId?item.orderId:''
+        }
+        console.log(params,'uuuu')
+        this.$router.push({name:'certificatePay',query:{'params':JSON.stringify(params)}})
+      }
     },
     checkTicket(){
         alert('功能开发中')

@@ -47,7 +47,7 @@
                 <span v-if="list[0].examResult === 1">考试未通过</span>
               </p>
               <p class="commonTagP">
-                <span>认证服务费</span><span>¥ {{list[0].certificationServiceFee}}</span>
+                <span>认证服务费</span><span>¥ {{list[0].examFee}}</span>
               </p>
              
           </div>
@@ -62,7 +62,7 @@
           </div>
           <div class="payBtns">
               <p class="firstP">
-                <span style="color:#ED1A23;font-weight:600;font-size:18px;">¥ {{list[0].certificationServiceFee}}</span>
+                <span style="color:#ED1A23;font-weight:600;font-size:18px;">¥ {{list[0].examFee}}</span>
               </p>
               <button class="submitP"  @click="handerCertificatePerson">证书申领</button>
           </div>
@@ -84,7 +84,6 @@ export default {
   data() {
     return {
       showPopup: false,
- 
       list:[{
         // playerName:'',
         // certificationServiceFee:null
@@ -106,6 +105,7 @@ export default {
   },
   created(){
     let obj = JSON.parse(this.$route.query.item);
+    console.log(obj,'123');
     let params = {
         examPlanId:obj.examPlanId,
         examLevel:obj.examlevel,

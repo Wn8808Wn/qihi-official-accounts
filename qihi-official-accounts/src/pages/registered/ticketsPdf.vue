@@ -7,7 +7,7 @@
                     <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentTicket(item,index)">
                     <label  :for='item.id'></label>
                     <span>{{item.playerName}}的准考证.pdf</span>
-                    <button>打开</button>
+                    <button @click="downTickets(item)">打开</button>
                 </li>    
             </ul>
         </div>
@@ -17,7 +17,7 @@
                <label class="lab" for='selectAll'></label>
                <span>全选</span>
             </p>
-            <p class="emailBtn">
+            <p class="emailBtn" @click="emailBtn">
               发送到邮箱
             </p>
         </div>  
@@ -40,6 +40,12 @@ export default {
     },
     selectCurrentAll(){
 
+    },
+    downTickets(){
+      alert('功能开发中')
+    },
+    emailBtn(){
+      alert('功能开发中')
     },
     initScrollBox(){
         if(this.ticketList!== undefined && this.ticketList!== null && this.ticketList.length>0 ){
@@ -195,7 +201,7 @@ export default {
       &>span{
         position: absolute;
         left:40px;
-        top: 20px;
+        top: 21px;
       }
       input[type="checkbox"] + label::before {
         width: 20px;

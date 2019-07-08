@@ -119,6 +119,14 @@ export default new Router({
       component: () => import('../pages/registered/certificatePerson.vue'), // 段级位考试=>已报名=>个人证书申领
     },
     {
+      path: '/examCenter/examinationLevel/registered/checkCertificateOrder',
+      name: 'checkCertificateOrder',
+      meta: {
+        title: '订单详情'
+      },
+      component: () => import('../pages/registered/checkCertificateOrder.vue'), // 段级位考试=>已报名=>证书订单详情
+    },
+    {
       path: '/examCenter/examinationLevel/registered/ticketsPdf',
       name: 'ticketsPdf',
       meta: {
@@ -126,7 +134,6 @@ export default new Router({
       },
       component: () => import('../pages/registered/ticketsPdf.vue'), // 段级位考试=>已报名=>准考证PDF页面
     },
-
     {
       path: '/examCenter/examinationLevel/myOrder',
       name: 'myOrder',

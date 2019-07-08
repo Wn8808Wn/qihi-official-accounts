@@ -16,9 +16,9 @@ a { color:#666; text-decoration:none; }
 button{
     outline: none;
 }
-/* *{
+*{
     touch-action: none;
-} */
+}
 
 ::-webkit-scrollbar  
 {  

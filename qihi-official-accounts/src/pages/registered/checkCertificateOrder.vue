@@ -4,21 +4,28 @@
             <div class="waitPay">
                 <img src="../../assets/imgs/timer.svg">
                 <div>
-                    <p>等待付款</p>
-                    <p>请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
+                    <p>已付款</p>
                 </div>
             </div>
             <div class="infoBox">
                 <div class="bottomBorderBox">
-                    <p>
-                        <span>收件信息</span>
-                        <span><span class="defaultSpan">默认</span>小智15613119863<span style="display:block;">北京市朝阳区砖角楼南里5号楼南里902</span></span>
+                    <p class="orderNumberP">
+                        <span>订单编号</span>
+                        <span>1010201233123</span>
+                         <x-button plain type="primary" style="border-radius:14px;">复制</x-button>
                      </p>
                     <p>
+                        <span>收件信息</span>
+                        <span><span class="defaultSpan">默认</span>小智15613119863</span>
+                    </p>
+                   
+                </div>
+                <div class="bottomBorderBox">
+                     <p>
                         <span>发票信息</span>
                         <span>[企业]棋智科技有限公司</span>
                     </p>
-                </div>
+                </div>    
 
                 <div class="bottomBorderBox">
                     <p class="orderNumberP">
@@ -30,10 +37,14 @@
                         <span>下单时间</span>
                         <span>{{createdTime}}</span>
                     </p>
+
+                    <p>
+                        <span>付款时间</span>
+                        <span>{{payOffTime}}</span>
+                    </p>
                 </div>
                 <div class="bottomBar">
                     <p><i class="iconfont icon-lianxikefu"></i><span>联系客服</span></p>
-                    <p><i class="iconfont icon-chakandingdan"></i><span>取消订单</span></p>
                 </div>
             </div>
 
@@ -54,18 +65,15 @@
                         </p>
                         <p class="commonTagP">
                             <span>认证服务费</span>
-                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{item.examFee}}</span>
+                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{unitPrice}}</span>
                         </p>
 
                     </div>
 
             </div>
         </div>
-         <div class="fixedBox">
-            <p><span>合计:</span> <i>¥</i><span>{{totalPrice}}</span></p>
-            <button @click="submitExamTime" :class="{'allowClick':disabled === false}" :disabled="disabled" >
-               立即支付
-            </button>
+         <div class="totalBox">
+           <span>费用合计</span> <span>¥{{totalPrice}}</span>
         </div>
         <!-- 确认删除吗 -->
         <div v-transfer-dom>
@@ -98,34 +106,22 @@ export default {
     },
     data(){
         return{
-            time1: this.formatDate(new Date(), "YYYY-MM-DD hh:mm:ss"),
+     
             leveNames:'',
             totalPerson:null,
             linkman:'',
             phone:'',
             orderNo:'',
             createdTime:'',
-            totalFee:'',
+            totalPrice:'',
+            unitPrice:'',
+            payOffTime:'',
             disabled:false,
             showCofirm:false,
-            certificateList:[
-                // {
-                //     name:'浓哥',
-                //     id:'12321321321313',
-                //     phone:'1231231313213',
-                //     cost:150
-                // },
-                ]
+            certificateList:[]
         }
     },
     computed: {
-        totalPrice() {
-        let total = 0;
-        this.certificateList.forEach(item => {
-            total += item.examFee;
-        });
-        return total;
-        }
     },
     methods:{
         showTitle(){
@@ -142,50 +138,25 @@ export default {
         }
     },
     created(){
-        let t = new Date().getTime()+30*1000*60;
-        this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
-        this.certificateList = JSON.parse(JSON.parse(this.$route.query.params).chessPlay);
+        console.log(JSON.parse(sessionStorage.getItem("routerObj")))
+        let routerObj = JSON.parse(sessionStorage.getItem("routerObj"))
+        this.orderNo = routerObj.orderNo;
+        this.createdTime = routerObj.createdTime;
+        this.certificateList =routerObj.playerslist;
+        this.totalPrice = routerObj.totalPrice;
+        this.unitPrice = routerObj.unitPrice;
         this.totalPerson = this.certificateList.length;
         this.leveNames =  this.certificateList[0].leveNames;
-        console.log(JSON.parse(this.$route.query.params),'0000')
-        // 请求获取订单编号
-        let dataObj = JSON.parse(this.$route.query.params)
-        console.log(dataObj,'参数')
-        if(dataObj.orderNo){
-           this.orderNo = dataObj.orderNo;
-           this.createdTime = dataObj.createdTime;
-           let routerObj ={
-                examLevelTitle:dataObj.examLevelTitle,
-                totalPrice:dataObj.totalFee,
-                playerslist:JSON.parse(dataObj.chessPlay),
-                unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
-                createdTime:dataObj.createdTime,
-                orderNo:dataObj.orderNo,
-                orderId:dataObj.orderId
-            }
-            sessionStorage.setItem('routerObj',JSON.stringify(routerObj)) 
-                  
-        }else{
-            this.$axios.post('/api/enroll/submitOrder',qs.stringify(dataObj)).then( (res) => {
-                if( res.data.code === 0){
-                //    console.log(res,'asdsadasdad');
-                let rst = res.data.data;
-                this.orderNo = rst.orderNo;
-                this.createdTime = rst.createdTime;
-                // 缓存信息用于详情页
-                let routerObj ={
-                        examLevelTitle:dataObj.examLevelTitle,
-                        totalPrice:dataObj.totalFee,
-                        playerslist:JSON.parse(dataObj.chessPlay),
-                        unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
-                        createdTime:rst.createdTime,
-                        orderNo:rst.orderNo,
-                        orderId:rst.id
-                    }
-                    sessionStorage.setItem('routerObj',JSON.stringify(routerObj)) 
-                }      
-            })
+        // 请求获取支付时间
+        let params = {
+            orderId:routerObj.orderId,
+            payFee:routerObj.totalPrice,
         }
+        this.$axios.post('/api/order/OrderPayment',qs.stringify(params)).then( res => {
+            if(res.data.code === 0){
+                this.payOffTime = res.data.data;
+            }
+        })
     }
 }
 </script>
@@ -333,7 +304,7 @@ export default {
             width:calc(100% - 24px);
             height: 52px;
             position: absolute;
-            top: 299px;
+            top: 358px;
             padding-left: 24px;
             line-height: 52px;
             &>p{
@@ -356,7 +327,7 @@ export default {
             position: absolute;
             left: 8px;
             overflow: hidden;
-            top: 346px;
+            top: 406px;
             &>.commonBox{
                 border-radius: 0;
                 border-bottom: 1px solid #E5E5E5;
@@ -404,6 +375,29 @@ export default {
                         margin-bottom: 0px;
                     }
                 }
+            }
+        }
+    }  
+    &>.totalBox{
+        width:327px;
+        height:20px;
+        padding: 16px;
+        background:rgba(255,255,255,1);
+        // background: skyblue;
+        box-shadow:0px 0px 6px 0px rgba(0,0,0,0.05);
+        border-radius:14px;
+        position: absolute;
+        top: 660px;
+        left: 8px;
+        &>span{
+            height: 20px;
+            font-size: 14px;
+            color: #666666;
+            margin-right: 16px;
+            &:nth-of-type(2){
+                font-size:14px;
+                font-family:PingFang-SC-Medium;
+                color:rgba(237,26,35,1);
             }
         }
     }    

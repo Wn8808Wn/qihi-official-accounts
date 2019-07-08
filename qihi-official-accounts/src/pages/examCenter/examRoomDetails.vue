@@ -39,12 +39,12 @@
                         <p><i class="iconfont icon-zuowei"></i><span>剩余</span><span>{{item.remainSeat}}</span></p>
                     </div>
                     <div class="examTimeListRight">
-                        <div v-if="item.remainSeat>0 && !stopTime(item.examDate,item.examTime)" @click="selectCurrentRadio(item)">
+                        <!-- <div v-if="item.remainSeat>0 && !stopTime(item.examDate,item.examTime)" @click="selectCurrentRadio(item)"> -->
+                        <div v-if="item.remainSeat>0" @click="selectCurrentRadio(item)">  
                             <input  type="radio" name="examroom" :id='item.id'  >
                             <label  :for='item.id'></label>
                         </div>
-                        <!-- item.examTime 字符串非时间对象 -->
-                        <span v-if="stopTime(item.examDate,item.examTime)">截止报名</span>
+                        <!-- <span v-if="stopTime(item.examDate,item.examTime)">截止报名</span> -->
                         <span v-if="item.remainSeat <= 0 && !stopTime(item.examDate,item.examTime)">已约满</span>
                     </div>
                 </div>

@@ -51,7 +51,7 @@
                 <span v-if="item.examResult === 1">考试未通过</span>
               </p>
               <p class="commonTagP">
-                <span>认证服务费</span><span>¥ {{item.certificationServiceFee}}</span>
+                <span>认证服务费</span><span>¥ {{item.examFee}}</span>
               </p>
              
           </div>
@@ -96,32 +96,14 @@ export default {
       checkList:[],
       allChoose:false,
       disabled:true,
-      certificateList: [
-        // {
-        //   playerName: "展三",
-        //   certificateNo: 130133198010022566,
-        //   phone: 11231231231,
-        //   leveNames: "25级",
-        //   examResult: 1,
-        //   certificationServiceFee: 200
-        // },
-        // {
-        //   playerName: "展三",
-        //   certificateNo: 130133198010022566,
-        //   phone: 11231231231,
-        //   leveNames: "25级",
-        //   examResult: 1,
-        //   certificationServiceFee: 200
-        // },
-       
-      ],
-    };
+      certificateList: [],
+    }
   },
   computed:{
       totalPrice(){
         let total = 0;
         this.checkList.forEach( item => {
-            total+=item.certificationServiceFee
+            total+=item.examFee
         });
         return total;
       }
@@ -154,6 +136,7 @@ export default {
       }
     },
     hanleApply(){
+      console.log(this.checkList,'list1111')
       this.$router.push({name:'certificateDetails',query:{"checkList":JSON.stringify(this.checkList)}})
     }
   },
@@ -161,7 +144,7 @@ export default {
     let examPlanId = this.$route.query.examPlanId;
     let examLevel = this.$route.query.examLevel;
     let orderNo = this.$route.query.orderNo;
-    console.log(examPlanId,'adsasd')
+    // console.log(examPlanId,'adsasd')
     let params = {
       examPlanId,
       examLevel,
@@ -169,8 +152,8 @@ export default {
     };
     this.$axios.get("/api/enroll/certificateApply", { params }).then(res => {
       if (res.data.code === 0) {
-        this.certificateList = res.data.data;
         console.log(res.data.data,'???')
+        this.certificateList = res.data.data;
       }
     });
   }
