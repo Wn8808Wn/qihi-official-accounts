@@ -6,7 +6,7 @@
                 <li v-for="(item,index) in ticketList" :key="index">
                     <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentTicket(item,index)">
                     <label  :for='item.id'></label>
-                    <span>{{item.name}}的准考证.pdf</span>
+                    <span>{{item.playerName}}的准考证.pdf</span>
                     <button>打开</button>
                 </li>    
             </ul>
@@ -14,7 +14,8 @@
         <div class="pageBottom">
             <p class="checkBtn">
                <input type="checkbox" id="selectAll" v-model="checkListAll" @change="selectCurrentAll">
-               <label for='selectAll'>全选</label> 
+               <label class="lab" for='selectAll'></label>
+               <span>全选</span>
             </p>
             <p class="emailBtn">
               发送到邮箱
@@ -28,32 +29,7 @@ import Bscroll from 'better-scroll';
 export default {
   data() {
     return {
-      ticketList: [
-          {
-            id:1,
-            name:'展三'
-          },
-          {
-            id:2,
-            name:'展三'
-          },
-          {
-            id:3,
-            name:'展三'
-          },
-           {
-            id:4,
-            name:'展三'
-          },
-          {
-            id:5,
-            name:'展三'
-          },
-          {
-            id:6,
-            name:'展三'
-          }
-      ],
+      ticketList: [],
       checkList: [],
       checkListAll:[]
     };
@@ -98,7 +74,8 @@ export default {
     }
   },
   created(){
-    console.log(this.ticketList.length,'sss')
+    console.log(this.$route.query,'111')
+    this.ticketList = JSON.parse(this.$route.query.playerList);
     this.$nextTick(() => {
         this.initScrollBox();
     });
@@ -114,7 +91,7 @@ export default {
   padding-top: 12px;
   background: $bg-color;
   .ticketWarpper{
-      background: red;
+
   }
   &>.ticketBox {
     width: 359px;
@@ -122,7 +99,7 @@ export default {
     // height: 539px;
     margin: 0 auto;
     background: $bg-color; 
-    background: red;
+    // background: red;
     box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
     border-radius: 14px;
     & > .titleTop {
@@ -205,7 +182,6 @@ export default {
   &>.pageBottom{
     width: 100%;
     height: 52px;
-    background:skyblue;
     position: fixed;
     left: 0;
     bottom: 0;
@@ -214,9 +190,12 @@ export default {
       height: 52px;
       line-height: 1;
       float: left;
-      background: salmon;
-      input[type="checkbox"] {
-        display: none;
+      position: relative;
+      background: #ffffff;
+      &>span{
+        position: absolute;
+        left:40px;
+        top: 20px;
       }
       input[type="checkbox"] + label::before {
         width: 20px;
@@ -240,8 +219,6 @@ export default {
         background: url("../../assets/imgs/selected.svg");
         background-size: cover;
       }
-
-      
     }
     
     &>.emailBtn{

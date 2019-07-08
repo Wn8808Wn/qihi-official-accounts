@@ -34,7 +34,7 @@
                 <!-- <span v-if="item.playerList.length === 2">{{item.playerList[0].playerName}} {{item.playerList[1].playerName}}</span> -->
                 <span v-if="item.playerList.length >= 2">{{item.playerList[0].playerName}} 等{{item.playerList.length}}人</span>
               </p>
-              <button v-if="item.state === 0" @click="checkTicket">准考证</button>
+              <button v-if="item.state === 0" @click="checkTicket(item)">准考证</button>
               <div v-else class="btnGrps">
                   <button @click="handleScores(item)">棋手成绩</button>
                   <button @click="handleCertificate(item)" class="bgBtn">证书申领</button>
@@ -121,8 +121,20 @@ export default {
 
       this.$router.push({name:'certificate',query:{examPlanId,examLevel,orderNo}})
     },
-    checkTicket(){
-        this.$router.push({name:'ticketsPdf'})
+    checkTicket(item){
+        console.log(item);
+        let dataObj = {
+          address:item.address,
+          examLevel:item.examLevel,
+          examLevels:item.examLevels,
+          examPlanId:item.examPlanId,
+          examTime:item.examTime,
+          orderNo:item.orderNo,
+          roomName:item.roomName,
+          state:item.state,
+          playerList:JSON.stringify(item.playerList)
+        }
+        this.$router.push({name:'ticketsPdf',query:dataObj})
     }
   },
   created(){
@@ -132,7 +144,7 @@ export default {
      this.$axios.get('/api/enroll/enroll_list',{params}).then( res =>{
         if(res.data.code ===0 ){
           this.list =res.data.data.info;
-          // console.log(res.data.data.info,'已报名list')
+          console.log(res.data.data.info,'已报名list')
           if(this.list === []){
             this.showNoApplyPage = true;
           }

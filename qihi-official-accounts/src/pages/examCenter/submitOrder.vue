@@ -316,10 +316,14 @@ export default {
             linkMan: that.linkManInfo,
             phone: that.linkManPhone,
             totalFee: that.totalPrice,
-            chessPlay: JSON.stringify(that.checkList)
+            chessPlay: JSON.stringify(that.checkList),
+            examRoomName:this.examRoomName,
+            examLevelTitle:this.examLevelTitle,
+            address:this.address,
+            time:this.time,
           };
           sessionStorage.setItem("chessPlayersInfo", JSON.stringify(dataObj));
-          this.$router.push({ name: "orderDetails" });
+          this.$router.push({ path: '/examCenter/examinationLevel/orderDetails',query:dataObj});
         } else if (res.data.code === 2) {
           alert(res.data.msg); //剩余座位数不足
         } else {

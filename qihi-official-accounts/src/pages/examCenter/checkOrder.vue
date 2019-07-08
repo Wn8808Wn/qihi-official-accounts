@@ -69,7 +69,7 @@
                         </p>
                         <p class="commonTagP">
                             <span>报名费用</span>
-                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{item.examFee}}</span>
+                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{unitPrice}}</span>
                         </p>
 
                     </div>
@@ -104,13 +104,14 @@ export default {
             examLevelTitle:'',
             examTime:'',
             address:'',
-            linkman:'',
+            linkMan:'',
             phone:'',
             orderNo:'',
-            orderId:null,
+            unitPrice:'',
+            orderId:'',
             createdTime:'',
             payOffTime:'',
-            totalPrice:'500',
+            totalPrice:'',
             playerslist:[
                 // {
                 //     name:'浓哥',
@@ -140,17 +141,20 @@ export default {
     },
     mounted(){
       //  缓存数据
-        this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName;
-        this.address = JSON.parse(sessionStorage.getItem('currentItem')).address;
-        this.examLevelTitle = sessionStorage.getItem('examLevelTitle')
-        this.examTime = sessionStorage.getItem('examTime')
-        this.linkman = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).linkMan;
-        this.totalPrice = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).totalFee;
-        this.phone = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).phone;
-        this.playerslist = JSON.parse(JSON.parse(sessionStorage.getItem('chessPlayersInfo')).chessPlay)
-        this.orderNo = JSON.parse(sessionStorage.getItem('orderNo'));
-        this.createdTime = JSON.parse(sessionStorage.getItem('createdTime'));
-        this.orderId = JSON.parse(sessionStorage.getItem('orderId'));
+        console.log(JSON.parse(sessionStorage.getItem('routerObj')),'000');
+        let routerObj = JSON.parse(sessionStorage.getItem('routerObj'));
+        this.examRoomName = routerObj.examRoomName;
+        this.address = routerObj.address;
+        this.examLevelTitle = routerObj.examLevelTitle;
+        this.examTime = routerObj.examTime;
+        this.linkMan = routerObj.linkMan;
+        this.totalPrice = routerObj.totalPrice;
+        this.phone = routerObj.phone;
+        this.playerslist = routerObj.playerslist;
+        this.orderNo = routerObj.orderNo;
+        this.createdTime = routerObj.createdTime;
+        this.unitPrice =routerObj.unitPrice;
+        this.orderId =routerObj.orderId;
         let params = {
             orderId:this.orderId,
             payFee:this.totalPrice,

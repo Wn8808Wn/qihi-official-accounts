@@ -14,6 +14,7 @@
                 <span class="firstSpan" v-if="item.orderType === 1">中国围棋协会段级位认证服务</span>
                 <span v-if="item.payStatus === 0">等待付款</span>
                 <span v-if="item.payStatus === 1" style="color:#666666;">已付款</span>
+                <span v-if="item.payStatus === 2" style="color:#666666;">已关闭</span>
               </p>
               <p class="commonTagP">
                 <span>考试级别</span>
@@ -32,7 +33,7 @@
                 <span>需付费用</span>
                 <span style="color:#ED1A23;">¥{{item.totalFee}}</span>
               </p>
-              <button v-if="item.payStatus === 0"  @click="handlePay(item.playerList[0])" class="bgBtn">去支付</button>
+              <button v-if="item.payStatus === 0"  @click="handlePay(item)" class="bgBtn">去支付</button>
              
               <div class="btnGrps">
                    <button v-if="item.payStatus === 1"  @click="refundBtn">退款</button>
@@ -134,9 +135,19 @@ export default {
       alert('功能开发中')
     },
     handlePay(item){
-      let examPlanId =   item.examPlanId;
-      let examLevel = item.examLevel;
-      this.$router.push({name:'certificate',query:{examPlanId,examLevel}})
+      let dataObj = {
+            examPlanId:item.playerList[0].examPlanId,
+            linkMan:item.playerList[0].linkman,
+            phone:item.playerList[0].phone,
+            totalFee:item.totalFee,
+            chessPlay: JSON.stringify(item.playerList),
+            examRoomName:item.roomName,
+            examLevelTitle:item.examLevels,
+            address:item.address,
+            time:item.examTime,
+      };
+      // console.log(dataObj,'00000')
+      this.$router.push({ path: '/examCenter/examinationLevel/orderDetails',query:dataObj});
     },
     checkTicket(){
         alert('功能开发中')

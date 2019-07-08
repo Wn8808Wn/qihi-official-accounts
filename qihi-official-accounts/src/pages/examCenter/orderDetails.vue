@@ -66,9 +66,8 @@
                         </p>
                         <p class="commonTagP">
                             <span>报名费用</span>
-                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{item.examFee}}</span>
+                            <span style="color:#ED1A23;"><i style="font-style:normal; color:#ED1A23;font-size:14px;">¥</i> {{unitPrice}}</span>
                         </p>
-
                     </div>
 
             </div>
@@ -122,6 +121,7 @@ export default {
             disabled:false,
             showCofirm:false,
             totalPrice:'',
+            unitPrice:'',
             playerslist:[
                 // {
                 //     name:'浓哥',
@@ -155,26 +155,51 @@ export default {
     mounted(){
         let t = new Date().getTime()+30*1000*60;
         this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
-        //缓存数据
-        this.examRoomName = JSON.parse(sessionStorage.getItem('currentItem')).examRoomName;
-        this.address = JSON.parse(sessionStorage.getItem('currentItem')).address;
-        this.examLevelTitle = sessionStorage.getItem('examLevelTitle')
-        this.examTime = sessionStorage.getItem('examTime')
-        this.linkman = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).linkMan;
-        this.totalPrice = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).totalFee;
-        this.phone = JSON.parse(sessionStorage.getItem('chessPlayersInfo')).phone;
-        this.playerslist = JSON.parse(JSON.parse(sessionStorage.getItem('chessPlayersInfo')).chessPlay)
+        let dataObj = this.$route.query;
+        // console.log(dataObj)
+         //路由传值
+        this.examRoomName = dataObj.examRoomName;
+        this.address = dataObj.address;
+        this.examLevelTitle = dataObj.examLevelTitle;
+        this.examTime = dataObj.time;
+        this.linkman = dataObj.linkMan;
+        this.totalPrice = dataObj.totalFee;
+        this.phone = dataObj.phone;
+        this.playerslist = JSON.parse(dataObj.chessPlay);
+        this.unitPrice  = dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length);
+    
         // 请求获取订单编号
-        let dataObj = JSON.parse(sessionStorage.getItem('chessPlayersInfo'))
-        this.$axios.post('/api/enter/signUpOrder',qs.stringify(dataObj)).then( (res) => {
+        let params = {
+            examPlanId: dataObj.examPlanId,
+            linkMan: dataObj.linkMan,
+            phone: dataObj.phone,
+            totalFee: dataObj.totalFee,
+            chessPlay: JSON.stringify(JSON.parse(dataObj.chessPlay))
+          };
+        this.$axios.post('/api/enter/signUpOrder',qs.stringify(params)).then( (res) => {
             console.log(res,'dasdad')
             if( res.data.code === 0){
                 let obj = res.data.data
                 this.orderNo = obj.orderNo;
                 this.createdTime = obj.createdTime;
-                sessionStorage.setItem('createdTime',JSON.stringify(obj.createdTime))
-                sessionStorage.setItem('orderNo',JSON.stringify(obj.orderNo))
-                sessionStorage.setItem('orderId',JSON.stringify(obj.id))
+                // sessionStorage.setItem('createdTime',JSON.stringify(obj.createdTime))
+                // sessionStorage.setItem('orderNo',JSON.stringify(obj.orderNo))
+                // sessionStorage.setItem('orderId',JSON.stringify(obj.id))
+                let routerObj ={
+                    examRoomName:dataObj.examRoomName,
+                    address:dataObj.address,
+                    examLevelTitle:dataObj.examLevelTitle,
+                    examTime:dataObj.time,
+                    linkMan:dataObj.linkMan,
+                    totalPrice:dataObj.totalFee,
+                    phone:dataObj.phone,
+                    playerslist:JSON.parse(dataObj.chessPlay),
+                    unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
+                    createdTime:obj.createdTime,
+                    orderNo:obj.orderNo,
+                    orderId:obj.id
+                }
+                sessionStorage.setItem('routerObj',JSON.stringify(routerObj))
             }      
         })
        
@@ -187,10 +212,9 @@ export default {
 @import "../../style/mixin.scss";
 .orderDetailsPage{
     width: 375px;
-    height: calc(100% - 120px);
+    height: 100%;
     background: $bg-color;
-    padding-bottom: 120px;
-    overflow: hidden;
+    padding-bottom: 52px;
     &>.waitPayTop{
         position: relative;
         height: 104px;
@@ -308,8 +332,10 @@ export default {
                     }
                     &>i{
                         color:rgba(32,105,229,1);
-                        font-size: 16px;
-                        margin-right: 2px;
+                        font-size: 14px;
+                        height: 14px;
+                        width: 14px;
+                        margin-right: 8px;
                     }
                 }
             }
