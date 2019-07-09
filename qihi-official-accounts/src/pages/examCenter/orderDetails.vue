@@ -25,7 +25,7 @@
                             </p>
                             <p>
                                 <span>考试时间</span>
-                                <span>{{examTime}}</span>
+                                <span>{{examTime.split(' ')[0].replace(/-/g,'.')}} {{formatDate(examTime, "hh:mm")}}-{{longTimeAgo(examTime,examTime.split(' ')[1],30)}}</span>
                             </p>
 
                         </div>
@@ -131,6 +131,13 @@ export default {
     };
   },
   methods: {
+    longTimeAgo(dateStr, timeStr, long) {
+        let s = dateStr.split(" ")[0] + " " + timeStr;
+        var new_time_str = s.replace(/-/g, "/");
+        var now = new Date(new_time_str);
+        var time = now.getTime() + 1000 * 60 * long;
+        return this.formatDate(time, "hh:mm");
+    },
     showTitle() {
       alert("请重新下单");
     },

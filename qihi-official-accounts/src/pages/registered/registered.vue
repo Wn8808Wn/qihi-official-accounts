@@ -25,7 +25,7 @@
               </p>
               <p class="commonTagP">
                 <span>考试时间</span>
-                <span>{{item.examTime}}</span>
+                <span>{{item.examTime.split(' ')[0].replace(/-/g,'.')}} {{formatDate(item.examTime, "hh:mm")}}-{{longTimeAgo(item.examTime,item.examTime.split(' ')[1],30)}}</span>
               </p>
               <p class="commonTagP">
                 <span>报名棋手</span>
@@ -64,7 +64,14 @@ export default {
     }
   },
   methods:{
-     handleScores(item){
+    longTimeAgo(dateStr, timeStr, long) {
+      let s = dateStr.split(" ")[0] + " " + timeStr;
+      var new_time_str = s.replace(/-/g, "/");
+      var now = new Date(new_time_str);
+      var time = now.getTime() + 1000 * 60 * long;
+      return this.formatDate(time, "hh:mm");
+    },
+    handleScores(item){
       let examPlanId = item.examPlanId;
       let orderNo = item.orderNo
       this.$router.push({name:'chessplayerScores',query:{examPlanId,orderNo}})

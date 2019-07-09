@@ -22,7 +22,7 @@
               </p>
               <p class="commonTagP">
                 <span>考试时间</span>
-                <span>{{item.examTime}}至</span>
+                <span>{{item.examTime.split(' ')[0].replace(/-/g,'.')}} {{formatDate(item.examTime, "hh:mm")}}-{{longTimeAgo(item.examTime,item.examTime.split(' ')[1],30)}}</span>
               </p>
               <p class="commonTagP">
                 <span>报名棋手</span>
@@ -62,35 +62,17 @@ export default {
   data() {
     return {
       index: 0,
-      list:[
-        // {
-        //   roomName:'龙岗区考场',
-        //   examStatus:0,
-        //   examLevels:'10级',
-        //   address:'黑龙江省哈尔滨市围棋协会二楼130',
-        //   examTime:'2019.02.18 9:00',
-        //   playerName:'网三',
-        //   price:1600,
-        //   state:0,
-        //   playerList:[{},{}]
-        // },
-        // {
-        //   roomName:'龙岗区考场',
-        //   examStatus:1,
-        //   examLevels:'10级',
-        //   address:'黑龙江省哈尔滨市围棋协会二楼130',
-        //   examTime:'2019.02.18 9:00',
-        //   playerName:'网三',
-        //   state:1,
-        //   registeredType:1,
-        //   price:1600,
-        //   playerList:[{},{}]
-        // },
-      ],
-
+      list:[],
     };
   },
   methods: {
+     longTimeAgo(dateStr, timeStr, long) {
+      let s = dateStr.split(" ")[0] + " " + timeStr;
+      var new_time_str = s.replace(/-/g, "/");
+      var now = new Date(new_time_str);
+      var time = now.getTime() + 1000 * 60 * long;
+      return this.formatDate(time, "hh:mm");
+    },
     getList(params){
         this.$axios.get('/api/order/orderAll_list',{params}).then( res =>{
         if(res.data.code ===0 ){
