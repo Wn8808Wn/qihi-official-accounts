@@ -190,20 +190,18 @@ export default {
   }
   .orderListWrapper{
      width: 100%;
-     height:100%;
+     height:612px;
+     overflow: hidden;
    } 
   &> .orderList {
     display: flex;
     width: 100%;
-    height: 618px;
-    overflow: hidden;
-    margin-top: 12px;
+    margin-top: 1px;
     flex-direction: column;
     align-items: center;
     &>.content{
       & > div {
       width: 327px;
-      // height: 186px;
       overflow: hidden;
       padding: 16px;
       margin-top: 12px;
@@ -211,7 +209,7 @@ export default {
       box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
       border-radius: 14px;
       &:nth-of-type(1){
-          margin-top:0;
+          margin-top:12px;
       }
       & > p:nth-of-type(1) {
           width:100%;
@@ -295,11 +293,11 @@ export default {
       display: flex;
       justify-content: center;
       font-size:12px;
-      font-family:PingFang-SC-Medium;
       font-weight:500;
       color:rgba(176,176,176,1);
       line-height:17px;
       margin-top:8px;
+      padding-bottom: 50px;
     }
   }
 
