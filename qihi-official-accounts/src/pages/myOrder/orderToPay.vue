@@ -3,7 +3,6 @@
         <div class="waitPayTop">
             <div class="waitPay">
                 <p><img src="../../assets/imgs/timer.svg"></p>
-                
                 <div>
                     <p>等待付款</p>
                     <p>座位已成功锁定,请在<clocker :time="time1" format='%M 分 %S 秒' @on-finish = "showTitle"></clocker>内完成支付</p>
@@ -94,6 +93,7 @@
 </template>
 
 <script>
+import Bscroll from "better-scroll";
 import qs from 'qs' // qs在安装axios后会自动安装，只需要组件里import一下即可
 import { Clocker, Cell, Group,XButton,Confirm,TransferDom} from 'vux'
 export default {
