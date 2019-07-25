@@ -21,6 +21,8 @@ fastclick.attach(document.body)
 // 引入axios 挂载
 import axios from 'axios'
 Vue.prototype.$axios = axios;
+// import axios from './config/axios'
+// Vue.prototype.$axios = axios
 
 //引入重置样式
 import '../static/style/reset.css'

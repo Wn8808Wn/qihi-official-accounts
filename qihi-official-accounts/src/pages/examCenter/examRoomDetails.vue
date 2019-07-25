@@ -35,16 +35,19 @@
             <div class="examTimeList">
                 <div v-for="(item,index) in timeList" :key="index">
                     <div class="examTimeListLeft">
-                        <p><i class="iconfont icon-shijian"></i><span>时间</span><span>{{item.examTime}}-{{longTimeAgo(examDateCommon,item.examTime,30)}}</span></p>
+                        <p><i class="iconfont icon-shijian"></i><span>时间</span><span>{{item.examTime}}-{{longTimeAgo(examDateCommon,item.examTime,parseInt(item.timeStr))}}</span></p>
                         <p><i class="iconfont icon-zuowei"></i><span>剩余</span><span>{{item.remainSeat}}</span></p>
                     </div>
                     <div class="examTimeListRight">
-                        <!-- <div v-if="item.remainSeat>0 && !stopTime(item.examDate,item.examTime)" @click="selectCurrentRadio(item)"> -->
-                        <div v-if="item.remainSeat>0" @click="selectCurrentRadio(item)">  
+                        <div v-if="item.remainSeat>0 && !stopTime(item.examDate,item.examTime)" @click="selectCurrentRadio(item)">
+                          <input  type="radio" name="examroom" :id='item.id'  >
+                          <label  :for='item.id'></label>
+                        </div>
+                        <!-- <div v-if="item.remainSeat>0" @click="selectCurrentRadio(item)">  
                             <input  type="radio" name="examroom" :id='item.id'  >
                             <label  :for='item.id'></label>
-                        </div>
-                        <!-- <span v-if="stopTime(item.examDate,item.examTime)">截止报名</span> -->
+                        </div> -->
+                        <span v-if="stopTime(item.examDate,item.examTime)">截止报名</span>
                         <span v-if="item.remainSeat <= 0 && !stopTime(item.examDate,item.examTime)">已约满</span>
                     </div>
                 </div>
@@ -122,7 +125,8 @@ export default {
       this.disabled = true;
       let params = {
         roomId: JSON.parse(sessionStorage.getItem("currentItem")).examRoomId,
-        examDate: item.examDate
+        examDate: item.examDate,
+        examLevelStr:this.examLevelTitle
       };
       this.$axios.get("/api/enter/get_examDetal", { params }).then(res => {
         if (res.data.code === 0) {
@@ -160,7 +164,9 @@ export default {
 
     //请求滑动的日期
     let params = {
-      roomId: JSON.parse(sessionStorage.getItem("currentItem")).examRoomId
+        roomId: JSON.parse(sessionStorage.getItem("currentItem")).examRoomId,
+        examLevel:this.examLevelId,
+        examLevelStr:this.examLevelTitle
     };
     this.$axios.get("/api/enter/get_calendar", { params }).then(res => {
       if (res.data.code === 0) {
@@ -351,7 +357,7 @@ export default {
                 border-radius: 50%;
                 margin-right: 8px;
                 background: url("../../assets/imgs/noSelect.svg");
-                background-size: cover;
+                background-size: 100% 100%;
                 content: "";
                 left: 0;
                 top: 0;
@@ -367,7 +373,7 @@ export default {
                 top: 0;
                 position: absolute;
                 background: url("../../assets/imgs/selected.svg");
-                background-size: cover;
+                background-size: 100% 100%;
               }
             }
             & > span {

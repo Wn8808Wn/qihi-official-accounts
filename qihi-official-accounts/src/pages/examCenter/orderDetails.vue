@@ -25,7 +25,7 @@
                             </p>
                             <p>
                                 <span>考试时间</span>
-                                <span>{{examTime.split(' ')[0].replace(/-/g,'.')}} {{formatDate(examTime, "hh:mm")}}-{{longTimeAgo(examTime,examTime.split(' ')[1],30)}}</span>
+                                <span>{{examTime.split(' ')[0].replace(/-/g,'.')}} {{examTime.split(' ')[1]}}</span>
                             </p>
 
                         </div>
@@ -163,6 +163,7 @@ export default {
     this.address = dataObj.address;
     this.examLevelTitle = dataObj.examLevelTitle;
     this.examTime = dataObj.time;
+    console.log(this.examTime,'0000')
     this.linkman = dataObj.linkMan;
     this.totalPrice = dataObj.totalFee;
     this.phone = dataObj.phone;
@@ -193,6 +194,7 @@ export default {
         examPlanId: dataObj.examPlanId,
         linkMan: dataObj.linkMan,
         phone: dataObj.phone,
+        examLeve:sessionStorage.getItem('examLevelId'),
         totalFee: dataObj.totalFee,
         chessPlay: JSON.stringify(JSON.parse(dataObj.chessPlay))
       };
@@ -211,8 +213,7 @@ export default {
               totalPrice: dataObj.totalFee,
               phone: dataObj.phone,
               playerslist: JSON.parse(dataObj.chessPlay),
-              unitPrice:
-                dataObj.totalFee / JSON.parse(dataObj.chessPlay).length,
+              unitPrice:dataObj.totalFee / JSON.parse(dataObj.chessPlay).length,
               createdTime: obj.createdTime,
               orderNo: obj.orderNo,
               orderId: obj.id

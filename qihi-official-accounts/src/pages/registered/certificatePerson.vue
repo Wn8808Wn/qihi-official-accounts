@@ -105,7 +105,7 @@ export default {
   },
   created(){
     let obj = JSON.parse(this.$route.query.item);
-    console.log(obj,'123');
+    // console.log(obj,'123');
     let params = {
         examPlanId:obj.examPlanId,
         examLevel:obj.examlevel,
@@ -114,7 +114,7 @@ export default {
     }
     this.$axios.get('/api/enroll/certificateApply_list',{params}).then( res => {
         if( res.data.code === 0){
-          console.log(res.data.data,'2222')
+          // console.log(res.data.data,'2222')
           this.list = res.data.data;
         }
     })

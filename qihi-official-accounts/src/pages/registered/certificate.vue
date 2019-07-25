@@ -136,7 +136,7 @@ export default {
       }
     },
     hanleApply(){
-      console.log(this.checkList,'list1111')
+      // console.log(this.checkList,'list1111')
       this.$router.push({name:'certificateDetails',query:{"checkList":JSON.stringify(this.checkList)}})
     }
   },
@@ -353,7 +353,7 @@ export default {
           border-radius: 50%;
           margin-right: 8px;
           background: url("../../assets/imgs/noSelect.svg");
-          background-size: cover;
+          background-size: 100% 100%;
           content: "";
           left: 0;
           top: 0;
@@ -369,7 +369,7 @@ export default {
           top: 0;
           position: absolute;
           background: url("../../assets/imgs/selected.svg");
-          background-size: cover;
+          background-size: 100% 100%;
         }
   }
 //弹窗样式

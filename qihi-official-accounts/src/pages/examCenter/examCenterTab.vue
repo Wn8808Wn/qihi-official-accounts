@@ -176,16 +176,7 @@ export default {
             historyAreaList: [],
             examAreaList: [],
             examLevelList: [],
-            examRoomList: [
-              // {
-              //   examRoomId: 1,
-              //   examRoomName: "龙岗区考场",
-              //   examStatus: 0,
-              //   address: "黑龙江省哈尔滨市围棋协会二楼130",
-              //   examBeginDate: "2019.02.18",
-              //   examEndDate:"2019.03.04"
-              // },
-            ]
+            examRoomList: [],
         };
     },
     methods: {
@@ -236,7 +227,8 @@ export default {
             )[0].id;
             let params = {
               provinceCode: defualtProvince,
-              examLevel: defualtLevel
+              examLevel: defualtLevel,
+              examLevalStr:this.examLevelTitle
             };
             this.getRoomList(params);
           });
@@ -245,7 +237,7 @@ export default {
       //获取考试地区和级别列表
       getList() {
         return this.$axios.get("/api/enter/get_examArea").then(res => {
-          // console.log(res, "获取列表");
+          console.log(res, "获取列表");
           if (res.data.code === 0) {
             this.examAreaList = res.data.data.areaList;
             this.examLevelList = res.data.data.levelType;
@@ -258,6 +250,7 @@ export default {
             this.examRoomList = [];
             if (res.data.code === 0) {
                 this.examRoomList = res.data.data;
+                console.log(res.data.data,'99')
             } else {
                 console.log(res.data.msg);
             }
@@ -295,7 +288,8 @@ export default {
         this.examAreaTitle = row.areaName;
         let params = {
           provinceCode: row.id,
-          examLevel: this.examLevelList.filter(e => e.levelName === this.examLevelTitle)[0].id
+          examLevel: this.examLevelList.filter(e => e.levelName === this.examLevelTitle)[0].id,
+          examLevalStr:this.examLevelTitle
         };
         setTimeout(() => {
           this.showExamArea = false;
@@ -304,12 +298,14 @@ export default {
         }, 200);
       },
       selectCurrentProvince(row, index) {
+        console.log('11')
         this.setHistoryItems(row);
         this.examAreaTitle = row.areaName;
         this.currentProvinceID = index;
         let params = {
           provinceCode: row.id,
-          examLevel: this.examLevelList.filter(e => e.levelName === this.examLevelTitle)[0].id
+          examLevel: this.examLevelList.filter(e => e.levelName === this.examLevelTitle)[0].id,
+          examLevalStr:this.examLevelTitle
         };
         setTimeout(() => {
           this.showExamArea = false;
@@ -322,7 +318,8 @@ export default {
         this.currentLevelID = index;
         let params = {
           examLevel: row.id,
-          provinceCode: this.examAreaList.filter(e => e.areaName === this.examAreaTitle)[0].id
+          provinceCode: this.examAreaList.filter(e => e.areaName === this.examAreaTitle)[0].id,
+          examLevalStr:this.examLevelTitle
         };
         setTimeout(() => {
           this.showExamLevel = false;

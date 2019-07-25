@@ -24,7 +24,7 @@
                                 </p>
                                 <p>
                                     <span>考试时间</span>
-                                    <span>{{examTime.split(' ')[0].replace(/-/g,'.')}} {{formatDate(examTime, "hh:mm")}}-{{longTimeAgo(examTime,examTime.split(' ')[1],30)}}</span>
+                                    <span>{{examTime.split(' ')[0].replace(/-/g,'.')}} {{examTime.split(' ')[1]}}</span>
                                 </p>
 
                             </div>

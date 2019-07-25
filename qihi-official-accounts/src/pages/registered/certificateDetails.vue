@@ -187,7 +187,7 @@ export default {
         phone:this.linkManPhone,
         totalFee:this.totalPrice,
         chessPlay:JSON.stringify(this.certificateList),
-        examLevel:this.examlevel,
+        examLeve:this.examlevel,
       }
       console.log(params,'ppppppp')
       this.$router.push({name:'certificatePay',query:{'params':JSON.stringify(params)}})
@@ -451,7 +451,7 @@ export default {
           border-radius: 50%;
           margin-right: 8px;
           background: url("../../assets/imgs/noSelect.svg");
-          background-size: cover;
+          background-size: 100% 100%;
           content: "";
           left: 0;
           top: 0;
@@ -467,7 +467,7 @@ export default {
           top: 0;
           position: absolute;
           background: url("../../assets/imgs/selected.svg");
-          background-size: cover;
+          background-size: 100% 100%;
         }
       }
     }

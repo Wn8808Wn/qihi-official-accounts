@@ -163,7 +163,7 @@ export default {
           height: 20px;
           border-radius: 50%;
           background: url("../../assets/imgs/noSelect.svg");
-          background-size: cover;
+          background-size: 100% 100%;
           content: "";
           left: 16px;
           top: 16px;
@@ -178,7 +178,7 @@ export default {
           top: 16px;
           position: absolute;
           background: url("../../assets/imgs/selected.svg");
-          background-size: cover;
+          background-size: 100% 100%;
         }
       }
     }
