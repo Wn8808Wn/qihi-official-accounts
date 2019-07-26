@@ -1,11 +1,11 @@
 <template>
     <div class="ticketsPdfPage">
         <div class="ticketBox ticketWarpper" ref="ticketWarpper">
-            <div class="titleTop"><span>报考级别</span><span>10级</span></div>
+            <div class="titleTop"><span>报考级别</span><span>{{examLevels}}</span></div>
             <ul class="content">
                 <li v-for="(item,index) in ticketList" :key="index">
-                    <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentTicket(item,index)">
-                    <label  :for='item.id'></label>
+                    <input type="checkbox" :id='item.chessPlayerId' :value="item" v-model="checkList" @change="selectCurrentTicket(item,index)">
+                    <label  :for='item.chessPlayerId'></label>
                     <span>{{item.playerName}}的准考证.pdf</span>
                     <button @click="downTickets(item)">打开</button>
                 </li>    
@@ -13,7 +13,7 @@
         </div>
         <div class="pageBottom">
             <p class="checkBtn">
-               <input type="checkbox" id="selectAll" v-model="checkListAll" @change="selectCurrentAll">
+               <input type="checkbox" id="selectAll"  v-model="allChoose" @click="selectCurrentAll">
                <label class="lab" for='selectAll'></label>
                <span>全选</span>
             </p>
@@ -31,57 +31,72 @@ export default {
     return {
       ticketList: [],
       checkList: [],
-      checkListAll:[]
+      allChoose:false,
+      examLevels:'',
+      htmlTitle:''
     };
   },
   methods: {
-    selectCurrentTicket() {
-        
-    },
-    selectCurrentAll(){
-
-    },
-    downTickets(){
-      alert('功能开发中')
-    },
-    emailBtn(){
-      alert('功能开发中')
-    },
-    initScrollBox(){
-        if(this.ticketList!== undefined && this.ticketList!== null && this.ticketList.length>0 ){
-            let totalHeight = 52*this.ticketList.lenght;
-            console.log(totalHeight,'00')
-            if(totalHeight <= 539){
-                this.$refs.ticketWarpper.style.heigth = totalHeight+'px';
-                console.log(this.$refs.ticketWarpper.style.heigth,'123')
-                this.$nextTick(()=>{
-                    if (!this.scroll) {
-                        this.scroll=new Bscroll(this.$refs.ticketWarpper, {
-                        click:true,
-                        });
-                    }else{
-                        this.scroll.refresh()
-                    }
-                });
-            }else{
-                this.$refs.ticketWarpper.style.heigth = '539px';
-                console.log(this.$refs.ticketWarpper.style.heigth,'321')
-                this.$nextTick(()=>{
-                if (!this.scroll) {
-                    this.scroll=new Bscroll(this.$refs.ticketWarpper, {
-                    click:true,
-                    });
-                }else{
-                    this.scroll.refresh()
-                }
-                });
-            }
-        }
-    }
+      selectCurrentTicket(item,index) {
+          if(this.checkList.length === this.ticketList.length){
+              this.allChoose = true;
+          }else{
+            this.allChoose = false;
+          }
+      },
+      selectCurrentAll(){
+          this.allChoose = !this.allChoose;
+          if(this.allChoose){
+            this.checkList = this.ticketList;
+            
+          }else{
+            this.checkList =[];
+          }
+      },
+      downTickets(item){
+        this.htmlTitle = item.playerName+'的准考证';
+         alert('功能开发中')
+        // this.getPdf('#pdfDom');
+      },
+      emailBtn(){
+        alert('功能开发中')
+      },
+      initScrollBox(){
+          if(this.ticketList!== undefined && this.ticketList!== null && this.ticketList.length>0 ){
+              let totalHeight = 52*this.ticketList.lenght;
+              console.log(totalHeight,'00')
+              if(totalHeight <= 539){
+                  this.$refs.ticketWarpper.style.heigth = totalHeight+'px';
+                  console.log(this.$refs.ticketWarpper.style.heigth,'123')
+                  this.$nextTick(()=>{
+                      if (!this.scroll) {
+                          this.scroll=new Bscroll(this.$refs.ticketWarpper, {
+                          click:true,
+                          });
+                      }else{
+                          this.scroll.refresh()
+                      }
+                  });
+              }else{
+                  this.$refs.ticketWarpper.style.heigth = '539px';
+                  console.log(this.$refs.ticketWarpper.style.heigth,'321')
+                  this.$nextTick(()=>{
+                  if (!this.scroll) {
+                      this.scroll=new Bscroll(this.$refs.ticketWarpper, {
+                      click:true,
+                      });
+                  }else{
+                      this.scroll.refresh()
+                  }
+                  });
+              }
+          }
+      }
   },
   created(){
-    console.log(this.$route.query,'111')
+    this.examLevels = this.$route.query.examLevels;
     this.ticketList = JSON.parse(this.$route.query.playerList);
+    // console.log(this.ticketList,'this.ticketList')
     this.$nextTick(() => {
         this.initScrollBox();
     });

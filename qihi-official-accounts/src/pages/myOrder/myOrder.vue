@@ -244,7 +244,8 @@ export default {
             height:28px;
             border-radius:14px;
             padding: 0;
-            border:1px solid rgba(32,105,229,1);
+            // border:1px solid rgba(32,105,229,1);
+            border:none;
             font-size: 14px;
             margin-top: 16px;
             float: right;

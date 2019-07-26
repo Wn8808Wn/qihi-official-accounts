@@ -7,6 +7,10 @@ import router from './router'
 //引入vuex 
 import store from './store/index'
 
+//下载准考证插件
+import htmlToPdf from "./utils/htmlToPdf";
+Vue.use(htmlToPdf);
+
 // 引入public.js
 import {format,formatDate} from './utils/public'
 Vue.prototype.format = format;

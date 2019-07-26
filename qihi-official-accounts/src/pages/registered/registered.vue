@@ -84,7 +84,7 @@ export default {
       this.$router.push({name:'certificate',query:{examPlanId,examLevel,orderNo}})
     },
     checkTicket(item){
-        console.log(item);
+        console.log(item,'ttt');
         let dataObj = {
           address:item.address,
           examLevel:item.examLevel,
@@ -261,6 +261,7 @@ export default {
             .bgBtn{
               margin-right: 8px;
               color: #ffffff;
+              border:none;
               background: $bg-blue;
             }
         }
