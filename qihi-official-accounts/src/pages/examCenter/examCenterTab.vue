@@ -351,8 +351,12 @@ export default {
           sessionStorage.setItem("examLevelList",JSON.stringify(res.data.data.levelType));
         }
       });
-
-      this.getLocation();
+      if(sessionStorage.getItem('firstLogin')){
+         
+      }else{
+        sessionStorage.setItem('firstLogin',true)
+        this.getLocation();
+      }
       if (window.localStorage.getItem("historyItem") !== null) {
         this.historyAreaList = JSON.parse(window.localStorage.getItem("historyItem"))
       }

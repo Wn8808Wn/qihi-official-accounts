@@ -19,7 +19,7 @@
                 <p>考试时间</p>
             </div>
             <div class="examTimeInfoContent">
-            <div class="swiperBox">
+            <!-- <div class="swiperBox">
                 <swiper :options="swiperOption">
                     <swiper-slide v-for="(item, index) in swiperSlides" :key="index" @click.native="selectDate(item,index)" :class="{'activeSlides':index === currentIndex}">
                         <div class="dateBox">   
@@ -30,7 +30,23 @@
                         </div>
                     </swiper-slide>
                 </swiper>
+            </div> -->
+            <div class="wrapper" ref="wrapper">
+                <ul class="content" ref="personTab">
+                    <li v-for="(item, index) in swiperSlides" :key="index" @click="selectDate(item,index)" :class="{'activeSlides':index === currentIndex}">
+                        <div class="dateBox">   
+                            <span class="firstSpan">{{format(item.examDate.replace(/-/g,'/'))}}</span>
+                            <span>
+                                {{format(new Date()) === format(item.examDate.replace(/-/g,'/'))?'今天':dayList[new Date(item.examDate.replace(/-/g,'/')).getDay()]}}
+                            </span>
+                        </div>
+                    </li>
+                </ul>
             </div>
+
+
+
+
             <p style="margin-top:8px;margin-left:16px;font-size:14px;font-weight:500;color:#FF9201;line-height:20px;">可预定两周内的考试，考试前30分钟截止报名</p>
             <div class="examTimeList">
                 <div v-for="(item,index) in timeList" :key="index">
@@ -67,6 +83,7 @@
 
 <script>
 // require styles
+import BScroll from 'better-scroll';
 import "../../../node_modules/vue-awesome-swiper/node_modules/swiper/dist/css/swiper.css";
 import { swiper, swiperSlide } from "vue-awesome-swiper";
 export default {
@@ -146,9 +163,29 @@ export default {
       // console.log(this.examTime,'this.examTime')
       sessionStorage.setItem("price", this.price);
       this.$router.push({ name: "submitOrder" });
+    },
+    personScroll() {
+      // 默认有六个li子元素，每个子元素的宽度为50px
+      let width = 8 * 50;
+      this.$refs.personTab.style.width = width + "px";
+      // this.$nextTick 是一个异步函数，为了确保 DOM 已经渲染
+      this.$nextTick(() => {
+        if (!this.scroll) {
+          this.scroll = new BScroll(this.$refs.wrapper, {
+            startX: 0,
+            click: true,
+            scrollX: true,
+            // 忽略竖直方向的滚动
+            scrollY: false,
+            eventPassthrough: "vertical"
+          });
+        } else {
+          this.scroll.refresh();
+        }
+      });
     }
   },
-  mounted() {
+  created() {
     //路由方式
     // this.examLevelId = this.$route.query.examLevelId;
     // this.examLevelTitle = this.$route.query.level;
@@ -161,7 +198,6 @@ export default {
       sessionStorage.getItem("currentItem")
     ).examRoomName;
     this.address = JSON.parse(sessionStorage.getItem("currentItem")).address;
-
     //请求滑动的日期
     let params = {
         roomId: JSON.parse(sessionStorage.getItem("currentItem")).examRoomId,
@@ -171,6 +207,9 @@ export default {
     this.$axios.get("/api/enter/get_calendar", { params }).then(res => {
       if (res.data.code === 0) {
         this.swiperSlides = res.data.data;
+        this.$nextTick(() => {
+            this.personScroll();
+        })
       }
     });
     //请求报考价格
@@ -184,7 +223,6 @@ export default {
   }
 };
 </script>
-
 
 <style lang='scss' scoped>
 @import "../../style/mixin.scss";
@@ -261,51 +299,52 @@ export default {
       flex: 1;
       width: 100%;
       background: #ffffff;
-      & > .swiperBox {
+      &>.wrapper{
         margin-top: 11px;
-        width: 343px;
+        width: 359px;
         height: 50px;
-        padding: 6px 0 8px 16px;
-        & > .swiper-container {
-          min-width: 51px;
-          height: 51px;
-          // background: black;
-          & > .swiper-wrapper {
-            width: 50px;
+        overflow: hidden;
+        // background: salmon;
+        .content{
             height: 50px;
-            margin: 0;
-            & > .swiper-slide {
-              width: 50px !important;
-              height: 50px !important;
-              background: rgba(255, 255, 255, 1);
-              border-radius: 18px;
-              margin-right: 4px;
+            padding-left: 16px;
+            // background: seagreen;
+            &>li{
+                width: 48px;
+                height: 48px;
+                background: rgba(255, 255, 255, 1);
+                border-radius: 18px;
+                border: 1px solid #fff;
+                margin-right: 4px;
+                float: left;
+                .dateBox {
+                    text-align: center;
+                    span {
+                        font-size: 12px;
+                        font-weight: 500;
+                        color: rgba(51, 51, 51, 1);
+                        line-height: 17px;
+                    }
+                    .firstSpan {
+                        display: block;
+                        font-size: 14px;
+                        font-weight: 500;
+                        margin: 8px 0 1px;
+                        color: rgba(51, 51, 51, 1);
+                        line-height: 20px;
+                    }
+                  }
             }
             .activeSlides {
-              width: 48px !important;
-              height: 48px !important;
               border: 1px solid rgba(32, 105, 229, 1);
             }
-            .dateBox {
-              text-align: center;
-              span {
-                font-size: 12px;
-                font-weight: 500;
-                color: rgba(51, 51, 51, 1);
-                line-height: 17px;
-              }
-              .firstSpan {
-                display: block;
-                font-size: 14px;
-                font-weight: 500;
-                margin: 8px 0 1px;
-                color: rgba(51, 51, 51, 1);
-                line-height: 20px;
-              }
-            }
-          }
         }
       }
+
+
+
+
+
       .examTimeList {
         width: 327px;
         margin-top: 12px;
