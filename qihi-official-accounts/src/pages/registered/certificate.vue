@@ -144,7 +144,6 @@ export default {
     let examPlanId = this.$route.query.examPlanId;
     let examLevel = this.$route.query.examLevel;
     let orderNo = this.$route.query.orderNo;
-    // console.log(examPlanId,'adsasd')
     let params = {
       examPlanId,
       examLevel,

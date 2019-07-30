@@ -351,6 +351,8 @@ export default {
           sessionStorage.setItem("examLevelList",JSON.stringify(res.data.data.levelType));
         }
       });
+
+      // 判断首次登陆还是返回到这个页面 处理频繁请求地理定位问题
       if(sessionStorage.getItem('firstLogin')){
          
       }else{

@@ -24,7 +24,7 @@
                     <span>{{item.leveNames}}</span>
                   </p>
                   <div class="btnGrps" v-if="item.examResult === 0 && item.certificationType === 0">
-                      <button @click="handleScores">对弈报告</button>
+                      <button @click="handleScores" v-if="false">对弈报告</button>
                       <button class="bgBtn" @click="handleApplyCard(item)">证书申领</button>
                   </div>   
                   <div class="btnGrps" v-if="item.examResult === 0 && item.certificationType === 1 ">
