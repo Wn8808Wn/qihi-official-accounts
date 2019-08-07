@@ -14,7 +14,7 @@
               <span>跨级别考试申请</span>
             </div>
         </div>
-          <!-- 点击考试须知弹层 -->
+        <!-- 点击考试须知弹层 -->
         <div v-transfer-dom>
             <popup v-model="showPopup" @on-hide="log('hide')" @on-show="log('show')">
                 <div class="popupPage">
@@ -177,6 +177,7 @@ export default {
             examAreaList: [],
             examLevelList: [],
             examRoomList: [],
+            city:''
         };
     },
     methods: {
@@ -210,47 +211,46 @@ export default {
               }
           }
       },
-      //获取地理定位
-      getLocation() {
-        let geolocation = location.initMap("map-container"); //定位
-        AMap.event.addListener(geolocation, "complete", result => {
-          this.examAreaTitle = result.addressComponent.province;
-          // console.log("定位结果为" + result.addressComponent.province);
-          alert("定位结果为" + result.addressComponent.province);
-          this.getList().then(() => {
-            // console.log('123')
-            let defualtProvince = this.examAreaList.filter(
-              e => e.areaName == this.examAreaTitle
-            )[0].id;
-            let defualtLevel = this.examLevelList.filter(
-              e => e.levelName == this.examLevelTitle
-            )[0].id;
-            let params = {
-              provinceCode: defualtProvince,
-              examLevel: defualtLevel,
-              examLevalStr:this.examLevelTitle
-            };
-            this.getRoomList(params);
-          });
-        });
-      },
       //获取考试地区和级别列表
-      getList() {
-        return this.$axios.get("/api/enter/get_examArea").then(res => {
-          console.log(res, "获取列表");
-          if (res.data.code === 0) {
-            this.examAreaList = res.data.data.areaList;
-            this.examLevelList = res.data.data.levelType;
-            sessionStorage.setItem("examLevelList",JSON.stringify(res.data.data.levelType));
-          }
-        });
+      getLevelAreaList() {
+          this.$axios.get("/api/enter/get_examArea").then(res => {
+              if (res.data.code === 0) {
+                  this.examAreaList = res.data.data.areaList;
+                  this.examLevelList = res.data.data.levelType;
+                  if(this.examAreaList && this.examLevelList){
+                      let defualtProvince = this.examAreaList.filter(e => e.areaName == this.examAreaTitle)[0].id;
+                      let defualtLevel = this.examLevelList.filter(e => e.levelName == this.examLevelTitle)[0].id;
+                      let params = {
+                          provinceCode: defualtProvince,
+                          examLevel: defualtLevel,
+                          examLevalStr:this.examLevelTitle
+                      };
+                      this.getRoomList(params);
+                  }
+                  this.$nextTick(() => {
+                      this.scroll = new Bscroll(this.$refs.areaWrapper, { click: true });
+                  });
+                  this.$nextTick(() => {
+                      this.scroll = new Bscroll(this.$refs.levelWrapper, { click: true });
+                  });
+                  sessionStorage.setItem("examLevelList",JSON.stringify(res.data.data.levelType));
+              }
+          });
+      },
+      //获取地理定位
+      getLocation(){
+          let geolocation = location.initMap("iCenter"); //定位
+          AMap.event.addListener(geolocation, "complete", result => {
+              this.examAreaTitle = result.addressComponent.province;
+              alert("定位结果为" + result.addressComponent.province);
+       });
       },
       getRoomList(params) {
+         this.examRoomList = [];
         return this.$axios.get("/api/enter/get_examRoom", { params }).then(res => {
-            this.examRoomList = [];
             if (res.data.code === 0) {
                 this.examRoomList = res.data.data;
-                console.log(res.data.data,'99')
+                // console.log(res.data.data,'99')
             } else {
                 console.log(res.data.msg);
             }
@@ -332,33 +332,18 @@ export default {
         sessionStorage.setItem("examLevelTitle", this.examLevelTitle);
         sessionStorage.setItem("currentItem", JSON.stringify(item));
         sessionStorage.setItem("examLevelId", examLevelId);
-        //路由传值
-        // this.$router.push({name:'examRoomDetails',query:{currentItem:JSON.stringify(item),level:this.examLevelTitle,examLevelId}})
         this.$router.push({ name: "examRoomDetails" });
       }
     },
-    created() {
-      this.$axios.get("/api/enter/get_examArea").then(res => {
-        if (res.data.code === 0) {
-          this.examAreaList = res.data.data.areaList;
-          this.examLevelList = res.data.data.levelType;
-          this.$nextTick(() => {
-            this.scroll = new Bscroll(this.$refs.areaWrapper, { click: true });
-          });
-          this.$nextTick(() => {
-            this.scroll = new Bscroll(this.$refs.levelWrapper, { click: true });
-          });
-          sessionStorage.setItem("examLevelList",JSON.stringify(res.data.data.levelType));
-        }
-      });
-
-      // 判断首次登陆还是返回到这个页面 处理频繁请求地理定位问题
-      if(sessionStorage.getItem('firstLogin')){
-         
-      }else{
-        sessionStorage.setItem('firstLogin',true)
-        this.getLocation();
-      }
+    created(){
+      this.getLevelAreaList()
+      // // 判断首次登陆还是返回到这个页面 处理频繁请求地理定位问题
+      // if(sessionStorage.getItem('firstLogin')){
+      //   this.getLocation();
+      // }else{
+      //   sessionStorage.setItem('firstLogin',true)
+      //   this.getLocation();
+      // }
       if (window.localStorage.getItem("historyItem") !== null) {
         this.historyAreaList = JSON.parse(window.localStorage.getItem("historyItem"))
       }

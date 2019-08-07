@@ -8,7 +8,7 @@
     
         <div class="orderList orderListWrapper" ref="orderListWrapper">
             <ul class="content">
-            <div v-for="(item,index) in list" :key="index" @click="goDetails(item)">
+            <div v-for="(item,index) in list" :key="index" @click.stop.prevent="goDetails(item)">
               <p>
                 <span class="firstSpan" v-if="item.orderType === 0">中国围棋协会段级位考试</span>
                 <span class="firstSpan" v-if="item.orderType === 1">中国围棋协会段级位认证服务</span>
@@ -22,7 +22,7 @@
               </p>
               <p class="commonTagP">
                 <span>考试时间</span>
-                <span>{{item.examTime.split(' ')[0].replace(/-/g,'.')}} {{formatDate(item.examTime, "hh:mm")}}-{{longTimeAgo(item.examTime,item.examTime.split(' ')[1],30)}}</span>
+                <span>{{item.examTime}}</span>
               </p>
               <p class="commonTagP">
                 <span>报名棋手</span>
@@ -68,25 +68,32 @@ export default {
     };
   },
   methods: {
+      longTimeAgo(dateStr, timeStr, long) {
+        let s = dateStr.split(" ")[0] + " " + timeStr;
+        var new_time_str = s.replace(/-/g, "/");
+        var now = new Date(new_time_str);
+        var time = now.getTime() + 1000 * 60 * long;
+        return this.formatDate(time, "hh:mm");
+      },
       goDetails(item){
-        console.log(item)
         if(item.payStatus === 0 && item.orderType === 0){
             let dataObj = {
               examPlanId:item.playerList[0].examPlanId,
               linkMan:item.playerList[0].linkman,
               phone:item.playerList[0].phone,
-              totalFee:item.totalFee,
-              chessPlay: JSON.stringify(item.playerList),
+              totalPrice:item.totalFee,
+              playerslist:item.playerList,
               examRoomName:item.roomName,
               examLevelTitle:item.examLevels,
               address:item.address,
-              time:item.examTime,
-              orderNo:item.orderNo?item.orderNo:'',
-              createdTime:item.createdTime?item.createdTime:'',
-              orderId:item.orderId?item.orderId:''
+              examTime:item.examTime,
+              orderNo:item.orderNo,
+              createdTime:item.createdTime,
+              orderId:item.orderId,
+              unitPrice:item.playerList[0].examFee
             };
-            // console.log(dataObj,'0')
-            this.$router.push({ name:'orderDetails',query:dataObj});
+            sessionStorage.setItem('routerObj',JSON.stringify(dataObj))
+            this.$router.push({ name:'orderDetails'});
         }
         if(item.payStatus === 0 && item.orderType === 1){
             let params = {
@@ -94,18 +101,17 @@ export default {
                 linkMan:item.playerList[0].linkman,
                 phone:item.playerList[0].phone,
                 totalFee:item.totalFee,
-                chessPlay:JSON.stringify(item.playerList),
+                certificateList:item.playerList,
                 examLevel:item.examLevel,
-                orderNo:item.orderNo?item.orderNo:'',
-                createdTime:item.createdTime?item.createdTime:'',
-                orderId:item.orderId?item.orderId:''
+                orderNo:item.orderNo,
+                createdTime:item.createdTime,
+                orderId:item.orderId
             }
-            // console.log(params,'uuuu')
-            this.$router.push({name:'certificatePay',query:{'params':JSON.stringify(params)}})
-        
+            sessionStorage.setItem('detailsObj',JSON.stringify(params))
+            this.$router.push({name:'certificatePay'})
         }
         if(item.payStatus === 1 && item.orderType === 0){
-            // alert('已支付考试')
+            console.log(item,'已支付考试')
             let routerObj = {
                 examRoomName: item.roomName,
                 address: item.address,
@@ -118,64 +124,64 @@ export default {
                 unitPrice: item.totalFee/(item.playerList.length),
                 createdTime: item.createdTime,
                 orderNo: item.orderNo,
-                orderId: item.orderId
+                orderId: item.orderId,
+                timeStr:item.timeStr
             };
+            sessionStorage.setItem('payOffTime',JSON.stringify(item.playerList[0].payTime))
             sessionStorage.setItem("routerObj", JSON.stringify(routerObj));
             this.$router.push({name:'checkOrder'})
         }
         
         if(item.payStatus === 1 && item.orderType === 1){
-            alert('已支付认证')
-            let routerObj ={
+            console.log(item)
+            let detailsObj ={
                 examLevelTitle:item.examLevels,
                 totalPrice:item.totalFee,
-                playerslist:item.playerList,
+                certificateList:item.playerList,
                 unitPrice:item.totalFee/(item.playerList.length),
                 createdTime:item.createdTime,
                 orderNo:item.orderNo,
                 orderId:item.orderId
             }
-            sessionStorage.setItem('routerObj',JSON.stringify(routerObj)) 
+            sessionStorage.setItem('certificatePayOffTime',item.playerList[0].payTime);
+            sessionStorage.setItem('detailsObj',JSON.stringify(detailsObj)) 
             this.$router.push({name:'checkCertificateOrder'})
         }
       },
-      longTimeAgo(dateStr, timeStr, long) {
-        let s = dateStr.split(" ")[0] + " " + timeStr;
-        var new_time_str = s.replace(/-/g, "/");
-        var now = new Date(new_time_str);
-        var time = now.getTime() + 1000 * 60 * long;
-        return this.formatDate(time, "hh:mm");
-      },
       getList(params){
           this.$axios.get('/api/order/orderAll_list',{params}).then( res =>{
-          if(res.data.code ===0 ){
-            this.list =res.data.data.info;
-            // console.log(res.data.data.info,'DNF')
-          }
-          this.$nextTick(() => {
-            this.scroll = new Bscroll(this.$refs.orderListWrapper, {click:true})
+              this.list =[];
+              if(res.data.code ===0 ){
+                  this.list =res.data.data.info;
+                  this.list.map( item =>{
+                    item.examTime = item.examTime.split(' ')[0].replace(/-/g,'.') +' '+this.formatDate(item.examTime, "hh:mm")+'-'+this.longTimeAgo(item.examTime,item.examTime.split(' ')[1],parseInt(item.timeStr))
+                  })
+                  // console.log(res.data.data.info,'订单列表')
+                  this.$nextTick(() => {
+                      this.scroll = new Bscroll(this.$refs.orderListWrapper, {click:true})
+                  })
+              }
           })
-      })
       },
       selectedCurrent(index) {
         this.index = index;
-        if(index === 0){
+        if(index == 0){
           let params = {
-              userId:1,
+              userId:1,   //全部
           }
           this.getList(params);
         }
-        if(index === 1){
+        if(index == 1){
           let params = {
               userId:1,
               payStatus:0   //0 代付款
           }
           this.getList(params);
         }
-        if(index === 2){
+        if(index == 2){
           let params = {
               userId:1,
-              payStatus:1   //0 已付款
+              payStatus:1   //1 已付款
           }
           this.getList(params);
         }
@@ -184,38 +190,39 @@ export default {
         alert('功能开发中')
       },
       handlePay(item){
-        // console.log(item,'item')
+        console.log(item,'item')
         if(item.orderType === 0){
           let dataObj = {
               examPlanId:item.playerList[0].examPlanId,
               linkMan:item.playerList[0].linkman,
               phone:item.playerList[0].phone,
-              totalFee:item.totalFee,
-              chessPlay: JSON.stringify(item.playerList),
+              totalPrice:item.totalFee,
+              playerList: item.playerList,
               examRoomName:item.roomName,
               examLevelTitle:item.examLevels,
               address:item.address,
-              time:item.examTime,
-              orderNo:item.orderNo?item.orderNo:'',
-              createdTime:item.createdTime?item.createdTime:'',
-              orderId:item.orderId?item.orderId:''
+              examTime:item.examTime,
+              orderNo:item.orderNo,
+              createdTime:item.createdTime,
+              orderId:item.orderId,
+              unitPrice:item.totalFee/(item.playerList.length)
           };
-          // console.log(dataObj,'0')
-          this.$router.push({ name:'orderDetails',query:dataObj});
+          sessionStorage.setItem('routerObj',JSON.stringify(dataObj))
+          this.$router.push({ name:'orderDetails'});
         }else{
           let params = {
               examPlanId:item.playerList[0].examPlanId,
               linkMan:item.playerList[0].linkman,
               phone:item.playerList[0].phone,
               totalFee:item.totalFee,
-              chessPlay:JSON.stringify(item.playerList),
+              certificateList:item.playerList,
               examLevel:item.examLevel,
-              orderNo:item.orderNo?item.orderNo:'',
-              createdTime:item.createdTime?item.createdTime:'',
-              orderId:item.orderId?item.orderId:''
+              orderNo:item.orderNo,
+              createdTime:item.createdTime,
+              orderId:item.orderId
           }
-          // console.log(params,'uuuu')
-          this.$router.push({name:'certificatePay',query:{'params':JSON.stringify(params)}})
+          sessionStorage.setItem('detailsObj',JSON.stringify(params))
+          this.$router.push({name:'certificatePay'})
         }
       },
       checkTicket(){
@@ -227,10 +234,16 @@ export default {
          userId:1,
       }
       this.getList(params);
-  }
+  },
+  // beforeRouteEnter( to,from,next){
+  //   if(from.fullPath !== '/'){
+  //       next( vm =>{
+  //         vm.selectedCurrent(1)
+  //       })
+  //   }
+  // }
 };
 </script>
-
 
 <style lang='scss' scoped>
 @import "../../style/mixin.scss";

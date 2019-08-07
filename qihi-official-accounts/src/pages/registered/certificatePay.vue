@@ -99,24 +99,18 @@ export default {
     },
     data(){
         return{
-            time1: this.formatDate(new Date(), "YYYY-MM-DD hh:mm:ss"),
+            time1:'',
             leveNames:'',
-            totalPerson:null,
+            totalPerson:'',
             linkman:'',
             phone:'',
             orderNo:'',
+            orderId:'',
             createdTime:'',
             totalFee:'',
             disabled:false,
             showCofirm:false,
-            certificateList:[
-                // {
-                //     name:'浓哥',
-                //     id:'12321321321313',
-                //     phone:'1231231313213',
-                //     cost:150
-                // },
-                ]
+            certificateList:[]
         }
     },
     computed: {
@@ -136,60 +130,55 @@ export default {
             this.showCofirm = true;
         },
         onCancel(){
-
+            this.$router.push({name:'myOrder'})
         },
         onConfirm(){
-            this.$router.push({name:'successPay'})
+            //支付获取下单时间
+            let params = {
+                orderId:this.orderId,
+                payFee:this.totalPrice,
+            }
+            this.$axios.post('/api/order/OrderPayment',qs.stringify(params)).then( res => {
+                if(res.data.code === 0){
+                    let payOffTime = res.data.data;
+                    console.log(payOffTime)
+                    sessionStorage.setItem('certificatePayOffTime',payOffTime)
+                    this.$router.push({name:'successPay'})
+                }
+            })
+            
         }
     },
     created(){
+        let detailsObj = JSON.parse(sessionStorage.getItem('detailsObj'));
+        this.certificateList = detailsObj.certificateList;
+        this.totalPerson = detailsObj.certificateList.length;
+        this.leveNames =  detailsObj.certificateList[0].leveNames;
+        this.orderNo = detailsObj.orderNo;
+        this.orderId = detailsObj.orderId;
+        this.createdTime = detailsObj.createdTime;
+        let t = new Date(detailsObj.createdTime).getTime()+30*1000*60;
+        this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
         this.$nextTick(() => {
             this.scroll = new Bscroll(this.$refs.orderDetailsPageWrapper, {click: true});
         });
-        let t = new Date().getTime()+30*1000*60;
-        this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss")
-        this.certificateList = JSON.parse(JSON.parse(this.$route.query.params).chessPlay);
-        this.totalPerson = this.certificateList.length;
-        this.leveNames =  this.certificateList[0].leveNames;
         // console.log(JSON.parse(this.$route.query.params),'0000')
         // 请求获取订单编号
-        let dataObj = JSON.parse(this.$route.query.params)
-        // console.log(dataObj,'参数')
-        if(dataObj.orderNo){
-           this.orderNo = dataObj.orderNo;
-           this.createdTime = dataObj.createdTime;
-           let routerObj ={
-                examLevelTitle:dataObj.examLevelTitle,
-                totalPrice:dataObj.totalFee,
-                playerslist:JSON.parse(dataObj.chessPlay),
-                unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
-                createdTime:dataObj.createdTime,
-                orderNo:dataObj.orderNo,
-                orderId:dataObj.orderId
-            }
-            sessionStorage.setItem('routerObj',JSON.stringify(routerObj)) 
+        // if(dataObj.orderNo){
+        //    this.orderNo = dataObj.orderNo;
+        //    this.createdTime = dataObj.createdTime;
+        //    let routerObj ={
+        //         examLevelTitle:dataObj.examLevelTitle,
+        //         totalPrice:dataObj.totalFee,
+        //         playerslist:JSON.parse(dataObj.chessPlay),
+        //         unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
+        //         createdTime:dataObj.createdTime,
+        //         orderNo:dataObj.orderNo,
+        //         orderId:dataObj.orderId
+        //     }
+        //     sessionStorage.setItem('routerObj',JSON.stringify(routerObj)) 
                   
-        }else{
-            this.$axios.post('/api/enroll/submitOrder',qs.stringify(dataObj)).then( (res) => {
-                if( res.data.code === 0){
-                //    console.log(res,'asdsadasdad');
-                let rst = res.data.data;
-                this.orderNo = rst.orderNo;
-                this.createdTime = rst.createdTime;
-                // 缓存信息用于详情页
-                let routerObj ={
-                        examLevelTitle:dataObj.examLevelTitle,
-                        totalPrice:dataObj.totalFee,
-                        playerslist:JSON.parse(dataObj.chessPlay),
-                        unitPrice:dataObj.totalFee/(JSON.parse(dataObj.chessPlay).length),
-                        createdTime:rst.createdTime,
-                        orderNo:rst.orderNo,
-                        orderId:rst.id
-                    }
-                    sessionStorage.setItem('routerObj',JSON.stringify(routerObj)) 
-                }      
-            })
-        }
+        // }
     }
 }
 </script>

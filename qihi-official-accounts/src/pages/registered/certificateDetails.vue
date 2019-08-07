@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import qs from 'qs' // qs在安装axios后会自动安装，只需要组件里import一下即可
+import qs from 'qs';
 import { TransferDom, Popup,InlineXSwitch} from "vux";
 export default {
   directives: {
@@ -141,9 +141,9 @@ export default {
       linkManPhone:'',
       showLinkMan: false,
       linkManList: [],
-      currentLinkManId: null,
+      currentLinkManId: '',
       needPaper:false,
-      totalPerson:null,
+      totalPerson:'',
       leveNames:'',
       examlevel:'',
       examPlanId:'',
@@ -189,16 +189,32 @@ export default {
         chessPlay:JSON.stringify(this.certificateList),
         examLeve:this.examlevel,
       }
-      console.log(params,'ppppppp')
-      this.$router.push({name:'certificatePay',query:{'params':JSON.stringify(params)}})
+      // console.log(params,'ppppppp')
+      //提交订单获取订单编号
+      this.$axios.post('/api/enroll/submitOrder',qs.stringify(params)).then( (res) => {
+          if( res.data.code === 0){
+             console.log(res,'获取订单编号');
+              let rst = res.data.data;
+              //缓存信息用于详情页
+              let detailsObj ={
+                  certificateList:this.certificateList,
+                  createdTime:rst.createdTime,
+                  orderNo:rst.orderNo,
+                  orderId:rst.id,
+                  totalPrice:this.totalPrice,
+                  unitPrice:this.totalPrice/(this.certificateList.length)
+              }
+              sessionStorage.setItem('detailsObj',JSON.stringify(detailsObj))
+              this.$router.push({name:'certificatePay'}) 
+          }      
+      })
     },
     mustBtn(){
         this.disabled =  !this.disabled;
     }
   },
   created() {
-    console.log( JSON.parse(this.$route.query.checkList),'JSON')
-    this.certificateList = JSON.parse(this.$route.query.checkList);
+    this.certificateList = JSON.parse(sessionStorage.getItem('checkList'));
     this.leveNames = this.certificateList[0].leveNames;
     this.examlevel = this.certificateList[0].examlevel;
     this.totalPerson = this.certificateList.length;
@@ -209,7 +225,7 @@ export default {
     this.$axios.get("/api/linkman/linkman_list", { params }).then(res => {
       if (res.data.code === 0) {
         this.linkManList = res.data.data;
-        console.log(res,'123');
+        // console.log(res,'123');
       }
     });
   }

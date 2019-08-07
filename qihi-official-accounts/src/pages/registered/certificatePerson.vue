@@ -30,24 +30,24 @@
         <div class="listBox">
             <div>
               <p>
-                <span class="firstSpan">{{list[0].playerName}}</span>
-                <span>{{list[0].certificateNo}}</span>
+                <span class="firstSpan">{{playerName}}</span>
+                <span>{{certificateNo}}</span>
               </p>
                <p class="commonTagP">
                 <span>电话号码</span>
-                <span>{{list[0].phone}}</span>
+                <span>{{phone}}</span>
               </p>
               <p class="commonTagP">
                 <span>考试级别</span>
-                <span>{{list[0].leveNames}}</span>
+                <span>{{leveNames}}</span>
               </p>
               <p class="commonTagP">
                 <span>考试结果</span>
-                <span v-if="list[0].examResult === 0">考试通过</span>
-                <span v-if="list[0].examResult === 1">考试未通过</span>
+                <span v-if="examResult === 0">考试通过</span>
+                <span v-if="examResult === 1">考试未通过</span>
               </p>
               <p class="commonTagP">
-                <span>认证服务费</span><span>¥ {{list[0].examFee}}</span>
+                <span>认证服务费</span><span>¥ {{examFee}}</span>
               </p>
              
           </div>
@@ -58,11 +58,11 @@
         <div class="bottomBar">
           <div class="tips">
             <i class="iconfont icon-zhushi"></i>
-            <p>通过考试的棋手请在2019年02月06日23:59:00前完成证 书申领，否则认证资格将作废。</p>
+            <p>通过考试的棋手请在2019年12月31日23:59:00前完成证 书申领，否则认证资格将作废。</p>
           </div>
           <div class="payBtns">
               <p class="firstP">
-                <span style="color:#ED1A23;font-weight:600;font-size:18px;">¥ {{list[0].examFee}}</span>
+                <span style="color:#ED1A23;font-weight:600;font-size:18px;">¥ {{examFee}}</span>
               </p>
               <button class="submitP"  @click="handerCertificatePerson">证书申领</button>
           </div>
@@ -84,10 +84,13 @@ export default {
   data() {
     return {
       showPopup: false,
-      list:[{
-        // playerName:'',
-        // certificationServiceFee:null
-      }],
+      list:[],
+      playerName:'',
+      certificateNo:'',
+      phone:'',
+      leveNames:'',
+      examResult:'',
+      examFee:''
     };
   },
   methods: {
@@ -99,13 +102,12 @@ export default {
       this.showPopup = false;
     },
     handerCertificatePerson(){
-      this.$router.push({name:'certificateDetails',query:{"checkList":JSON.stringify(this.list)}})
-    
+      sessionStorage.setItem('checkList',JSON.stringify(this.list))
+      this.$router.push({name:'certificateDetails'})
     }
   },
   created(){
-    let obj = JSON.parse(this.$route.query.item);
-    // console.log(obj,'123');
+    let obj = JSON.parse(sessionStorage.getItem('singleApply'));
     let params = {
         examPlanId:obj.examPlanId,
         examLevel:obj.examlevel,
@@ -114,8 +116,14 @@ export default {
     }
     this.$axios.get('/api/enroll/certificateApply_list',{params}).then( res => {
         if( res.data.code === 0){
-          // console.log(res.data.data,'2222')
+          console.log(res.data.data,'2222')
           this.list = res.data.data;
+          this.playerName = res.data.data[0].playerName;
+          this.certificateNo = res.data.data[0].certificateNo;
+          this.phone = res.data.data[0].phone;
+          this.leveNames = res.data.data[0].leveNames;
+          this.examResult = res.data.data[0].examResult;
+          this.examFee = res.data.data[0].examFee;
         }
     })
   }

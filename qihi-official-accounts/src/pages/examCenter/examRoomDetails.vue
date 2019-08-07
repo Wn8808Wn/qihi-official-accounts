@@ -19,18 +19,6 @@
                 <p>考试时间</p>
             </div>
             <div class="examTimeInfoContent">
-            <!-- <div class="swiperBox">
-                <swiper :options="swiperOption">
-                    <swiper-slide v-for="(item, index) in swiperSlides" :key="index" @click.native="selectDate(item,index)" :class="{'activeSlides':index === currentIndex}">
-                        <div class="dateBox">   
-                            <span class="firstSpan">{{format(item.examDate.replace(/-/g,'/'))}}</span>
-                            <span>
-                               {{format(new Date()) === format(item.examDate.replace(/-/g,'/'))?'今天':dayList[new Date(item.examDate.replace(/-/g,'/')).getDay()]}}
-                            </span>
-                        </div>
-                    </swiper-slide>
-                </swiper>
-            </div> -->
             <div class="wrapper" ref="wrapper">
                 <ul class="content" ref="personTab">
                     <li v-for="(item, index) in swiperSlides" :key="index" @click="selectDate(item,index)" :class="{'activeSlides':index === currentIndex}">
@@ -44,9 +32,6 @@
                 </ul>
             </div>
 
-
-
-
             <p style="margin-top:8px;margin-left:16px;font-size:14px;font-weight:500;color:#FF9201;line-height:20px;">可预定两周内的考试，考试前30分钟截止报名</p>
             <div class="examTimeList">
                 <div v-for="(item,index) in timeList" :key="index">
@@ -59,10 +44,6 @@
                           <input  type="radio" name="examroom" :id='item.id'  >
                           <label  :for='item.id'></label>
                         </div>
-                        <!-- <div v-if="item.remainSeat>0" @click="selectCurrentRadio(item)">  
-                            <input  type="radio" name="examroom" :id='item.id'  >
-                            <label  :for='item.id'></label>
-                        </div> -->
                         <span v-if="stopTime(item.examDate,item.examTime)">截止报名</span>
                         <span v-if="item.remainSeat <= 0 && !stopTime(item.examDate,item.examTime)">已约满</span>
                     </div>
@@ -98,7 +79,7 @@ export default {
       examLevelTitle: "",
       examDateCommon: "",
       dayList: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
-      currentIndex: "",
+      currentIndex: 0,
       swiperOption: {
         freeMode: true,
         longSwipersRadio: 0.9,
@@ -156,11 +137,10 @@ export default {
       //利用 sessionStorage 存储examPlanId
       sessionStorage.setItem("examPlanId", item.id);
       this.disabled = false;
-      this.examTime =item.examDate.split(" ")[0].replace(/-/g, ".") +" " +item.examTime +"-" +this.longTimeAgo(this.examDateCommon, item.examTime, 30);
+      this.examTime =item.examDate.split(" ")[0].replace(/-/g, ".") +" " +item.examTime +"-" +this.longTimeAgo(this.examDateCommon, item.examTime,parseInt(item.timeStr));
     },
     submitExamTime() {
       sessionStorage.setItem("examTime", this.examTime);
-      // console.log(this.examTime,'this.examTime')
       sessionStorage.setItem("price", this.price);
       this.$router.push({ name: "submitOrder" });
     },
@@ -186,11 +166,6 @@ export default {
     }
   },
   created() {
-    //路由方式
-    // this.examLevelId = this.$route.query.examLevelId;
-    // this.examLevelTitle = this.$route.query.level;
-    // this.examRoomName = JSON.parse(this.$route.query.currentItem).examRoomName;
-    // this.address = JSON.parse(this.$route.query.currentItem).address;
     //缓存方式
     this.examLevelId = sessionStorage.getItem("examLevelId");
     this.examLevelTitle = sessionStorage.getItem("examLevelTitle");
@@ -207,19 +182,21 @@ export default {
     this.$axios.get("/api/enter/get_calendar", { params }).then(res => {
       if (res.data.code === 0) {
         this.swiperSlides = res.data.data;
+        let item = this.swiperSlides[0];
         this.$nextTick(() => {
             this.personScroll();
+            if(item !== []){
+                this.selectDate(item,0);
+            }
         })
       }
     });
     //请求报考价格
-    this.$axios
-      .get("/api/enter/get_serviceFee?examLevel=" + this.examLevelId)
-      .then(res => {
+    this.$axios.get("/api/enter/get_serviceFee?examLevel=" + this.examLevelId).then(res => {
         if (res.data.code === 0) {
-          this.price = res.data.data;
+            this.price = res.data.data;
         }
-      });
+    });
   }
 };
 </script>

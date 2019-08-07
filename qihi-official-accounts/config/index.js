@@ -11,8 +11,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api':{
-        target:'http://192.168.1.147:8080',
-        // target: 'http://192.168.1.126:8080',//辉哥后端接口地址  
+        target:'http://192.168.1.143:8080',
+        // target: 'http://192.168.1.123:8080',//辉哥后端接口地址  
         // target:'http://39.98.82.63:8080',
         changeOrigin:true,
         pathRewrite:{
@@ -20,17 +20,14 @@ module.exports = {
         }
       }
     },
-
     // Various Dev Server settings
     host: '192.168.1.119', // can be overwritten by process.env.HOST
     // host: 'localhost', // can be overwritten by process.env.HOST
-   
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
-
     
     /**
      * Source Maps

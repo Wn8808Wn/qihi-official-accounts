@@ -32,10 +32,11 @@
               <p>
                 <span class="firstSpan">{{item.playerName}}</span>
                 <span>{{item.certificateNo}}</span>
-                <span class="playCheckBox">
+                <span class="playCheckBox" v-if="item.examResult === 0 && item.certificationType === 0">
                     <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentPlayer(item,index)">
                     <label  :for='item.id'></label>
                 </span>
+                <span class="fltR" v-if="item.certificationType === 1">已认证</span>
               </p>
                <p class="commonTagP">
                 <span>电话号码</span>
@@ -50,7 +51,7 @@
                 <span v-if="item.examResult === 0">考试通过</span>
                 <span v-if="item.examResult === 1">考试未通过</span>
               </p>
-              <p class="commonTagP">
+              <p class="commonTagP" v-show="item.examResult === 0">
                 <span>认证服务费</span><span>¥ {{item.examFee}}</span>
               </p>
              
@@ -62,12 +63,12 @@
         <div class="bottomBar">
           <div class="tips">
             <i class="iconfont icon-zhushi"></i>
-            <p>通过考试的棋手请在2019年02月06日23:59:00前完成证 书申领，否则认证资格将作废。</p>
+            <p>通过考试的棋手请在2019年12月31日23:59:00前完成证 书申领，否则认证资格将作废。</p>
           </div>
           <div class="payBtns">
               <p class="firstP">
                 <span class="playCheckBox">
-                    <input type="checkbox" id='checkAll' v-model="allChoose"  @click="selectAll">
+                    <input type="checkbox" id='checkAll'  :disabled='nullDisabled'  v-model="allChoose" @click="selectAll">
                     <label  for='checkAll'></label>
                 </span>
                 <span>全选</span><span style="color:#ED1A23;margin-left:4px;font-weight:600;font-size:18px;">¥ {{totalPrice}}</span>
@@ -96,7 +97,9 @@ export default {
       checkList:[],
       allChoose:false,
       disabled:true,
+      nullDisabled:true,
       certificateList: [],
+      hasCertificationList:[],//考试通过的数组
     }
   },
   computed:{
@@ -118,7 +121,7 @@ export default {
     },
     selectCurrentPlayer(item,index){
       this.disabled = false;
-      if(this.checkList.length === this.certificateList.length){
+      if(this.checkList.length === this.hasCertificationList.length){
           this.allChoose = true;
       }else{
         this.allChoose = false;
@@ -128,7 +131,7 @@ export default {
     selectAll(){
       this.allChoose = !this.allChoose;
       if(this.allChoose){
-        this.checkList = this.certificateList;
+        this.checkList = this.hasCertificationList;
         this.disabled = false;
       }else{
         this.checkList =[];
@@ -137,7 +140,8 @@ export default {
     },
     hanleApply(){
       // console.log(this.checkList,'list1111')
-      this.$router.push({name:'certificateDetails',query:{"checkList":JSON.stringify(this.checkList)}})
+      sessionStorage.setItem('checkList',JSON.stringify(this.checkList))
+      this.$router.push({name:'certificateDetails'})
     }
   },
   created() {
@@ -153,6 +157,12 @@ export default {
       if (res.data.code === 0) {
         console.log(res.data.data,'???')
         this.certificateList = res.data.data;
+        this.hasCertificationList = this.certificateList.filter( e =>e.examResult == 0 && e.certificationType == 0)
+        if(this.hasCertificationList.length == 0){
+            this.nullDisabled = true;
+        }else{
+            this.nullDisabled = false;
+        }
       }
     });
   }
@@ -217,6 +227,13 @@ export default {
           font-weight: 600;
           margin-right: 8px;
           color: rgba(51, 51, 51, 1);
+          line-height: 22px;
+        }
+        &>.fltR{
+          font-size: 16px;
+          font-family: PingFang-SC-Medium;
+          font-weight: 500;
+          float: right;
           line-height: 22px;
         }
         & > span {

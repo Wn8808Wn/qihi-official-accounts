@@ -90,7 +90,6 @@
 
 <script>
 import Bscroll from "better-scroll";
-import qs from 'qs' // qs在安装axios后会自动安装，只需要组件里import一下即可
 import { Cell, Group,XButton,} from 'vux'
 export default {
     components: {
@@ -109,7 +108,6 @@ export default {
             phone:'',
             orderNo:'',
             unitPrice:'',
-            orderId:'',
             createdTime:'',
             payOffTime:'',
             totalPrice:'',
@@ -132,7 +130,7 @@ export default {
     },
     mounted(){
       //  缓存数据
-        console.log(JSON.parse(sessionStorage.getItem('routerObj')),'000');
+        // console.log(JSON.parse(sessionStorage.getItem('routerObj')),'000');
         let routerObj = JSON.parse(sessionStorage.getItem('routerObj'));
         this.examRoomName = routerObj.examRoomName;
         this.address = routerObj.address;
@@ -145,16 +143,7 @@ export default {
         this.orderNo = routerObj.orderNo;
         this.createdTime = routerObj.createdTime;
         this.unitPrice =routerObj.unitPrice;
-        this.orderId =routerObj.orderId;
-        let params = {
-            orderId:this.orderId,
-            payFee:this.totalPrice,
-        }
-        this.$axios.post('/api/order/OrderPayment',qs.stringify(params)).then( res => {
-            if(res.data.code === 0){
-                this.payOffTime = res.data.data;
-            }
-        })
+        this.payOffTime = JSON.parse(sessionStorage.getItem('payOffTime'));
     }
 }
 </script>

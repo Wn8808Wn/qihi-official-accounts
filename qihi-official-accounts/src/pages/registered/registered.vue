@@ -7,7 +7,7 @@
             <p>赶快去报名段级位考试吧！</p>
       </div>
       <!-- 有数据 -->
-      <div  v-else-if="list.length !== 0" class="registeredList registeredWrapper" ref="registeredWrapper">
+      <div  v-if="!showNoApplyPage" class="registeredList registeredWrapper" ref="registeredWrapper">
         <ul class="content">
           <div v-for="(item,index) in list" :key="index">
               <p>
@@ -25,7 +25,7 @@
               </p>
               <p class="commonTagP">
                 <span>考试时间</span>
-                <span>{{item.examTime.split(' ')[0].replace(/-/g,'.')}} {{formatDate(item.examTime, "hh:mm")}}-{{longTimeAgo(item.examTime,item.examTime.split(' ')[1],30)}}</span>
+                <span>{{item.examTime.split(' ')[0].replace(/-/g,'.')}} {{formatDate(item.examTime, "hh:mm")}}-{{longTimeAgo(item.examTime,item.examTime.split(' ')[1],parseInt(item.timeStr))}}</span>
               </p>
               <p class="commonTagP">
                 <span>报名棋手</span>
@@ -35,7 +35,7 @@
                 <span v-if="item.playerList.length >= 2">{{item.playerList[0].playerName}} 等{{item.playerList.length}}人</span>
               </p>
               <button v-if="item.state === 0" @click="checkTicket(item)">准考证</button>
-              <div v-else class="btnGrps">
+              <div v-if="item.state === 1" class="btnGrps">
                   <button @click="handleScores(item)">棋手成绩</button>
                   <button @click="handleCertificate(item)" class="bgBtn">证书申领</button>
               </div>
@@ -80,11 +80,11 @@ export default {
       let examPlanId =   item.examPlanId;
       let examLevel = item.examLevel;
       let orderNo = item.orderNo;
-      console.log(item,'999')
+      // console.log(item,'999')
       this.$router.push({name:'certificate',query:{examPlanId,examLevel,orderNo}})
     },
     checkTicket(item){
-        console.log(item,'ttt');
+        // console.log(item,'ttt');
         let dataObj = {
           address:item.address,
           examLevel:item.examLevel,
@@ -94,9 +94,10 @@ export default {
           orderNo:item.orderNo,
           roomName:item.roomName,
           state:item.state,
-          playerList:JSON.stringify(item.playerList)
+          playerList:item.playerList
         }
-        this.$router.push({name:'ticketsPdf',query:dataObj})
+        sessionStorage.setItem('ticketsDetails',JSON.stringify(dataObj))
+        this.$router.push({name:'ticketsPdf'})
     }
   },
   created(){
@@ -104,16 +105,18 @@ export default {
          userId:1
       }
      this.$axios.get('/api/enroll/enroll_list',{params}).then( res =>{
-        if(res.data.code ===0 ){
+        if(res.data.code === 0 ){
           this.list =res.data.data.info;
           console.log(res.data.data.info,'已报名list')
           if(this.list === []){
             this.showNoApplyPage = true;
+          }else{
+              this.$nextTick(() => {
+                  this.scroll = new Bscroll(this.$refs.registeredWrapper, {click:true})
+              })
           }
         }
-        this.$nextTick(() => {
-          this.scroll = new Bscroll(this.$refs.registeredWrapper, {click:true})
-        })
+       
 
      })
     

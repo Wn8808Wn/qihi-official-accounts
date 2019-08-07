@@ -48,34 +48,15 @@ import Bscroll from "better-scroll";
 export default {
   data() {
     return {
-      playerList: [
-        // {
-        //     playerName:'张三',
-        //     examResult:0,
-        //     orderNo:1123131232131231123,
-        //     phone:123123123213,
-        //     leveNames:'25级',
-        //     score:70,
-        //     certificationType:1
-        // },
-        // {
-        //     playerName:'张三疯呀',
-        //     examResult:0,
-        //     phone:12321321321,
-        //     orderNo:1123131232131231123,
-        //     leveNames:'25级',
-        //     score:90,
-        //     certificationType:0
-        // },
-        
-      ]
+      playerList: []
     };
   },
   methods: {
     handleScores() {},
     handleApplyCard(item) {
-      console.log(item,'000')
-      this.$router.push({name: "certificatePerson",query:{ item: JSON.stringify(item) }});
+      console.log(item,'oo')
+      sessionStorage.setItem('singleApply',JSON.stringify(item))
+      this.$router.push({name: "certificatePerson"});
     }
   },
   created() {
@@ -195,6 +176,7 @@ export default {
             height: 28px;
             background: #ffffff;
             border-radius: 14px;
+            border: none;
             border: 1px solid rgba(32, 105, 229, 1);
             font-size: 14px;
             font-family: PingFang-SC-Medium;
@@ -205,7 +187,8 @@ export default {
             float: right;
           }
           .bgBtn {
-            margin-right: 8px;
+            border: none;
+            // margin-right: 8px;
             color: #ffffff;
             background: $bg-blue;
           }

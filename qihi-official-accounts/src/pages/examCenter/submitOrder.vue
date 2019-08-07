@@ -50,7 +50,7 @@
                               <div class="infoBox">
                                   <p><span>棋手姓名</span> <span>{{item.playerName}}</span></p>
                                   <p><span>段位等级</span>
-                                  <span>{{examLevelList.filter( item1 => item1.id === item.chessLevel)[0].levelName}}</span>
+                                  <span>{{examLevelList.filter( item1 => item1.id == item.chessLevel)[0].levelName}}</span>
                                   </p>
                                   <p><span>证件号码</span> <span>{{item.certificateNo}}</span></p>
                               </div>
@@ -186,16 +186,8 @@
 </template>
 
 <script>
-import {
-  PopupPicker,
-  Group,
-  TransferDom,
-  Popup,
-  Swipeout,
-  SwipeoutItem,
-  SwipeoutButton,
-  Confirm
-} from "vux";
+import {PopupPicker,Group,TransferDom,Popup,Swipeout,SwipeoutItem,SwipeoutButton,Confirm} from "vux";
+import qs from "qs"; 
 import appointmentInfo from "./popups/appointmentInfo.vue";
 export default {
   directives: {
@@ -228,7 +220,7 @@ export default {
       showPlayer: false,
       disabled: true,
       playerNum: 0,
-      examLevelList: "",
+      examLevelList:[],
       checkList: [],
       linkManList: [
         // {
@@ -321,15 +313,45 @@ export default {
             examLevelTitle:this.examLevelTitle,
             address:this.address,
             time:this.time,
-          };
+          }
           sessionStorage.setItem("chessPlayersInfo", JSON.stringify(dataObj));
-          this.$router.push({ path: '/examCenter/examinationLevel/orderDetails',query:dataObj});
-        } else if (res.data.code === 2) {
-          alert(res.data.msg); //剩余座位数不足
-        } else {
-          alert(res.data.msg); // 无剩余座位数
-        }
-      });
+          //提交订单获取订单编号
+          let params = {
+            examPlanId: dataObj.examPlanId,
+            linkMan: dataObj.linkMan,
+            phone: dataObj.phone,
+            examLeve:sessionStorage.getItem('examLevelId'),
+            totalFee: dataObj.totalFee,
+            chessPlay:dataObj.chessPlay
+          };
+          this.$axios.post("/api/enter/signUpOrder", qs.stringify(params)).then(res => {
+              console.log(res, "获取订单编号");
+              if (res.data.code === 0) {
+                  let obj = res.data.data;
+                  let routerObj = {
+                    examRoomName: dataObj.examRoomName,
+                    address: dataObj.address,
+                    examLevelTitle: dataObj.examLevelTitle,
+                    examTime: dataObj.time,
+                    linkMan: dataObj.linkMan,
+                    totalPrice: dataObj.totalFee,
+                    phone: dataObj.phone,
+                    playerslist: JSON.parse(dataObj.chessPlay),
+                    unitPrice:dataObj.totalFee / JSON.parse(dataObj.chessPlay).length,
+                    createdTime: obj.createdTime,
+                    orderNo: obj.orderNo,
+                    orderId: obj.id
+                  };
+                  sessionStorage.setItem("routerObj", JSON.stringify(routerObj));
+                  this.$router.push({ name: 'orderDetails'});
+              }
+            });
+            } else if (res.data.code === 2) {
+              alert(res.data.msg); //剩余座位数不足
+            } else {
+              alert(res.data.msg); // 无剩余座位数
+            }
+          });
     },
     log() {},
     handleOpen(index) {
@@ -392,9 +414,7 @@ export default {
     },
     onConfirm() {
       // console.log(this.checkList,'000')
-      this.checkList = this.checkList.filter(
-        (item, index) => item.id !== this.delCurrentplayerId
-      );
+      this.checkList = this.checkList.filter((item, index) => item.id !== this.delCurrentplayerId);
       if (this.checkList.length === 0) {
         this.disabled = true;
       } else {
@@ -403,24 +423,15 @@ export default {
     }
   },
   mounted() {
-    //路由传值方式
-    // this.examRoomName = this.$route.params.examRoomName;
-    // this.examLevelTitle = this.$route.params.examLevel;
-    // this.address = this.$route.params.address;
-    // this.time = this.$route.params.examTime;
-    // this.price = this.$route.params.price;
     //缓存方式
     this.examLevelTitle = sessionStorage.getItem("examLevelTitle");
-    this.examRoomName = JSON.parse(
-      sessionStorage.getItem("currentItem")
-    ).examRoomName;
+    this.examRoomName = JSON.parse(sessionStorage.getItem("currentItem")).examRoomName;
     this.address = JSON.parse(sessionStorage.getItem("currentItem")).address;
     this.time = sessionStorage.getItem("examTime");
     this.price = sessionStorage.getItem("price");
     this.getLinkManList();
     this.getPlayerList();
     this.examLevelList = JSON.parse(sessionStorage.getItem("examLevelList"));
-    // console.log(this.examLevelList, "000");
   }
 };
 </script>

@@ -79,9 +79,6 @@ const webpackConfig = {
     tls: 'empty',
     child_process: 'empty'
   },
-  // externals: {
-  //   'AMap': 'AMap',
-  // }
 }
 module.exports = vuxLoader.merge(webpackConfig, {
   plugins: ['vux-ui', 'progress-bar', 'duplicate-style', {name: 'less-theme', path: 'src/style/vux_theme.less'}]

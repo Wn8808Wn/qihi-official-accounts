@@ -25,7 +25,8 @@
                             </p>
                             <p>
                                 <span>考试时间</span>
-                                <span>{{examTime.split(' ')[0].replace(/-/g,'.')}} {{examTime.split(' ')[1]}}</span>
+                                <span>{{examTime}}</span>
+                                <!-- <span>{{examTime.split(' ')[0].replace(/-/g,'.')}} {{examTime.split(' ')[1]}}</span> -->
                             </p>
 
                         </div>
@@ -85,7 +86,7 @@
         </div>
         <!-- 确认支付吗 -->
         <div v-transfer-dom>
-          <confirm v-model="showCofirm"
+          <confirm v-model="showCofirmTitle"
           title="提示"
           @on-cancel="onCancel"
           @on-confirm="onConfirm"
@@ -99,7 +100,7 @@
 
 <script>
 import Bscroll from "better-scroll";
-import qs from "qs"; // qs在安装axios后会自动安装，只需要组件里import一下即可
+import qs from 'qs';
 import { Clocker, Cell, Group, XButton, Confirm, TransferDom } from "vux";
 export default {
   directives: {
@@ -114,7 +115,8 @@ export default {
   },
   data() {
     return {
-      time1: this.formatDate(new Date(), "YYYY-MM-DD hh:mm:ss"),
+      time1:'',
+      time:'',
       examRoomName: "",
       examLevelTitle: "",
       examTime: "",
@@ -124,7 +126,8 @@ export default {
       orderNo: "",
       createdTime: "",
       disabled: false,
-      showCofirm: false,
+      showCofirmTitle: false,
+      orderId:'',
       totalPrice: "",
       unitPrice: "",
       playerslist: []
@@ -142,86 +145,49 @@ export default {
       alert("请重新下单");
     },
     showCofirmPage() {
-      this.showCofirm = true;
+      this.showCofirmTitle = true;
     },
     onCancel() {
-      alert("跳转到我的订单代付款页面");
+      this.$router.push({name:'myOrder'})
+      //保存初始化时间在我的订单中去支付使用
+      sessionStorage.setItem('initializeTime',this.time)
     },
     onConfirm() {
-      this.$router.push({ name: "successApply" });
+        //支付成功获取支付时间
+        let params = {
+            orderId:this.orderId,
+            payFee:this.totalPrice,
+        }
+        this.$axios.post('/api/order/OrderPayment',qs.stringify(params)).then( res => {
+            if(res.data.code === 0){
+                let payOffTime = res.data.data;
+                sessionStorage.setItem('payOffTime',JSON.stringify(payOffTime))
+            }
+        })
+        this.$router.push({ name: "successApply"});
     }
   },
   created() {
-    this.$nextTick(() => {
-      this.scroll = new Bscroll(this.$refs.orderDetailsPageWrapper, {click: true});
-    });
-    let t = new Date().getTime() + 30 * 1000 * 60;
-    this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss");
-    let dataObj = this.$route.query;
-    //路由传值
+    //通过缓存拿到订单号和创建时间
+    let dataObj = JSON.parse(sessionStorage.getItem('routerObj'));
     this.examRoomName = dataObj.examRoomName;
     this.address = dataObj.address;
+    this.orderId = dataObj.orderId;
+    this.orderNo = dataObj.orderNo;
+    this.createdTime = dataObj.createdTime;
     this.examLevelTitle = dataObj.examLevelTitle;
-    this.examTime = dataObj.time;
-    console.log(this.examTime,'0000')
+    this.examTime = dataObj.examTime;
     this.linkman = dataObj.linkMan;
-    this.totalPrice = dataObj.totalFee;
+    this.totalPrice = dataObj.totalPrice;
     this.phone = dataObj.phone;
-    this.playerslist = JSON.parse(dataObj.chessPlay);
-    this.unitPrice = dataObj.totalFee / JSON.parse(dataObj.chessPlay).length;
-    // 判断路由
-    if (dataObj.orderNo) {
-      this.orderNo = dataObj.orderNo;
-      this.createdTime = dataObj.createdTime;
-      let routerObj = {
-        examRoomName: dataObj.examRoomName,
-        address: dataObj.address,
-        examLevelTitle: dataObj.examLevelTitle,
-        examTime: dataObj.time,
-        linkMan: dataObj.linkMan,
-        totalPrice: dataObj.totalFee,
-        phone: dataObj.phone,
-        playerslist: JSON.parse(dataObj.chessPlay),
-        unitPrice: dataObj.totalFee / JSON.parse(dataObj.chessPlay).length,
-        createdTime: dataObj.createdTime,
-        orderNo: dataObj.orderNo,
-        orderId: dataObj.orderId
-      };
-      sessionStorage.setItem("routerObj", JSON.stringify(routerObj));
-    } else {
-      // 请求获取订单编号
-      let params = {
-        examPlanId: dataObj.examPlanId,
-        linkMan: dataObj.linkMan,
-        phone: dataObj.phone,
-        examLeve:sessionStorage.getItem('examLevelId'),
-        totalFee: dataObj.totalFee,
-        chessPlay: JSON.stringify(JSON.parse(dataObj.chessPlay))
-      };
-      this.$axios.post("/api/enter/signUpOrder", qs.stringify(params)).then(res => {
-          console.log(res, "dasdad");
-          if (res.data.code === 0) {
-            let obj = res.data.data;
-            this.orderNo = obj.orderNo;
-            this.createdTime = obj.createdTime;
-            let routerObj = {
-              examRoomName: dataObj.examRoomName,
-              address: dataObj.address,
-              examLevelTitle: dataObj.examLevelTitle,
-              examTime: dataObj.time,
-              linkMan: dataObj.linkMan,
-              totalPrice: dataObj.totalFee,
-              phone: dataObj.phone,
-              playerslist: JSON.parse(dataObj.chessPlay),
-              unitPrice:dataObj.totalFee / JSON.parse(dataObj.chessPlay).length,
-              createdTime: obj.createdTime,
-              orderNo: obj.orderNo,
-              orderId: obj.id
-            };
-            sessionStorage.setItem("routerObj", JSON.stringify(routerObj));
-          }
-        });
-    }
+    this.playerslist =dataObj.playerslist;
+    this.unitPrice = dataObj.unitPrice;
+    let TimeGo = new Date(dataObj.createdTime)
+    let t = TimeGo.getTime() + 30 * 1000 * 60;
+    this.time1 = this.formatDate(t, "YYYY-MM-DD hh:mm:ss");
+    this.$nextTick(() => {
+        this.scroll = new Bscroll(this.$refs.orderDetailsPageWrapper, {click: true});
+    });
   }
 };
 </script>

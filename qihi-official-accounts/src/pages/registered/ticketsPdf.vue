@@ -41,7 +41,7 @@ export default {
           if(this.checkList.length === this.ticketList.length){
               this.allChoose = true;
           }else{
-            this.allChoose = false;
+              this.allChoose = false;
           }
       },
       selectCurrentAll(){
@@ -64,10 +64,10 @@ export default {
       initScrollBox(){
           if(this.ticketList!== undefined && this.ticketList!== null && this.ticketList.length>0 ){
               let totalHeight = 52*this.ticketList.lenght;
-              console.log(totalHeight,'00')
+              // console.log(totalHeight,'00')
               if(totalHeight <= 539){
                   this.$refs.ticketWarpper.style.heigth = totalHeight+'px';
-                  console.log(this.$refs.ticketWarpper.style.heigth,'123')
+                  // console.log(this.$refs.ticketWarpper.style.heigth,'123')
                   this.$nextTick(()=>{
                       if (!this.scroll) {
                           this.scroll=new Bscroll(this.$refs.ticketWarpper, {
@@ -94,9 +94,8 @@ export default {
       }
   },
   created(){
-    this.examLevels = this.$route.query.examLevels;
-    this.ticketList = JSON.parse(this.$route.query.playerList);
-    // console.log(this.ticketList,'this.ticketList')
+    this.examLevels = JSON.parse(sessionStorage.getItem('ticketsDetails')).examLevels;
+    this.ticketList = JSON.parse(sessionStorage.getItem('ticketsDetails')).playerList;
     this.$nextTick(() => {
         this.initScrollBox();
     });

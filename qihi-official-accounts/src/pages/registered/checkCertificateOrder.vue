@@ -13,7 +13,7 @@
                         <div class="infoBox">
                             <div class="bottomBorderBox">
                                 <p class="orderNumberP">
-                                    <span>订单编号</span>
+                                    <span>运单编号</span>
                                     <span>1010201233123</span>
                                     <x-button plain type="primary" style="border-radius:14px;">复制</x-button>
                                 </p>
@@ -109,25 +109,16 @@ export default {
         this.$nextTick(() => {
             this.scroll = new Bscroll(this.$refs.orderDetailsPageWrapper, {click: true});
         });
-        console.log(JSON.parse(sessionStorage.getItem("routerObj")))
-        let routerObj = JSON.parse(sessionStorage.getItem("routerObj"))
-        this.orderNo = routerObj.orderNo;
-        this.createdTime = routerObj.createdTime;
-        this.certificateList =routerObj.playerslist;
-        this.totalPrice = routerObj.totalPrice;
-        this.unitPrice = routerObj.unitPrice;
+        console.log(JSON.parse(sessionStorage.getItem("detailsObj")))
+        let detailsObj = JSON.parse(sessionStorage.getItem("detailsObj"))
+        this.orderNo = detailsObj.orderNo;
+        this.createdTime = detailsObj.createdTime;
+        this.certificateList =detailsObj.certificateList;
+        this.totalPrice = detailsObj.totalPrice;
+        this.unitPrice = detailsObj.unitPrice;
         this.totalPerson = this.certificateList.length;
         this.leveNames =  this.certificateList[0].leveNames;
-        // 请求获取支付时间
-        let params = {
-            orderId:routerObj.orderId,
-            payFee:routerObj.totalPrice,
-        }
-        this.$axios.post('/api/order/OrderPayment',qs.stringify(params)).then( res => {
-            if(res.data.code === 0){
-                this.payOffTime = res.data.data;
-            }
-        })
+        this.payOffTime = sessionStorage.getItem('certificatePayOffTime');
     }
 }
 </script>
