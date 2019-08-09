@@ -124,7 +124,14 @@ export default {
     },
     methods:{
         showTitle(){
-            alert('请重新下单')
+            let params ={
+            id:this.orderId
+            }
+            this.$axios.post('/api/enroll/order_time',qs.stringify(params)).then( res =>{
+                if(res.data.code === 0){
+                    this.disabled =true;
+                }
+            })
         },
         submitExamTime(){
             this.showCofirm = true;

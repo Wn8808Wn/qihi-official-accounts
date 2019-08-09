@@ -104,21 +104,21 @@ export default {
       let params = {
          userId:1
       }
-     this.$axios.get('/api/enroll/enroll_list',{params}).then( res =>{
-        if(res.data.code === 0 ){
-          this.list =res.data.data.info;
-          console.log(res.data.data.info,'已报名list')
-          if(this.list === []){
-            this.showNoApplyPage = true;
-          }else{
-              this.$nextTick(() => {
-                  this.scroll = new Bscroll(this.$refs.registeredWrapper, {click:true})
-              })
+      this.$axios.get('/api/enroll/enroll_list',{params}).then( res =>{
+          if(res.data.code === 0 ){
+            this.list =res.data.data.info;
+            console.log(res.data.data.info,'已报名list')
+            if(this.list === []){
+              this.showNoApplyPage = true;
+            }
           }
+      })
+      this.$nextTick(() => {
+        if (!this.scroll) {
+            this.scroll = new Bscroll(this.$refs.registeredWrapper, {click:true})
         }
-       
-
-     })
+         
+      })
     
   }
 }

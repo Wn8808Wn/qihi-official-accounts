@@ -142,7 +142,15 @@ export default {
         return this.formatDate(time, "hh:mm");
     },
     showTitle() {
-      alert("请重新下单");
+        let params ={
+            id:this.orderId
+        }
+        this.$axios.post('/api/enroll/order_time',qs.stringify(params)).then( res =>{
+            console.log(res)
+            if(res.data.code === 0){
+                this.disabled =true;
+            }
+        })
     },
     showCofirmPage() {
       this.showCofirmTitle = true;

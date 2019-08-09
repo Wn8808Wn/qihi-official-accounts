@@ -10,11 +10,12 @@ export default{
         scale: 2,
         canvas: c,
         logging: true,
-        width: document.querySelector(dom).width,
-        height: document.querySelector(dom).height
+        width: document.querySelector(dom).clientWidth,
+        height:document.querySelector(dom).clientHeight
       };
-      c.width = document.querySelector(dom).width * 2
-      c.height = document.querySelector(dom).height * 2
+      console.log(opts,'options')
+      c.width = document.querySelector(dom).clientWidth * 2
+      c.height = document.querySelector(dom).clientHeight * 2
       c.getContext("2d").scale(2, 2);
       html2Canvas(document.querySelector(dom), opts).then(function (canvas) {
         let contentWidth = canvas.width

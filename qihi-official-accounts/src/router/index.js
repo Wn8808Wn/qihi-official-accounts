@@ -8,6 +8,11 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'loading', 
+      component: () => import('../pages/loading.vue') 
+    },
+    {
+      path: '/examCenter',
       name: 'examCenter', 
       meta: {
         title: '考试中心'

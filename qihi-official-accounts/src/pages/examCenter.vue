@@ -82,7 +82,18 @@ export default {
         default:
           break;
       }
-    }
+    },
+  },
+  beforeRouteEnter(to, from, next) {
+    console.log(to, "to");
+    console.log(from, "from");
+    next(vm => {
+      let params = new URLSearchParams();
+      params.append('code',to.query.code)
+      vm.$axios.get('/api/wechat/get_weixin_info',{params}).then( res =>{
+         console.log(res)
+      })
+    });
   }
 };
 </script>
