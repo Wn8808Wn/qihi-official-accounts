@@ -61,7 +61,6 @@ export default {
   },
   methods: {
     handleToPage(index) {
-      // console.log(index);
       switch (index) {
         case 0:
           this.$router.push({ name: "examinationLevel" });
@@ -91,7 +90,12 @@ export default {
       let params = new URLSearchParams();
       params.append('code',to.query.code)
       vm.$axios.get('/api/wechat/get_weixin_info',{params}).then( res =>{
-         console.log(res)
+          if(res.data.code === 0){
+            let token = res.data.data.token
+            // alert(token)
+            console.log(token)
+            sessionStorage.setItem("dsToken", token); // 存token
+          }
       })
     });
   }

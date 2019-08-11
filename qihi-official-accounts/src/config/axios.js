@@ -11,8 +11,8 @@ axios.defaults.withCredentials = true;
 let msg;
 //HTTPrequest拦截
 axios.interceptors.request.use(config => {
-    if (sessionStorage.getItem('token')) {
-		config.headers['Authorization'] = sessionStorage.getItem('token') 
+	if (sessionStorage.getItem('dsToken')) {
+		config.headers['Token'] = sessionStorage.getItem('dsToken') 
     }
 	return config
 }, error => {

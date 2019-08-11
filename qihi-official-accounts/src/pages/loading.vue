@@ -23,7 +23,9 @@ export default {
     };
   },
   beforeRouteEnter(to, from, next) {
-    next();
+    next( vm =>{
+      this.loading = false;
+    });
   }
 };
 </script>

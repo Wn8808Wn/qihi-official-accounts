@@ -1,0 +1,2 @@
+webpackJsonp([18],{AtcD:function(e,t){},JhK4:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var s={render:function(){this.$createElement;this._self._c;return this._m(0)},staticRenderFns:[function(){var e=this.$createElement,t=this._self._c||e;return t("div",{staticClass:"umpireTestPage"},[t("div",[this._v("该功能尚未开放！！敬请期待！！")])])}]};var i=n("C7Lr")({},s,!1,function(e){n("AtcD")},null,null);t.default=i.exports}});
+//# sourceMappingURL=18.1fb6d13b2933ab2412d2.js.map
