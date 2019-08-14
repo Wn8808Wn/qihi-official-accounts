@@ -220,7 +220,6 @@ export default {
     this.totalPerson = this.certificateList.length;
     this.examPlanId = this.certificateList[0].examPlanId
     let params = {
-      userId: 1
     };
     this.$axios.get("/api/linkman/linkman_list", { params }).then(res => {
       if (res.data.code === 0) {
@@ -306,9 +305,7 @@ export default {
           height: 14px;
           width: 40px;
         }
-        // & /deep/ .weui-switch-cp__input:checked~.weui-switch-cp__box:after, .weui-switch:checked:after{
-        //   content: '';
-        // }
+        
         & /deep/ .weui-switch-cp__box:before, .weui-switch:before{
             content: " ";
             position: absolute;

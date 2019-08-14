@@ -115,6 +115,7 @@ export default {
     },
     downTickets(item) {
       console.log(item, "item");
+      // alert('aaa')
       this.htmlTitle = item.playerName + "的准考证";
       this.playerName = item.playerName;
       this.gender = item.gender;

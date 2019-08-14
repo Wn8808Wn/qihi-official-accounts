@@ -102,7 +102,6 @@ export default {
   },
   created(){
       let params = {
-         userId:1
       }
       this.$axios.get('/api/enroll/enroll_list',{params}).then( res =>{
           if(res.data.code === 0 ){

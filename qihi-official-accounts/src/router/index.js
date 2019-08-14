@@ -153,7 +153,63 @@ export default new Router({
       meta: {
         title: '常用信息'
       },
-      component: () => import('../pages/commonInformation/commonInformation.vue'), // 段级位考试=>常用信息
+      component: () => import('../pages/commonInformation/commonInformation.vue'), // 段级位考试=>常用棋手
+    },
+    {
+      path: '/examCenter/examinationLevel/addPlayer',
+      name: 'addPlayer',
+      meta: {
+        title: '新增棋手'
+      },
+      component: () => import('../pages/commonInformation/addPlayer.vue'), // 段级位考试=>新增棋手
+    },
+    {
+      path: '/examCenter/examinationLevel/addPlayerInfo',
+      name: 'addPlayerInfo',
+      meta: {
+        title: '新增棋手'
+      },
+      component: () => import('../pages/commonInformation/addPlayerInfo.vue'), // 段级位考试=>新增棋手=>棋手详细信息
+    },
+    {
+      path: '/examCenter/examinationLevel/editPlayerInfo',
+      name: 'editPlayerInfo',
+      meta: {
+        title: '编辑棋手'
+      },
+      component: () => import('../pages/commonInformation/editPlayerInfo.vue'), // 段级位考试=>新增棋手=>编辑棋手
+    },
+    {
+      path: '/examCenter/examinationLevel/playerUnitCode',
+      name: 'playerUnitCode',
+      meta: {
+        title: '新增棋手'
+      },
+      component: () => import('../pages/commonInformation/playerUnitCode.vue'), // 段级位考试=>新增棋手=>棋手机构代码
+    },
+    {
+      path: '/examCenter/examinationLevel/addLinkman',
+      name: 'addLinkman',
+      meta: {
+        title: '新增常用联系人'
+      },
+      component: () => import('../pages/commonInformation/addLinkman.vue'), // 段级位考试=>新增联系人
+    },
+    {
+      path: '/examCenter/examinationLevel/editLinkmanInfo',
+      name: 'editLinkmanInfo',
+      meta: {
+        title: '编辑常用联系人'
+      },
+      component: () => import('../pages/commonInformation/editLinkmanInfo.vue'), // 段级位考试=>编辑联系人
+    },
+    {
+      path: '/examCenter/examinationLevel/reimbursementInfo',
+      name: 'reimbursementInfo',
+      meta: {
+        title: '报销凭证'
+      },
+      component: () => import('../pages/commonInformation/reimbursementInfo.vue'), // 段级位考试=>报销凭证
     },
     {
       path: '/examCenter/coachTest',

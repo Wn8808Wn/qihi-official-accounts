@@ -260,7 +260,6 @@ export default {
     //获取联系人列表
     getLinkManList() {
       let params = {
-        userId: 1
       };
       this.$axios.get("/api/linkman/linkman_list", { params }).then(res => {
         if (res.data.code === 0) {
@@ -274,7 +273,6 @@ export default {
     //获取棋手列表
     getPlayerList() {
       let params = {
-        userId: 1,
         areaId: 1100000,
         chessLevel: 1
       };

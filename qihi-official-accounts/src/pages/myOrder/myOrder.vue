@@ -167,20 +167,20 @@ export default {
         this.index = index;
         if(index == 0){
           let params = {
-              userId:1,   //全部
+            
           }
           this.getList(params);
         }
         if(index == 1){
           let params = {
-              userId:1,
+             
               payStatus:0   //0 代付款
           }
           this.getList(params);
         }
         if(index == 2){
           let params = {
-              userId:1,
+            
               payStatus:1   //1 已付款
           }
           this.getList(params);
@@ -231,7 +231,6 @@ export default {
   },
   created(){
       let params = {
-         userId:1,
       }
       this.getList(params);
   },

@@ -1,36 +1,71 @@
 <template>
     <div class="myOrderPage">
         <commonInfo></commonInfo>
-        <tab :line-width="2" custom-bar-width="44px" default-color='#333333' active-color='#2069E5' v-model="index">
-          <tab-item selected @on-item-click='selectedCurrent'>棋手</tab-item>
+        <tab :line-width="2"  custom-bar-width="44px" default-color='#333333' active-color='#2069E5' v-model="index">
+          <tab-item seletced  @on-item-click='selectedCurrent'>棋手</tab-item>
           <tab-item  @on-item-click='selectedCurrent'>地址</tab-item>
           <tab-item  @on-item-click='selectedCurrent'>联系人</tab-item>
           <tab-item  @on-item-click='selectedCurrent'>报销凭证</tab-item>
         </tab>
-        <div class="list listWrapper" ref="listWrapper">
-            <ul class="content">
-            <div v-for="(item,index) in list" :key="index">
-
-              <p class="commonTagP">
-                <span>电话号码</span>
-                <span>{{item.examLevels}}</span>
-              </p>
-              <p class="commonTagP">
-                <span>所属机构</span>
-                <span>{{item.examTime}}</span>
-              </p>
+        <!-- 棋手列表 -->
+        <div class="list listWrapper" ref="listWrapper" v-if="index === 0">
+            <ul class="content">  
+            <div v-for="(item,index) in playerList" :key="index" class="commonBox">
+              <div class="lfloat">
+                  <p>
+                      <span>{{item.playerName}}</span>
+                  </p>
+                  <p class="commonTagP">
+                    <span>段位等级</span>
+                    <span>{{item.chessLevelName}}</span>
+                  </p>
+                  <p class="commonTagP">
+                    <span>证件号码</span>
+                    <span>{{item.certificateNo}}</span>
+                  </p>
+              </div>
+              <div class="rfloat"><i class="iconfont icon-xiugai" @click="editPlayerInfo(item)"></i></div>
             </div>
             <p class="bottomBar">
                 已加载全部
             </p>
             </ul>
         </div>
+         <!-- 地址列表 -->
+       
+         <!-- 联系人列表 -->
+        <div class="list listWrapper" ref="listWrapper" v-if="index === 2">
+            <ul class="content">  
+            <div v-for="(item,index) in linkmanList" :key="index" class="commonBox">
+              <div class="lfloat">
+                  <p>
+                      <span>{{item.linkman}}</span>
+                  </p>
+                  <p class="commonTagP">
+                    <span>电话号码</span>
+                    <span>{{item.phone}}</span>
+                  </p>
+                  <p class="commonTagP">
+                    <span>邮箱地址</span>
+                    <span>{{item.email}}</span>
+                  </p>
+              </div>
+              <div class="rfloat"><i class="iconfont icon-xiugai" @click="editlinkmanInfo(item)"></i></div>
+            </div>
+            <p class="bottomBar">
+                已加载全部
+            </p>
+            </ul>
+        </div>
+         <!-- 报销凭证列表 -->
+
+        <div class="addBtn" @click="addBtn"></div>
         <commonTabbar></commonTabbar>
     </div>
 </template>
 
 <script>
-import Bscroll from 'better-scroll';
+import Bscroll from "better-scroll";
 import { Tab, TabItem } from "vux";
 import commonInfo from "./popups/commonInfo";
 import commonTabbar from "../../components/commonTabbar";
@@ -44,66 +79,85 @@ export default {
   data() {
     return {
       index: 0,
-      list:[
-        // {
-        //   roomName:'龙岗区考场',
-        //   examStatus:0,
-        //   examLevels:'10级',
-        //   address:'黑龙江省哈尔滨市围棋协会二楼130',
-        //   examTime:'2019.02.18 9:00',
-        //   playerName:'网三',
-        //   price:1600,
-        //   state:0,
-        //   playerList:[{},{}]
-        // },
-      ],
-
+      playerList: [],
+      adressList: [],
+      linkmanList: [],
+      reimbursementList:[]
     };
   },
   methods: {
-    getList(params){
-        this.$axios.get('/api/order/orderAll_list',{params}).then( res =>{
-        if(res.data.code ===0 ){
-          this.list =res.data.data.info;
-          console.log(res.data.data.info,'DNF')
+    addBtn() {
+      if (this.index === 0) {
+        this.$router.push({ name: "addPlayer" });
+      }
+      if (this.index === 1) {
+        // alert("新增地址");
+      }
+      if (this.index === 2) {
+         this.$router.push({ name: "addLinkman" });
+      }
+      if (this.index === 3) {
+        // alert("新增报销");
+      }
+    },
+    getPlayerList(params) {
+      this.$axios.get("/api/player/list", { params }).then(res => {
+        if (res.data.code === 0) {
+          console.log(res)
+          this.playerList = res.data.data;
+          // let examLevelList = JSON.parse(sessionStorage.getItem('examLevelList'));
+          // this.playerList.map( e =>{
+          //   e.chessLevelName = examLevelList.filter( item => item.id == e.chessLevel)[0].levelName;
+          // })
+          this.$nextTick(() => {
+              this.scroll = new Bscroll(this.$refs.listWrapper, { click: true });
+          });
         }
-        this.$nextTick(() => {
-          this.scroll = new Bscroll(this.$refs.listWrapper, {click:true})
-        })
-     })
+      });
+    },
+    getLinkmanList(params){
+      this.$axios.get("/api/linkman/list ", { params }).then(res => {
+        if (res.data.code === 0) {
+          console.log(res)
+          this.linkmanList = res.data.data;
+          // let examLevelList = JSON.parse(sessionStorage.getItem('examLevelList'));
+          // this.playerList.map( e =>{
+          //   e.chessLevelName = examLevelList.filter( item => item.id == e.chessLevel)[0].levelName;
+          // })
+          // this.$nextTick(() => {
+          //     this.scroll = new Bscroll(this.$refs.listWrapper, { click: true });
+          // });
+        }
+      });
+    },
+    editPlayerInfo(item){
+      sessionStorage.setItem('editCurrentPlayerInfo',JSON.stringify(item))
+      this.$router.push({name:'editPlayerInfo'})
+    },
+     editlinkmanInfo(item){
+      console.log(item)
+      sessionStorage.setItem('editCurrentLinkmanInfo',JSON.stringify(item))
+      this.$router.push({name:'editLinkmanInfo'})
     },
     selectedCurrent(index) {
       this.index = index;
-      if(index === 0){
-        let params = {
-            userId:1,
-        }
-        //  this.getList(params);
+      if (index === 0) {
+        this.getPlayerList();
       }
-      if(index === 1){
-        let params = {
-            userId:1,
-            payStatus:0   //0 代付款
-        }
-        //  this.getList(params);
+      if (index === 1) {
+        //  this.$router.push({name:'addressInfo'})
       }
-      if(index === 2){
-        let params = {
-            userId:1,
-            payStatus:1   //0 已付款
-        }
-        //  this.getList(params);
+      if (index === 2) {
+        this.getLinkmanList();
+        //  this.$router.push({name:'linkmanInfo'})
       }
-    },
-    refundBtn(){
-      alert('功能开发中')
-    },
-    checkTicket(){
-        alert('功能开发中')
+      if (index === 3) {
+        //  this.$router.push({name:'reimbursementInfo'})
+      }
     }
   },
-  created(){
-
+  created() {
+    this.getPlayerList();
   }
 };
 </script>
@@ -114,126 +168,116 @@ export default {
 .myOrderPage {
   width: 100%;
   height: 100%;
+  display: flex; //.....
+  flex-direction: column; //.....
   background: $bg-color;
   & /deep/ .vux-tab .vux-tab-item {
     background: none;
     font-size: 16px;
     color: #333333;
+    .aa {
+      font-size: 18px;
+    }
   }
-  .listWrapper{
-     width: 100%;
-     height:100%;
-   } 
-  &> .list {
+  .listWrapper {
+    width: 100%; //.....
+  }
+  & > .list {
     display: flex;
+    flex: 1;
     width: 100%;
-    height: 618px;
+    height: calc(100% - 60px); //.....
     overflow: hidden;
-    margin-top: 12px;
+    padding-bottom: 60px; //.....
     flex-direction: column;
     align-items: center;
-    &>.content{
-      & > div {
-      width: 327px;
-      // height: 186px;
-      overflow: hidden;
-      padding: 16px;
-      margin-top: 12px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
-      border-radius: 14px;
-      &:nth-of-type(1){
-          margin-top:0;
-      }
-      & > p:nth-of-type(1) {
-          width:100%;
-          height: 22px;
-          & >.firstSpan{
-            font-size: 16px;
+    & > .content {
+      padding-top: 12px; //.....
+      & > .commonBox {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        &:last-child {
+          margin-bottom: 0px;
+        }
+        .lfloat {
+          width: 80%;
+          height: 86px;
+          & > p:nth-of-type(1) {
+            width: 100%;
             height: 22px;
-            float: left;
-            font-family: PingFangSC-Semibold;
-            font-weight: 600;
-            color: rgba(51, 51, 51, 1);
-            line-height: 22px;
-          }
-          & > span {
-            font-size:16px;
-            font-family:PingFang-SC-Medium;
-            font-weight:500;
-            float: right;
-            color:rgba(237,26,35,1);
-            line-height:22px;
-          }
-        }
-        & > p:nth-of-type(2) {
-          margin-top: 16px;
-          
-        }
-        .commonTagP {
-          margin-top: 8px;
-          & > span {
-            height: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 20px;
-          }
-          & > span:nth-of-type(1) {
-            color: #666666;
-            height: 20px;
-            margin-right: 16px;
-            float: left;
-          }
-          & > span:nth-of-type(2) {
-            color: #333333;
-            width: 249px;
-            height: 20px;
-            display: inline-block;
-          }
-        }
-        &>button{
-            width:76px;
-            height:28px;
-            border-radius:14px;
-            padding: 0;
-            border:1px solid rgba(32,105,229,1);
-            font-size: 14px;
-            margin-top: 16px;
-            float: right;
-            color: #ffffff;
-            background: $bg-blue;
-        }
-        .btnGrps{
-          &>button{
-              width: 76px;
-              height:28px;
-              border: none;
-              outline: none;
-              background: #ffffff;
-              border-radius:14px;
-              border:1px solid rgba(32,105,229,1);
-              font-size: 14px;
-              color:rgba(32,105,229,1);
-              margin-top: 16px;
-              float: right;
-              margin-left: 8px;
+            margin-bottom: 16px;
+            & > span {
+              font-size: 16px;
+              font-weight: 600;
+              float: left;
+              color: rgba(51, 51, 51, 1);
+              line-height: 22px;
             }
+            // & > .firstSpan {
+            //   width: 64px;
+            //   height: 22px;
+            //   overflow: hidden;
+            //   margin-right: 8px;
+            //   text-overflow: ellipsis;
+            //   white-space: nowrap;
+            // }
+          }
+          .commonTagP {
+            height: 20px;
+            width: 100%;
+            margin-bottom: 8px;
+            & > span {
+              font-size: 14px;
+              font-weight: 500;
+              line-height: 20px;
+            }
+            & > span:nth-of-type(1) {
+              color: #666666;
+              margin-right: 16px;
+              float: left;
+            }
+            & > span:nth-of-type(2) {
+              color: #333333;
+              display: inline-block;
+            }
+            &:nth-last-of-type(1) {
+              margin-bottom: 0px;
+            }
+          }
         }
+        .rfloat {
+          width: 20%;
+          display: flex;
+          justify-content: flex-end;
+          & > i {
+            font-size: 36px;
+            color: #C8C8C8;
+          }
+        }
+      }
     }
-
-    }
-    
-    .bottomBar{
+    .bottomBar {
       display: flex;
       justify-content: center;
-      font-size:12px;
-      font-family:PingFang-SC-Medium;
-      font-weight:500;
-      color:rgba(176,176,176,1);
-      line-height:17px;
-      margin-top:8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(176, 176, 176, 1);
+      line-height: 17px;
+      margin-top: 8px;
+      margin-bottom: 60px; //....
     }
   }
-
+  .addBtn {
+    position: fixed;
+    left: 24px;
+    bottom: 111px;
+    width: 54px;
+    height: 54px;
+    background: url("../../assets/imgs/addBtn.svg") no-repeat;
+    background-size: 100% 100%;
+  }
 }
 </style>

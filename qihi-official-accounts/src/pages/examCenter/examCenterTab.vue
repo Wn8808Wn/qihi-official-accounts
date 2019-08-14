@@ -344,6 +344,8 @@ export default {
       //   sessionStorage.setItem('firstLogin',true)
       //   this.getLocation();
       // }
+      //打包前删除
+      sessionStorage.setItem('dsToken','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZW51TGlzdCI6InN0YW5kYXJkLHBhcGVyLGhhbGwsbWVzc2FnZSxwbGFuLG9yZGVyLHN0YXR1cyIsInVuaXRJZCI6IjEiLCJwZXJtaXNzaW9uTGlzdCI6Im1lc3NhZ2U6dGVtcExpc3Qsb3JkZXI6bGlzdCxwbGFuOmFkZCxzdGFuZGFyZDp0ZW1wRGV0YWlsLHBsYW46bGlzdCxoYWxsOmZyZWV6ZURldGFpbCxwbGFuOmRldGFpbCxoYWxsOmxpc3QscGxhbjpsaW1pdExpc3QsbWVzc2FnZTp0ZW1wQWRkLHN0YW5kYXJkOmxpc3Qsc3RhbmRhcmQ6ZGV0YWlsLHBsYW46dXBkYXRlLHN0YW5kYXJkOnRlbXBBZGQscGFwZXI6bGlzdCxvcmRlcjpkZXRhaWwscGFwZXI6dGVtcCxzdGFuZGFyZDp0ZW1wVXBkYXRlLGhhbGw6ZGV0YWlsLGhhbGw6cmVzdW1lLHN0YW5kYXJkOmFkZCxzdGFuZGFyZDp0ZW1wTGlzdCxwYXBlcjpkZXRhaWwsc3RhbmRhcmQ6dXBkYXRlLHBhcGVyOnNlbmQsaGFsbDphZGQsc3RhdHVzOmxpc3QsaGFsbDpmcmVlemVMaXN0LHN0YXR1czpleHBvcnQsbWVzc2FnZTp0ZW1wVXBkYXRlLG1lc3NhZ2U6bGlzdCxoYWxsOmZyZWV6ZSIsImV4cCI6MTU2NTc2NjA0MiwidXNlcklkIjoiMSIsInVzZXJuYW1lIjoiYWRtaW4ifQ.ZcGqLGWhTqVzrZGY1WdRReHYSA7S-TIa77NwyhT46zQ')
       if (window.localStorage.getItem("historyItem") !== null) {
         this.historyAreaList = JSON.parse(window.localStorage.getItem("historyItem"))
       }
