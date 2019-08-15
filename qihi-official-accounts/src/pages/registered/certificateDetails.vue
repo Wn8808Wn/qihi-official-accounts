@@ -221,7 +221,7 @@ export default {
     this.examPlanId = this.certificateList[0].examPlanId
     let params = {
     };
-    this.$axios.get("/api/linkman/linkman_list", { params }).then(res => {
+    this.$axios.get("/api/linkman/list", { params }).then(res => {
       if (res.data.code === 0) {
         this.linkManList = res.data.data;
         // console.log(res,'123');

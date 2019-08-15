@@ -9,8 +9,16 @@
 
          <div class="twoBtns">
             <button class="saveBtn" @click="saveDate">保存</button>
-            <button  class="saveBtn2" @click="delBtn">删除</button>
+            <button  class="saveBtn2" @click="delBtn" >删除</button>
             <button @click="cancleBtn">取消</button>
+        </div>
+        <div v-transfer-dom class="delPlayers">
+          <confirm v-model="showCofirm"
+          @on-cancel="onCancel"
+          @on-confirm="onConfirm"
+          >
+            <p style="text-align:center;">确认删除该棋手吗？</p>
+          </confirm>
         </div>
     </div>
 </template>
@@ -29,7 +37,8 @@ export default {
       email: "",
       isDef: 0,
       isDefault: false,
-      id: ""
+      id: "",
+      showCofirm: false,
     };
   },
   methods: {
@@ -54,7 +63,7 @@ export default {
         }
       });
     },
-    delBtn() {
+    onConfirm() {
       let params = {
         id: this.id
       };
@@ -64,6 +73,12 @@ export default {
           this.$router.push({ name: "commonInformation" });
         }
       });
+    },
+    delBtn(){
+      this.showCofirm = true;
+    },
+    onCancel() {
+      this.showCofirm = false;
     },
     cancleBtn() {
       //回到联系人页面

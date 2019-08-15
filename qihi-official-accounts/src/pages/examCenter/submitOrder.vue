@@ -261,7 +261,7 @@ export default {
     getLinkManList() {
       let params = {
       };
-      this.$axios.get("/api/linkman/linkman_list", { params }).then(res => {
+      this.$axios.get("/api/linkman/list", { params }).then(res => {
         if (res.data.code === 0) {
           this.linkManList = res.data.data;
         }
@@ -273,7 +273,7 @@ export default {
     //获取棋手列表
     getPlayerList() {
       let params = {
-        areaId: 1100000,
+        // areaId: 1100000,
         chessLevel: 1
       };
       this.$axios.get("/api/enter/choosePlayer", { params }).then(res => {
