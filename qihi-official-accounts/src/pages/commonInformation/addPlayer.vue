@@ -8,7 +8,7 @@
             </div>
             <div class="seletLinkman">
                 <p>证件号码</p> 
-                <p><input  type="text" class="ipt" v-model.trim="cardNum"  placeholder="请输入有效的证件号码" @blur="checkType"></p> 
+                <p><input  type="text" class="ipt" v-model.trim="cardNum"  placeholder="请输入有效的证件号码"></p> 
             </div>
         </div>  
         <button class="nextBtn" :class="{'deactive':disabled}" @click="checkIsMember">下一步</button>
@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       showType: false,
-      disabled:true,
+      disabled:false,
       cardType:'身份证',
       cardTypeId:1,
       cardNum:'',
@@ -90,10 +90,25 @@ export default {
           let  reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;  
           if(reg.test(card) === false){  
             this.showAlert = true;
+            this.disabled = true;
             return  false;
           }else{
             this.disabled = false;
-            return true;
+            let params = {
+                cardType:this.cardTypeId,
+                cardNo:this.cardNum
+            }
+            this.$axios.get('/api/player/get_player',{params}).then( res =>{
+              console.log(res,'sss')
+              if(res.data.code == 1){
+                this.showCofirmTitle = true;
+                this.disabled = true;
+              }
+              if(res.data.code == 0){
+                sessionStorage.setItem('chessInfo',JSON.stringify(res.data.data))
+                this.$router.push({name:'addPlayerInfo'})
+              }
+            })
           }
      },
      changeType(item){
@@ -105,23 +120,8 @@ export default {
             this.showType = false;
         },500)
      },
-     checkType(){
-        this.isCardNo(this.cardNum)
-     },
      checkIsMember(){
-       let params = {
-          cardType:this.cardTypeId,
-          cardNo:this.cardNum
-       }
-       this.$axios.get('/api/player/get_player',{params}).then( res =>{
-         console.log(res)
-         if(res.data.code === 1){
-           this.showCofirmTitle = true;
-         }else{
-           sessionStorage.setItem('chessInfo',JSON.stringify(res.data.data))
-           this.$router.push({name:'addPlayerInfo'})
-         }
-       })
+       this.isCardNo(this.cardNum)
      },
      onConfirm(){
         alert('功能开发中')
