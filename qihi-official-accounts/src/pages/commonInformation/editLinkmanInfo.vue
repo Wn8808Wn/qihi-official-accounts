@@ -25,10 +25,14 @@
 
 <script>
 import qs from "qs";
-import { InlineXSwitch } from "vux";
+import { InlineXSwitch,TransferDom,Confirm} from "vux";
 export default {
+  directives: {
+    TransferDom
+  },
   components: {
-    InlineXSwitch
+    InlineXSwitch,
+    Confirm
   },
   data() {
     return {

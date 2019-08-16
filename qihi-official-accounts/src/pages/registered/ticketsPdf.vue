@@ -11,49 +11,6 @@
                 </li>    
             </ul>
         </div>
-        <div class="ssss">
-        <div id="pdfDom">
-            <div  class="ticketDetails">
-                <div class="titleTop">
-                    <div>准考证</div>
-                    <p>2019年中国围棋协会段级位标准化考试</p>
-                </div>
-                <div class="examerInfo">
-                    <div class="lf">
-                        <p>姓　　名:<span>{{playerName}}</span></p>
-                        <p>性　　别:<span>{{gender === 0?'男':'女'}}</span> 证件类型:<span  v-if="certificateType===1" style="color:#000;margin-left:20px;">身份证</span></p>
-                        <p><i class="threeLetter">证件号</i>:<span>{{certificateNo}}</span></p>
-                        <p>报考等级:<span>{{leveNames}}</span></p>
-                        <p>准考证号:<span>{{examPermitNo}}</span></p>
-                        <p>考试时间:<span>{{examTime}}</span></p>
-                        <p>考试地点:<span>{{address}}</span></p>
-                    </div>
-                    <div id="qrcode">
-
-                    </div>
-                </div>
-                <div class="testInstructions">
-                    <h3>考试须知:</h3>
-                    <p>1、 考试可提前15分钟到场；迟到10分，考试资格作废，需重新报名。</p>
-                    <p>2、 考试座位:无固定座位号，无人座位均可使用。</p>
-                    <p>3、 考试流程</p>
-                        <li>(1) 找到座位</li>
-                        <li>(2) 确定考试设备开机</li>
-                        <li>(3) 准考证二维码对准镜头，进行身份认证</li>
-                        <li>(4) 扫码成功，开始答题</li>
-                        <!-- <div id="examSteps">
-                            <el-steps align-center>
-                            <el-step   description="找到座位"></el-step>
-                            <el-step   description="确认设备开机"></el-step>
-                            <el-step   description="准考证二维码扫描"></el-step>
-                            <el-step   description="答题"></el-step>
-                            </el-steps>
-                        </div> -->
-                    <p>4、 现场除考试题相关问题，均可咨询监考老师。</p>
-                </div>
-            </div>
-        </div>
-        </div>
         <!-- 底部btn -->
         <div class="pageBottom">
             <p class="checkBtn">
@@ -70,7 +27,7 @@
 
 <script>
 import Bscroll from "better-scroll";
-import QRcode from "qrcodejs2";
+
 export default {
   data() {
     return {
@@ -78,15 +35,6 @@ export default {
       checkList: [],
       allChoose: false,
       examLevels: "",
-      htmlTitle: "",
-      playerName: "",
-      gender: "",
-      certificateType: "",
-      certificateNo: "",
-      examTime: "",
-      leveNames: "",
-      address: "",
-      examPermitNo: ""
     };
   },
   methods: {
@@ -105,30 +53,26 @@ export default {
         this.checkList = [];
       }
     },
-    //生成二维码
-    getQrCode(val) {
-      let qrcode = new QRcode("qrcode", {
-        width: 180,
-        height: 180, // 高度
-        text: val // 二维码内容
-      });
-    },
     downTickets(item) {
       console.log(item, "item");
-      // alert('aaa')
-      this.htmlTitle = item.playerName + "的准考证";
-      this.playerName = item.playerName;
-      this.gender = item.gender;
-      this.certificateType = item.certificateType;
-      this.certificateNo = item.certificateNo;
-      this.leveNames = item.leveNames;
-      this.address = item.address;
-      this.examPermitNo = item.examPermitNo;
-      this.getQrCode(item.examPermitNo);
-      this.examTime = this.formatDate(item.examTime, "YYYY-MM-DD hh:mm");
-      setTimeout(() => {
-        this.getPdf("#pdfDom");
-      }, 2000);
+      sessionStorage.setItem('currentPdf',JSON.stringify(item))
+      //判断是否是微信环境
+      var ua = navigator.userAgent.toLowerCase();
+      if (ua.match(/MicroMessenger/i) == "micromessenger") {
+        // alert('请点击右上角在浏览器中打开进行下载当前的准考证')
+        this.$router.push({name:'showTicket',query:{
+          playerName: item.playerName,
+          gender:item.gender,
+          certificateType:item.certificateType,
+          certificateNo:item.certificateNo,
+          examTime:item.examTime,
+          leveNames:item.leveNames,
+          address:item.address,
+          examPermitNo:item.examPermitNo,
+        }})
+      } else {
+
+      }
     },
     emailBtn() {
       alert("功能开发中");
@@ -359,17 +303,17 @@ export default {
           }
         }
       }
-        #qrcode{
-            width: 180px;
-            height: 180px;
-            float: left;
-            margin-top: 14%;
-            &>img{
-                width: 100%;
-                height: 100%;
-                border: none;
-            }
+      #qrcode {
+        width: 180px;
+        height: 180px;
+        float: left;
+        margin-top: 14%;
+        & > img {
+          width: 100%;
+          height: 100%;
+          border: none;
         }
+      }
     }
     .testInstructions {
       width: calc(100% -82px);

@@ -140,6 +140,14 @@ export default new Router({
       component: () => import('../pages/registered/ticketsPdf.vue'), // 段级位考试=>已报名=>准考证PDF页面
     },
     {
+      path: '/examCenter/examinationLevel/registered/showTicket',
+      name: 'showTicket',
+      meta: {
+        title: '准考证'
+      },
+      component: () => import('../pages/registered/showTicket.vue'), // 段级位考试=>已报名=>准考证img页面
+    },
+    {
       path: '/examCenter/examinationLevel/myOrder',
       name: 'myOrder',
       meta: {

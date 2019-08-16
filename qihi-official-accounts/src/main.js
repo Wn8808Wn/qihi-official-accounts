@@ -22,6 +22,8 @@ import '../src/assets/icon/iconfont.css'
 import fastclick from 'fastclick'
 fastclick.attach(document.body)
 
+// 引入vconsole  打包前删除
+// import vConsole from '../src/utils/vconsole.js'
 // 引入axios 挂载
 import axios from './config/axios'
 Vue.prototype.$axios = axios;

@@ -1,11 +1,11 @@
 <template>
     <div class="myOrderPage">
         <commonInfo></commonInfo>
-        <tab :line-width="2"  custom-bar-width="44px" default-color='#333333' active-color='#2069E5' v-model="index">
-          <tab-item seletced  @on-item-click='selectedCurrent'>棋手</tab-item>
-          <tab-item  @on-item-click='selectedCurrent'>地址</tab-item>
-          <tab-item  @on-item-click='selectedCurrent'>联系人</tab-item>
-          <tab-item  @on-item-click='selectedCurrent'>报销凭证</tab-item>
+        <tab :line-width="2"  v-model="index" :animate='false' default-color='#333333' active-color='#2069E5'>
+          <tab-item   seletced  @on-item-click='selectedCurrent'>棋手</tab-item>
+          <tab-item   @on-item-click='selectedCurrent'>地址</tab-item>
+          <tab-item   @on-item-click='selectedCurrent'>联系人</tab-item>
+          <tab-item   @on-item-click='selectedCurrent'>报销凭证</tab-item>
         </tab>
         <!-- 棋手列表 -->
         <div class="list listWrapper" ref="listWrapper" v-if="index === 0">
@@ -78,11 +78,11 @@ export default {
   },
   data() {
     return {
-      index: 0,
       playerList: [],
       adressList: [],
       linkmanList: [],
-      reimbursementList:[]
+      reimbursementList:[],
+      index: 0,
     };
   },
   methods: {
@@ -124,9 +124,9 @@ export default {
           // this.playerList.map( e =>{
           //   e.chessLevelName = examLevelList.filter( item => item.id == e.chessLevel)[0].levelName;
           // })
-          // this.$nextTick(() => {
-          //     this.scroll = new Bscroll(this.$refs.listWrapper, { click: true });
-          // });
+          this.$nextTick(() => {
+              this.scroll = new Bscroll(this.$refs.listWrapper, { click: true });
+          });
         }
       });
     },
@@ -149,7 +149,6 @@ export default {
       }
       if (index === 2) {
         this.getLinkmanList();
-        //  this.$router.push({name:'linkmanInfo'})
       }
       if (index === 3) {
         //  this.$router.push({name:'reimbursementInfo'})
@@ -158,6 +157,16 @@ export default {
   },
   created() {
     this.getPlayerList();
+  },
+  beforeRouteEnter( to, from ,next){
+    console.log(from.name,'from')
+    if( from.name == 'editLinkmanInfo' || from.name == 'addLinkman'){
+      next( vm =>{
+         vm.selectedCurrent(2);
+      });
+    }else{
+      next();
+    }
   }
 };
 </script>
@@ -175,9 +184,7 @@ export default {
     background: none;
     font-size: 16px;
     color: #333333;
-    .aa {
-      font-size: 18px;
-    }
+    
   }
   .listWrapper {
     width: 100%; //.....
