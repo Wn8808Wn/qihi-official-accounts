@@ -25,7 +25,7 @@
         <div class="linkManPart">
             <div class="seletLinkman bottomBorder">
                 <p>联系人</p>  
-                <p><span class="defaultSpan">默认</span> <span>{{linkManInfo}}</span> <i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i> </p>
+                <p><span v-if="showDefLinkmanSpan" class="defaultSpan">默认</span> <span>{{linkManInfo}}</span> <i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i> </p>
             </div>
             <div class="seletLinkman">
                 <p>发票信息</p> 
@@ -39,30 +39,32 @@
                 <p @click="showPlayerPopups">选择棋手</p>
             </div>    
             <!-- 报名棋手选择列表 -->
-            <swipeout>
-                <div  class="swipeBox" v-for="(item,index) in checkList" :key="index">
-                    <div class="iBox"><i class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'activeTs':'deactiveTs'"></i></div>
-                     <swipeout-item @on-close="handleOpen(index)" @on-open="handleClose(index)" transition-mode="follow"  >
-                          <div slot="right-menu">
-                              <swipeout-button @click.native="onButtonClick(item)" type="primary">删除</swipeout-button>
-                          </div>
-                          <div slot="content">
-                              <div class="infoBox">
-                                  <p><span>棋手姓名</span> <span>{{item.playerName}}</span></p>
-                                  <p><span>段位等级</span>
-                                  <span>{{examLevelList.filter( item1 => item1.id == item.chessLevel)[0].levelName}}</span>
-                                  </p>
-                                  <p><span>证件号码</span> <span>{{item.certificateNo}}</span></p>
+            <swipeout class="swipeBoxWarper" ref="swipeBoxWarper">
+                <ul class="content">
+                    <div  class="swipeBox "  v-for="(item,index) in checkList" :key="index">
+                        <div class="iBox"><i class="iconfont icon-shanchu" :class="index === activeId && btnActive === 1?'activeTs':'deactiveTs'"></i></div>
+                        <swipeout-item @on-close="handleOpen(index)" @on-open="handleClose(index)" transition-mode="follow"  >
+                              <div slot="right-menu">
+                                  <swipeout-button @click.native="onButtonClick(item)" type="primary">删除</swipeout-button>
                               </div>
-                          </div>
-                </swipeout-item>
-                </div>
+                              <div slot="content">
+                                  <div class="infoBox">
+                                      <p><span>棋手姓名</span> <span>{{item.playerName}}</span></p>
+                                      <p><span>段位等级</span>
+                                      <span>{{examLevelList.filter( item1 => item1.id == item.chessLevel)[0].levelName}}</span>
+                                      </p>
+                                      <p><span>证件号码</span> <span>{{item.certificateNo}}</span></p>
+                                  </div>
+                              </div>
+                        </swipeout-item>
+                    </div>
+                </ul>
                
             </swipeout>
         </div>
 
         <!-- 底部bar -->
-        <div class="fixedBox">
+        <div class="fixedBox" style="z-index:1">
             <p><span>报名费:</span> <i>¥</i><span>{{totalPrice}}</span></p>
             <button @click="submitOrder" :class="{'allowClick':disabled === false}" :disabled="disabled" >
                 提交订单
@@ -78,19 +80,19 @@
                     <span @click="cancleLinkmanBtn">取消</span>
                 </div>
                 <!-- 获取联系人列表 -->
-                <div class="linkManListBox" v-if='true'>
+                <div class="linkManListBox linkmanWrapper"  ref="linkmanWrapper" v-if='!noLinkMan'>
+                    <ul class="content">
                         <li v-for="(item,index) in linkManList" :key="index"
-                        @click="selectCurrentLinkMan(item,index)" 
-                        >
+                          @click="selectCurrentLinkMan(item,index)">
                             <p :class="{activeLinkManStyle:currentLinkManId === index}">
                                 <span>{{item.linkman}}</span>
                                 <span class="mtop4px">{{item.phone}}</span>
                                 <span v-if="item.email" class="mtop4px">{{item.email}}</span>
                             </p>
-                            <i class="iconfont icon-xiugai"></i>
-                    </li>
+                        </li>
+                    </ul>
                 </div>
-                <div v-if="false" class="noLinkManBox">
+                <div v-if="noLinkMan" class="noLinkManBox">
                     <p>还没有创建常用联系人</p>
                 </div>
                 <div class="btmBar">
@@ -108,7 +110,8 @@
                         <span @click="canclePlayerBtn">取消</span>
                     </div>
                     <!-- 有棋手展示 -->
-                    <div class="linkManListBox chessPlayerBox" v-if='true'>
+                    <div class="linkManListBox chessPlayerBox playerWrapper" ref="playerWrapper" v-if='!noPlayer'>
+                      <ul class="content">
                         <li v-for="(item,index) in playerList" :key="index">
                             <p :class="{activeLinkManStyle:currentPlayerId === index}">
                                 <span>{{item.playerName}}</span>
@@ -117,7 +120,6 @@
                                 <span class="mtop4px">{{item.unitName}}</span>
                             </p>
                             <div>
-                                <i class="iconfont icon-xiugai"></i>
                                 <div class="playCheckBox">
                                     <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentPlayer(item,index)">
                                     <label  :for='item.id'></label>
@@ -125,9 +127,10 @@
                             </div>
                             
                         </li>
+                       </ul> 
                     </div>
                     <!-- 还没有棋手情况 -->
-                    <div v-if="false" class="noLinkManBox">
+                    <div v-if="noPlayer" class="noLinkManBox">
                         <p>还没有创建棋手</p>
                     </div>
                 
@@ -186,6 +189,7 @@
 </template>
 
 <script>
+import Bscroll from "better-scroll";
 import {PopupPicker,Group,TransferDom,Popup,Swipeout,SwipeoutItem,SwipeoutButton,Confirm} from "vux";
 import qs from "qs"; 
 import appointmentInfo from "./popups/appointmentInfo.vue";
@@ -214,7 +218,7 @@ export default {
       showPopup: false,
       showCommonQuestion: false,
       currentLinkManId: "",
-      linkManInfo: "棋智科技",
+      linkManInfo: "",
       currentPlayerId: "",
       showLinkMan: false,
       showPlayer: false,
@@ -222,33 +226,16 @@ export default {
       playerNum: 0,
       examLevelList:[],
       checkList: [],
-      linkManList: [
-        // {
-        //   linkman: "老王",
-        //   phone: 18811111188
-        // },
-      ],
-      playerList: [
-        //  {
-        //      id:1,
-        //      playerName:'尼古拉斯',
-        //      certificateNo:111231312313213123,
-        //      phone:1822112289,
-        //      unitName:'黑龙江棋院'
-        //  },
-        //  {
-        //      id:2,
-        //      playerName:'尼古拉斯',
-        //      certificateNo:111231312313213123,
-        //      phone:1822112289,
-        //      unitName:'黑龙江棋院'
-        //  },
-      ],
+      linkManList: [],
+      playerList: [],
       activeId: null,
       btnActive: 1,
       showCofirm: false,
       linkManPhone: "",
-      delCurrentplayerId: null
+      delCurrentplayerId: null,
+      noLinkMan:false,
+      noPlayer:false,
+      showDefLinkmanSpan:false
     };
   },
   computed: {
@@ -259,32 +246,59 @@ export default {
   methods: {
     //获取联系人列表
     getLinkManList() {
-      let params = {
-      };
+      let params = {};
       this.$axios.get("/api/linkman/list", { params }).then(res => {
         if (res.data.code === 0) {
+          console.log(res,'联系人列表')
           this.linkManList = res.data.data;
+          if(this.linkManList.length>0){
+              this.noLinkMan = false;
+              let defLinkmanInfoArr = this.linkManList.filter( (item,index) => item.isDef == 0)
+              if(defLinkmanInfoArr.length>0){
+                this.linkManInfo = defLinkmanInfoArr[0].linkman;
+                this.showDefLinkmanSpan = true
+              }else{
+                this.linkManInfo = '请选择';
+                this.showDefLinkmanSpan = false
+              }
+           
+          }else{
+            this.noLinkMan = true;
+          }
+          this.$nextTick(() => {
+              this.scroll = new Bscroll(this.$refs.linkmanWrapper, { click: true });
+          });
         }
       });
     },
     addLinkMan(){
-        this.$router.push({name:'commonInformation'})
+        this.$router.push({name:'addLinkman'})
     },
     //获取棋手列表
     getPlayerList() {
+      let provinceCode = JSON.parse(sessionStorage.getItem('currentItem')).provinceCode;
+      let chessLevel = sessionStorage.getItem('examLevelId')
       let params = {
-        // areaId: 1100000,
-        chessLevel: 1
+        provinceCode,
+        chessLevel
       };
       this.$axios.get("/api/enter/choosePlayer", { params }).then(res => {
         // console.log(res);
         if (res.data.code === 0) {
           this.playerList = res.data.data;
+          if(this.playerList.length>0){
+            this.noPlayer = false;
+          }else{
+            this.noPlayer = true;
+          }
+          this.$nextTick(() => {
+              this.scroll = new Bscroll(this.$refs.playerWrapper, { click: true });
+          });
         }
       });
     },
     addChessPlayer(){
-        this.$router.push({name:'commonInformation'})
+        this.$router.push({name:'addPlayer'})
     },
     submitOrder() {
       // //提交前先看座位数够不够
@@ -382,6 +396,11 @@ export default {
       this.currentLinkManId = index;
       this.linkManInfo = item.linkman;
       this.linkManPhone = item.phone;
+      if(item.isDef == 0){
+        this.showDefLinkmanSpan = true;
+      }else{
+        this.showDefLinkmanSpan = false;
+      }
       // console.log(this.linkManPhone, 11);
       setTimeout(() => {
         this.showLinkMan = false;
@@ -389,23 +408,24 @@ export default {
       }, 400);
     },
     showPlayerPopups() {
+      this.getPlayerList();
       this.showPlayer = true;
     },
     selectCurrentPlayer(item) {
-      console.log(this.checkList, "dasda");
+      console.log(this.checkList,'cheasd')
     },
     showCommonQuestionPage() {
       this.showCommonQuestion = true;
     },
     confirmBtn() {
-      this.showPlayer = false;
-      this.showExamInfo = false;
-      this.playerNum = this.checkList.length;
-      if (this.checkList.length == 0) {
-        this.disabled = true;
-      } else {
-        this.disabled = false;
-      }
+        this.showPlayer = false;
+        this.showExamInfo = false;
+        this.playerNum = this.checkList.length;
+        if (this.checkList.length == 0) {
+          this.disabled = true;
+        } else {
+          this.disabled = false;
+        }
     },
     onCancel() {
       this.showCofirm = false;
@@ -427,9 +447,10 @@ export default {
     this.address = JSON.parse(sessionStorage.getItem("currentItem")).address;
     this.time = sessionStorage.getItem("examTime");
     this.price = sessionStorage.getItem("price");
-    this.getLinkManList();
-    this.getPlayerList();
     this.examLevelList = JSON.parse(sessionStorage.getItem("examLevelList"));
+  },
+  created(){
+     this.getLinkManList();
   }
 };
 </script>
@@ -457,8 +478,7 @@ export default {
     background: rgba(255, 255, 255, 1);
     box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
     border-radius: 14px;
-    overflow: hidden;
-    // margin-top: 12px;
+    // overflow: hidden;
     .bottomBorder {
       border-bottom: 1px solid #e5e5e5;
     }
@@ -477,11 +497,12 @@ export default {
         }
         .defaultSpan {
           font-size: 12px;
-          font-family: PingFang-SC-Medium;
-          font-weight: 500;
-          padding: 1px 6px;
+          padding: 0px 6px;
           color: rgba(255, 255, 255, 1);
-          line-height: 17px;
+          line-height: 20px;
+          display:inline-block;
+          height: 100%;
+          vertical-align: middle;
           background: rgba(32, 105, 229, 1);
           border-radius: 10px;
         }
@@ -511,6 +532,11 @@ export default {
         line-height: 22px;
       }
     }
+    .swipeBoxWarper{
+      width: 100%;
+      height: 450px;
+      overflow: hidden;
+    }
     & /deep/ .vux-swipeout {
       width: 100%;
       & /deep/.swipeBox {
@@ -519,31 +545,32 @@ export default {
         overflow: hidden;
         position: relative;
         border-top: 1px solid #e5e5e5;
-        & > .iBox {
-          display: block;
-          width: 48px;
-          height: 104px;
-          background: #ffffff;
-          position: absolute;
-          left: 0px;
-          top: 0px;
-          text-align: center;
-          line-height: 104px;
-          z-index: 2;
-          &>i{
-            font-size: 20px;
-            color: rgba(32, 105, 229, 1);
-          }
-           .activeTs {
+          & > .iBox {
             display: block;
-            transform: rotateZ(0deg);
-            transition: all 500ms;
-          }
-          .deactiveTs {
-            display: block;
-            transform: rotateZ(90deg);
-            transition: all 500ms;
-          }
+            width: 48px;
+            height: 104px;
+            background: #ffffff;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            text-align: center;
+            line-height: 104px;
+            z-index: 2;
+            &>i{
+              font-size: 20px;
+              color: rgba(32, 105, 229, 1);
+            }
+            .activeTs {
+              display: block;
+              transform: rotateZ(0deg);
+              transition: all 500ms;
+            }
+            .deactiveTs {
+              display: block;
+              transform: rotateZ(90deg);
+              transition: all 500ms;
+            }
+          
         }
       }
       // swiperOut 样式
@@ -632,73 +659,85 @@ export default {
     }
   }
 }
+
+.linkmanWrapper{
+  width: 100%;
+  height: 550px;
+  overflow: hidden;
+}
+.playerWrapper{
+  width: 100%;
+  height: 518px;
+  overflow: hidden;
+
+}
 .linkManListBox {
   width: 375px;
-  & > li {
-    padding: 0 17px 0px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e5e5e5;
-    & > p {
-      padding: 12px 0;
-      & > span {
-        display: block;
-        height: 20px;
-        font-size: 14px;
-        color: #333333;
-        line-height: 20px;
-      }
-      .mtop4px {
-        margin-top: 4px;
-        color: #666666;
-      }
-    }
-    .icon-xiugai {
-      font-size: 30px;
-    }
-    & > div {
-      display: flex;
-      align-items: center;
-      & > .playCheckBox {
-        width: 20px;
-        height: 20px;
-        overflow: hidden;
-        position: relative;
-        input[type="checkbox"] {
-          display: none;
+  &>ul{
+      & > li {
+        padding: 0 17px 0px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e5e5e5;
+        & > p {
+          padding: 12px 0;
+          & > span {
+            display: block;
+            height: 20px;
+            font-size: 14px;
+            color: #333333;
+            line-height: 20px;
+          }
+          .mtop4px {
+            margin-top: 4px;
+            color: #666666;
+          }
         }
-        input[type="checkbox"] + label::before {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          margin-right: 8px;
-          background: url("../../assets/imgs/noSelect.svg");
-          background-size: 100% 100%;
-          content: "";
-          left: 0;
-          top: 0;
-          position: absolute;
-        }
-        input[type="checkbox"]:checked + label::before {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          margin-right: 8px;
-          content: "";
-          left: 0;
-          top: 0;
-          position: absolute;
-          background: url("../../assets/imgs/selected.svg");
-          background-size: 100% 100%;
+        & > div {
+          display: flex;
+          align-items: center;
+          & > .playCheckBox {
+            width: 20px;
+            height: 20px;
+            overflow: hidden;
+            position: relative;
+            margin-right: 10px;// 删除icon 调整偏移量
+            input[type="checkbox"] {
+              display: none;
+            }
+            input[type="checkbox"] + label::before {
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              margin-right: 8px;
+              background: url("../../assets/imgs/noSelect.svg");
+              background-size: 100% 100%;
+              content: "";
+              left: 0;
+              top: 0;
+              position: absolute;
+            }
+            input[type="checkbox"]:checked + label::before {
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              margin-right: 8px;
+              content: "";
+              left: 0;
+              top: 0;
+              position: absolute;
+              background: url("../../assets/imgs/selected.svg");
+              background-size: 100% 100%;
+            }
+          }
         }
       }
-    }
-  }
-  .activeLinkManStyle {
-    & > span {
-      color: #2069e5 !important;
-    }
+      .activeLinkManStyle {
+        & > span {
+          color: #2069e5 !important;
+        }
+      }
   }
 }
 .chessPlayerBox {

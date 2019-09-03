@@ -1,2 +1,0 @@
-webpackJsonp([18],{N1p5:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var i={render:function(){this.$createElement;this._self._c;return this._m(0)},staticRenderFns:[function(){var t=this.$createElement,e=this._self._c||t;return e("div",{staticClass:"testSimulatingPage"},[e("div",[this._v("该功能尚未开放！！敬请期待！！")])])}]};var s=n("C7Lr")({},i,!1,function(t){n("wgg5")},null,null);e.default=s.exports},wgg5:function(t,e){}});
-//# sourceMappingURL=18.5c378fa988e0a9544149.js.map

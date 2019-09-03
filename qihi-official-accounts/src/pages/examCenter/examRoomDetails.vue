@@ -93,7 +93,8 @@ export default {
       price: "",
       examLevelId: "",
       disabled: true,
-      examtime: ""
+      examtime: "",
+      provinceCode:''
     };
   },
   computed: {},
@@ -169,9 +170,8 @@ export default {
     //缓存方式
     this.examLevelId = sessionStorage.getItem("examLevelId");
     this.examLevelTitle = sessionStorage.getItem("examLevelTitle");
-    this.examRoomName = JSON.parse(
-      sessionStorage.getItem("currentItem")
-    ).examRoomName;
+    this.examRoomName = JSON.parse(sessionStorage.getItem("currentItem")).examRoomName;
+    this.provinceCode = JSON.parse(sessionStorage.getItem("currentItem")).provinceCode;
     this.address = JSON.parse(sessionStorage.getItem("currentItem")).address;
     //请求滑动的日期
     let params = {
@@ -192,7 +192,7 @@ export default {
       }
     });
     //请求报考价格
-    this.$axios.get("/api/enter/get_serviceFee?examLevel=" + this.examLevelId).then(res => {
+    this.$axios.get("/api/enter/get_serviceFee?examLevel="+this.examLevelId+"&provinceCode="+this.provinceCode).then(res => {
         if (res.data.code === 0) {
             this.price = res.data.data;
         }

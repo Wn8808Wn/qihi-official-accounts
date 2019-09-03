@@ -77,8 +77,9 @@ export default {
         unitName:obj.unitName,
         unitCode: this.code
       };
-      console.log(params,'params')
+      // console.log(params,'params')
       this.$axios.post("/api/player/player_add", qs.stringify(params)).then(res => {
+         console.log(res,'res')
           if(res.data.code == 0){
             this.$router.push({name:'commonInformation'})
           }
