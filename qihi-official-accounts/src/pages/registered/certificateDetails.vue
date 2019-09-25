@@ -4,7 +4,7 @@
             <i class="iconfont icon-zhushi"></i><span>申领说明</span>
         </div>
         <div v-transfer-dom>
-            <popup v-model="showPopup" @on-hide="log('hide')" @on-show="log('show')">
+            <popup v-model="showPopup">
                 <div class="popupPage">
                     <div class="PopupTop">
                         <p>申领说明</p>
@@ -26,7 +26,6 @@
               </div>
             </popup>
         </div>
-        
           <!-- 选择联系人发票信息 -->
         <div class="linkManPart">
            <div class="seletLinkman bottomBorder">
@@ -35,11 +34,16 @@
             </div>
             <div class="seletLinkman bottomBorder"  v-if="!needPaper">
                 <p>联系人</p>  
-                <p><span class="defaultSpan">默认</span> <span>{{linkManInfo}}</span> <span>{{linkManPhone}}</span> <i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i> </p>
+                <p><span  v-if="showDefLinkmanSpan" class="defaultSpan">默认</span> <span>{{linkManInfo}}</span> <span v-if="false">{{linkManPhone}}</span> <i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i> </p>
             </div>
             <div class="seletLinkman bottomBorder">
                 <p>发票信息</p> 
-                <p> <span style="color:#B0B0B0;">非必填，可补开</span><i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i></p> 
+                <p><span v-if="false">[企业]</span> 
+                <span v-if="receiptTitleType === 0">不开发票</span>
+                <span v-if="receiptTitleType === 1">个人</span>
+                <span v-if="receiptTitleType === 2">企业</span>
+                <i class="iconfont icon-youjiantou" @click="showInvoicePage"></i></p> 
+                <!-- <p> <span style="color:#B0B0B0;">非必填，可补开</span><i class="iconfont icon-youjiantou" @click="showLinkManPopupsPage"></i></p>  -->
             </div>
             <div class="seletLinkman" v-if="needPaper">
                 <p>收件地址</p> 
@@ -52,54 +56,56 @@
        
          <!-- 点击联系人弹层 -->
         <div v-transfer-dom>
-            <popup v-model="showLinkMan" @on-hide="log('hide')" @on-show="log('show')" height='100%' position='bottom'>
+            <popup v-model="showLinkMan"  height='100%' position='bottom'>
               <div class="popupPage">
                 <div class="PopupTop">
                     <p>选择联系人</p>
                     <span @click="cancleBtn">取消</span>
                 </div>
                 <!-- 获取联系人列表 -->
-                <div class="linkManListBox" v-if='true'>
+                <div class="linkManListBox linkmanWrapper"  ref="linkmanWrapper" v-if='!noLinkMan'>
+                    <ul class="content">
                         <li v-for="(item,index) in linkManList" :key="index"
-                        @click="selectCurrentLinkMan(item,index)" 
-                        >
+                          @click="selectCurrentLinkMan(item,index)">
                             <p :class="{activeLinkManStyle:currentLinkManId === index}">
                                 <span>{{item.linkman}}</span>
                                 <span class="mtop4px">{{item.phone}}</span>
                                 <span v-if="item.email" class="mtop4px">{{item.email}}</span>
                             </p>
-                            <i class="iconfont icon-xiugai"></i>
-                    </li>
+                        </li>
+                    </ul>
                 </div>
-                <div v-if="false" class="noLinkManBox">
+                <div v-if="noLinkMan" class="noLinkManBox">
                     <p>还没有创建常用联系人</p>
                 </div>
                 <div class="btmBar">
-                    <button>新增联系人</button>
+                    <button @click="addLinkMan">新增联系人</button>
                 </div>
               </div>
             </popup>
         </div>
 
         <!-- 列表渲染 -->
-        <div class="listBox">
-            <div v-for="(item,index) in certificateList" :key="index">
-              <p>
-                <span class="firstSpan">{{item.playerName}}</span>
-                <span>{{item.certificateNo}}</span>
-              </p>
-               <p class="commonTagP">
-                <span>电话号码</span>
-                <span>{{item.phone}}</span>
-              </p>
-              <p class="commonTagP">
-                <span>认证服务费</span><span>¥ {{item.examFee}}</span>
-              </p>
-          </div>
-          <p class="bottomTips">
-              已加载全部
-          </p>
-        </div>
+        <scroll class="listBox"  :data="certificateList">
+            <ul class="content">
+                <div v-for="(item,index) in certificateList" :key="index">
+                    <p>
+                    <span class="firstSpan">{{item.playerName}}</span>
+                    <span>{{item.certificateNo}}</span>
+                    </p>
+                    <p class="commonTagP">
+                    <span>电话号码</span>
+                    <span>{{item.phone}}</span>
+                    </p>
+                    <p class="commonTagP">
+                    <span>认证服务费</span><span>¥ {{item.examFee}}</span>
+                    </p>
+                </div>
+                <p class="bottomTips">
+                    已加载全部
+                </p>
+            </ul>
+        </scroll>
         <div class="bottomBar">
           <div class="tips">
               <span class="playCheckBox">
@@ -120,8 +126,9 @@
 </template>
 
 <script>
-import qs from 'qs';
-import { TransferDom, Popup,InlineXSwitch} from "vux";
+import qs from "qs";
+import Bscroll from "better-scroll";
+import { TransferDom, Popup, InlineXSwitch } from "vux";
 export default {
   directives: {
     TransferDom
@@ -137,16 +144,20 @@ export default {
       checkList: [],
       disabled: true,
       certificateList: [],
-      linkManInfo: "棋智科技",
-      linkManPhone:'',
+      linkManInfo: "",
+      linkManPhone: "",
       showLinkMan: false,
       linkManList: [],
-      currentLinkManId: '',
-      needPaper:false,
-      totalPerson:'',
-      leveNames:'',
-      examlevel:'',
-      examPlanId:'',
+      currentLinkManId: "",
+      needPaper: false,
+      totalPerson: "",
+      leveNames: "",
+      examlevel: "",
+      examPlanId: "",
+      showDefLinkmanSpan: false,
+      noLinkMan: false,
+      showInvoice:false,
+      receiptTitleType:0,
     };
   },
   computed: {
@@ -162,7 +173,6 @@ export default {
     showPopupPage() {
       this.showPopup = true;
     },
-    log() {},
     cancleBtn() {
       this.showPopup = false;
       this.showLinkMan = false;
@@ -180,51 +190,81 @@ export default {
         this.currentLinkManId = "";
       }, 1000);
     },
-    submitOrder(){
+    showInvoicePage() {
+      this.showInvoice = true;
+    },
+    submitOrder() {
       let params = {
-        examPlanId:this.examPlanId,
-        linkMan:this.linkManInfo,
-        phone:this.linkManPhone,
-        totalFee:this.totalPrice,
-        chessPlay:JSON.stringify(this.certificateList),
-        examLeve:this.examlevel,
-      }
+        examPlanId: this.examPlanId,
+        linkMan: this.linkManInfo,
+        phone: this.linkManPhone,
+        totalFee: this.totalPrice,
+        chessPlay: JSON.stringify(this.certificateList),
+        examLeve: this.examlevel
+      };
       // console.log(params,'ppppppp')
       //提交订单获取订单编号
-      this.$axios.post('/api/enroll/submitOrder',qs.stringify(params)).then( (res) => {
-          if( res.data.code === 0){
-             console.log(res,'获取订单编号');
-              let rst = res.data.data;
-              //缓存信息用于详情页
-              let detailsObj ={
-                  certificateList:this.certificateList,
-                  createdTime:rst.createdTime,
-                  orderNo:rst.orderNo,
-                  orderId:rst.id,
-                  totalPrice:this.totalPrice,
-                  unitPrice:this.totalPrice/(this.certificateList.length)
-              }
-              sessionStorage.setItem('detailsObj',JSON.stringify(detailsObj))
-              this.$router.push({name:'certificatePay'}) 
-          }      
-      })
+      this.$axios
+        .post("/api/enroll/submitOrder", qs.stringify(params))
+        .then(res => {
+          if (res.data.code === 0) {
+            console.log(res, "获取订单编号");
+            let rst = res.data.data;
+            //缓存信息用于详情页
+            let detailsObj = {
+              certificateList: this.certificateList,
+              createdTime: rst.createdTime,
+              orderNo: rst.orderNo,
+              orderId: rst.id,
+              totalPrice: this.totalPrice,
+              unitPrice: this.totalPrice / this.certificateList.length
+            };
+            sessionStorage.setItem("detailsObj", JSON.stringify(detailsObj));
+            this.$router.push({ name: "certificatePay" });
+          }
+        });
     },
-    mustBtn(){
-        this.disabled =  !this.disabled;
+    mustBtn() {
+      this.disabled = !this.disabled;
+    },
+    addLinkMan() {
+      this.$router.push({ name: "addLinkman" });
     }
   },
   created() {
-    this.certificateList = JSON.parse(sessionStorage.getItem('checkList'));
+    this.certificateList = JSON.parse(sessionStorage.getItem("checkList"));
     this.leveNames = this.certificateList[0].leveNames;
     this.examlevel = this.certificateList[0].examlevel;
     this.totalPerson = this.certificateList.length;
-    this.examPlanId = this.certificateList[0].examPlanId
-    let params = {
-    };
+    this.examPlanId = this.certificateList[0].examPlanId;
+    let params = {};
     this.$axios.get("/api/linkman/list", { params }).then(res => {
       if (res.data.code === 0) {
-        this.linkManList = res.data.data;
+        // this.linkManList = res.data.data;
         // console.log(res,'123');
+        console.log(res, "联系人列表");
+        this.linkManList = res.data.data;
+        if (this.linkManList.length > 0) {
+          this.noLinkMan = false;
+          let defLinkmanInfoArr = this.linkManList.filter(
+            (item, index) => item.isDef == 0
+          );
+          if (defLinkmanInfoArr.length > 0) {
+            this.linkManInfo = defLinkmanInfoArr[0].linkman;
+            this.linkManPhone = defLinkmanInfoArr[0].phone;
+            this.showDefLinkmanSpan = true;
+          } else {
+            this.linkManInfo = "请选择";
+            this.showDefLinkmanSpan = false;
+          }
+        } else {
+          this.noLinkMan = true;
+        }
+        this.$nextTick(() => {
+          this.scroll = new Bscroll(this.$refs.linkmanWrapper, {
+            click: true
+          });
+        });
       }
     });
   }
@@ -282,149 +322,156 @@ export default {
         & > span {
           color: #333333;
         }
-        &>.defaultSpan {
+        & > .defaultSpan {
           font-size: 12px;
           font-weight: 500;
           padding: 1px 6px;
           height: 16px;
           line-height: 20px;
           margin-right: 4px;
-          border: 1px solid #2069E5;
+          border: 1px solid #2069e5;
           color: rgba(255, 255, 255, 1);
           background: rgba(32, 105, 229, 1);
           border-radius: 10px;
         }
         // switch按钮样式
-        & /deep/ .weui-switch, .weui-switch-cp__box{
-            height: 14px;
-            width: 40px;
+        & /deep/ .weui-switch,
+        .weui-switch-cp__box {
+          height: 14px;
+          width: 40px;
         }
-        & /deep/  .weui-switch-cp__input:checked~.weui-switch-cp__box, .weui-switch:checked{
-          background-color: #2069E5;
+        & /deep/ .weui-switch-cp__input:checked ~ .weui-switch-cp__box,
+        .weui-switch:checked {
+          background-color: #2069e5;
           border: none;
           height: 14px;
           width: 40px;
         }
-        
-        & /deep/ .weui-switch-cp__box:before, .weui-switch:before{
-            content: " ";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 40px;
-            height: 14px;
-            border-radius: 14px;
-            background-color: #B0B0B0;
+
+        & /deep/ .weui-switch-cp__box:before,
+        .weui-switch:before {
+          content: " ";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 40px;
+          height: 14px;
+          border-radius: 14px;
+          background-color: #b0b0b0;
         }
-        & /deep/ .weui-switch-cp__box:after, .weui-switch:after{
-              width: 24px;
-              height: 24px;
-              top: -6px;
-              left: -2px;
-              content: '';
+        & /deep/ .weui-switch-cp__box:after,
+        .weui-switch:after {
+          width: 24px;
+          height: 24px;
+          top: -6px;
+          left: -2px;
+          content: "";
         }
       }
     }
   }
-  &>.infoTop{
-    width:calc(100% - 16px);
+  & > .infoTop {
+    width: calc(100% - 16px);
     height: 52px;
     padding-left: 16px;
     line-height: 52px;
-    &>p{
-      font-size:14px;
+    & > p {
+      font-size: 14px;
       float: left;
-      color:rgba(51,51,51,1);
+      color: rgba(51, 51, 51, 1);
     }
-    &>span{
+    & > span {
       float: left;
       margin-left: 12px;
       font-size: 12px;
-      color:#666666;
+      color: #666666;
     }
   }
   & > .listBox {
-    display: flex;
-    flex: 1;
+    // display: flex;
     width: 100%;
-    flex-direction: column;
-    align-items: center;
-    & > div {
-      width: 327px;
-      padding: 16px;
-      margin-top: 12px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
-      border-radius: 14px;
-      &:nth-of-type(1) {
-        margin-top: 0;
-      }
-      & > p:nth-of-type(1) {
-        width: 100%;
-        height: 22px;
-        & > .firstSpan {
-          font-size: 16px;
-          width: 70px;
+    height: 400px;
+    overflow: hidden;
+    // flex-direction: column;
+    // align-items: center;
+    & > .content {
+      & > div {
+        width: 327px;
+        padding: 16px;
+        margin-top: 12px;
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
+        border-radius: 14px;
+        &:nth-of-type(1) {
+          margin-top: 0;
+        }
+        & > p:nth-of-type(1) {
+          width: 100%;
           height: 22px;
-          float: left;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
-          margin-right: 8px;
-          color: rgba(51, 51, 51, 1);
-          line-height: 22px;
-        }
-        & > span {
-          font-size: 16px;
-          font-family: PingFang-SC-Medium;
-          font-weight: 500;
-          float: left;
-          line-height: 22px;
-        }
-      }
-      & > p:nth-of-type(2) {
-        margin-top: 16px;
-      }
-      & > .commonTagP {
-        height: 20px;
-        margin-bottom: 8px;
-        & > span {
-          font-size: 14px;
-          font-weight: 500;
-          line-height: 20px;
-        }
-        & > span:nth-of-type(1) {
-          color: #666666;
-          margin-right: 22px;
-          float: left;
-        }
-        & > span:nth-of-type(2) {
-          color: #333333;
-          width: 249px;
-          // display: inline-block;
-        }
-        &:nth-last-of-type(1) {
-          margin-bottom: 0px;
-          & > span:nth-of-type(1) {
+          & > .firstSpan {
+            font-size: 16px;
+            width: 70px;
+            height: 22px;
+            float: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: PingFangSC-Semibold;
+            font-weight: 600;
             margin-right: 8px;
+            color: rgba(51, 51, 51, 1);
+            line-height: 22px;
+          }
+          & > span {
+            font-size: 16px;
+            font-family: PingFang-SC-Medium;
+            font-weight: 500;
+            float: left;
+            line-height: 22px;
+          }
+        }
+        & > p:nth-of-type(2) {
+          margin-top: 16px;
+        }
+        & > .commonTagP {
+          height: 20px;
+          margin-bottom: 8px;
+          & > span {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+          }
+          & > span:nth-of-type(1) {
+            color: #666666;
+            margin-right: 22px;
+            float: left;
           }
           & > span:nth-of-type(2) {
-            color: #ed1a23;
+            color: #333333;
+            width: 249px;
+            // display: inline-block;
+          }
+          &:nth-last-of-type(1) {
+            margin-bottom: 0px;
+            & > span:nth-of-type(1) {
+              margin-right: 8px;
+            }
+            & > span:nth-of-type(2) {
+              color: #ed1a23;
+            }
           }
         }
       }
-    }
-    .bottomTips {
-      display: flex;
-      justify-content: center;
-      font-size: 12px;
-      font-family: PingFang-SC-Medium;
-      font-weight: 500;
-      color: rgba(176, 176, 176, 1);
-      line-height: 17px;
-      margin-top: 8px;
+      .bottomTips {
+        display: flex;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 500;
+        padding-bottom: 90px;
+        color: rgba(176, 176, 176, 1);
+        line-height: 17px;
+        margin-top: 8px;
+      }
     }
   }
 
@@ -484,7 +531,7 @@ export default {
         }
       }
     }
-    
+
     & > .payBtns {
       display: flex;
       align-items: center;
@@ -512,48 +559,55 @@ export default {
         font-weight: 600;
         color: #ffffff;
         font-size: 16px;
-        background: linear-gradient(135deg, rgba(243, 93, 46, 1) 0%, rgba(237, 26, 35, 1) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(243, 93, 46, 1) 0%,
+          rgba(237, 26, 35, 1) 100%
+        );
       }
-      .darkBtn{
-          background: #B0B0B0;
-        }
+      .darkBtn {
+        background: #b0b0b0;
+      }
     }
   }
 }
 //联系人列表样式
 .linkManListBox {
   width: 375px;
-  & > li {
-    padding: 0 17px 0px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e5e5e5;
-    & > p {
-      padding: 12px 0;
+  height: 550px;
+  overflow: hidden;
+  & > .content {
+    & > li {
+      padding: 0 17px 0px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e5e5e5;
+      & > p {
+        padding: 12px 0;
+        & > span {
+          display: block;
+          height: 20px;
+          font-size: 14px;
+          color: #333333;
+          line-height: 20px;
+        }
+        .mtop4px {
+          margin-top: 4px;
+          color: #666666;
+        }
+      }
+      .icon-xiugai {
+        font-size: 30px;
+      }
+    }
+    .activeLinkManStyle {
       & > span {
-        display: block;
-        height: 20px;
-        font-size: 14px;
-        color: #333333;
-        line-height: 20px;
+        color: #2069e5 !important;
       }
-      .mtop4px {
-        margin-top: 4px;
-        color: #666666;
-      }
-    }
-    .icon-xiugai {
-      font-size: 30px;
-    }
-  }
-  .activeLinkManStyle {
-    & > span {
-      color: #2069e5 !important;
     }
   }
 }
-
 .popupPage {
   display: flex;
   flex-direction: column;

@@ -94,9 +94,9 @@ export default {
           margin-bottom: 4px;
         }
     }
-    .weui-tabbar:before{
+    // .weui-tabbar:before{
 
-    }
+    // }
   }
   .weui-tabbar:before{
     content: " ";

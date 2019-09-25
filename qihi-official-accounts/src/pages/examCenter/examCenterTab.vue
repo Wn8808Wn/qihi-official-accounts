@@ -8,15 +8,15 @@
                 <span>报名须知</span>
             </div>
             <div class="contentRg">
-               <div>
-                   <img  src="../../assets/imgs/kjb.svg" alt="跨级别考试">
-              </div>
-              <span>跨级别考试申请</span>
+                <div>
+                    <img  src="../../assets/imgs/kjb.svg" alt="跨级别考试">
+                </div>
+                <span>跨级别考试申请</span>
             </div>
         </div>
         <!-- 点击考试须知弹层 -->
         <div v-transfer-dom>
-            <popup v-model="showPopup" @on-hide="log('hide')" @on-show="log('show')">
+            <popup v-model="showPopup">
                 <div class="popupPage">
                     <div class="PopupTop">
                         <p>报名须知</p>
@@ -66,62 +66,84 @@
         </div>
         <!-- 点击考试地区弹层 -->
         <div v-transfer-dom>
-            <popup v-model="showExamArea" @on-hide="log('hide')" @on-show="log('show')" height='100%'>
+            <popup v-model="showExamArea" height='100%'>
                 <div class="popupPage">
                     <div class="PopupTop">
                         <p>考试地区</p>
                         <span @click="cancleBtnArea">取消</span>
                     </div>
-                <div class="historicalAccess wrapper" ref="areaWrapper">
-                  <div class="content">
-                      <div class="historyBox">
-                        <span>历史访问</span>
-                        <div class="sixProvince">  
-                            <button  v-if="historyAreaList.length>0"   
-                            v-for="(item,index) in historyAreaList" :key="index" 
-                            @click="selectCurrentHistoryArea(item,index)" 
-                            :class="{'activeBtn': index === currentHistoryProvinceID}">
-                                  {{item.areaName}}
-                            </button>
+                    <div class="historicalAccess wrapper" ref="areaWrapper">
+                        <div class="content">
+                            <div class="historyBox">
+                                <span>历史访问</span>
+                                <div class="sixProvince">  
+                                    <button  v-if="historyAreaList.length>0"   
+                                    v-for="(item,index) in historyAreaList" :key="index" 
+                                    @click="selectCurrentHistoryArea(item,index)" 
+                                    :class="{'activeBtn': index === currentHistoryProvinceID}">
+                                          {{item.areaName}}
+                                    </button>
+                                </div>
+                            </div>  
+                        <!-- 获取考试地区列表 -->
+                            <div class="examListPart">
+                                <li v-if="examAreaList.length>0"  
+                                  v-for="(item,index) in examAreaList" :key="index" 
+                                  @click="selectCurrentProvince(item,index)" 
+                                  :class="{'activeProvince':index===currentProvinceID}">
+                                      {{item.areaName}}
+                                </li>
+                            </div>
                         </div>
-                      </div>  
-                  <!-- 获取考试地区列表 -->
-                      <div class="examListPart">
-                          <li v-if="examAreaList.length>0"  
-                            v-for="(item,index) in examAreaList" :key="index" 
-                            @click="selectCurrentProvince(item,index)" 
-                            :class="{'activeProvince':index===currentProvinceID}">
-                                {{item.areaName}}
-                          </li>
-                      </div>
-                   </div>
-                </div>
+                    </div>
               </div>
             </popup>
         </div>
          <!-- 点击考试级别弹层 -->
         <div v-transfer-dom>
-            <popup v-model="showExamLevel" @on-hide="log('hide')" @on-show="log('show')" height='100%' position='bottom'>
-              <div class="popupPage">
-                <div class="PopupTop">
-                    <p>考试级别</p>
-                    <span @click="cancleBtnLevel">取消</span>
+            <popup v-model="showExamLevel"  height='100%' position='bottom'>
+                <div class="popupPage">
+                    <div class="PopupTop">
+                        <p>考试级别</p>
+                        <span @click="cancleBtnLevel">取消</span>
+                    </div>
+                  <!-- 获取考试级别列表 -->
+                    <div class="examListPart levelWrapper" ref="levelWrapper">
+                        <ul class="content">
+                            <li v-for="(item,index) in examLevelList" :key="index"
+                            @click="selectCurrentLevel(item,index)" 
+                            :class="{'activeProvince':index===currentLevelID}">
+                                {{item.levelName}}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <!-- 获取考试级别列表 -->
-                <div class="examListPart levelWrapper" ref="levelWrapper">
-                   <ul class="content">
-                        <li v-for="(item,index) in examLevelList" :key="index"
-                        @click="selectCurrentLevel(item,index)" 
-                        :class="{'activeProvince':index===currentLevelID}">
-                            {{item.levelName}}
-                        </li>
-                   </ul>
-                </div>
-              </div>
             </popup>
         </div>
 
-        <div class="examRoomList">
+        <scroll class="examRoomListWarp"  :data="examRoomList">
+            <ul class="content">
+                <div  v-for="(item,index) in examRoomList" :key="index">
+                    <p>
+                        <span>{{item.examRoomName}}</span>
+                        <button v-if="item.examStatus === 0" @click="handleSignUp(item)">报名</button>
+                        <b v-if="item.examStatus === 1" :class="{'fullBtn':item.examStatus === 1}">已约满</b>
+                    </p>
+                    <p class="commonTagP">
+                        <span>考试地点</span>
+                        <span>{{item.address}}</span>
+                    </p>
+                    <p class="commonTagP">
+                        <span>考试时间</span>
+                        <span>{{item.examBeginDate.split(' ')[0].replace(/-/g,'.')}} 至 {{item.examEndDate.split(' ')[0].replace(/-/g,'.')}}</span>
+                    </p>
+                </div>
+                <p class="bottomBar">
+                    已加载全部
+                </p>
+            </ul>
+        </scroll>
+        <!-- <div class="examRoomList">
             <div  v-for="(item,index) in examRoomList" :key="index">
                 <p>
                   <span>{{item.examRoomName}}</span>
@@ -140,7 +162,7 @@
             <p class="bottomBar">
                 已加载全部
             </p>
-        </div>
+        </div> -->
         <!-- 底部公共组件 -->
         <commonTabbar></commonTabbar>
     </div>
@@ -152,208 +174,232 @@ import { location } from "../../utils/map.js";
 import commonTabbar from "../../components/commonTabbar";
 import { TransferDom, Popup, Cell, CellBox, Group, XButton } from "vux";
 export default {
-    directives: {
-        TransferDom
-    },
-    components: {
-        commonTabbar,
-        Popup,
-        Group,
-        Cell,
-        CellBox,
-        XButton
-    },
-    data() {
-        return {
-            showPopup: false,
-            showExamArea: false,
-            showExamLevel: false,
-            examAreaTitle: "北京市",
-            examLevelTitle: "5级",
-            currentHistoryProvinceID: null,
-            currentProvinceID: null,
-            currentLevelID: null,
-            historyAreaList: [],
-            examAreaList: [],
-            examLevelList: [],
-            examRoomList: [],
-            city:''
-        };
-    },
-    methods: {
-      // 判断关键字是否存在，存在就移除添加在首位
-      setHistoryItems(row) {
-          let historyItem = localStorage.getItem("historyItem");
-          if (historyItem === null) {
-              let  arr = [];
-              arr.push(row)
-              localStorage.setItem('historyItem',JSON.stringify(arr));
-              this.historyAreaList=JSON.parse(localStorage.getItem('historyItem'));
-          } else {
-              let historyItemArr = JSON.parse(historyItem)
-              let isExists = historyItemArr.filter(item => item.id === row.id).length;
-              if (isExists) {
-                  let newArr = historyItemArr.filter(e => e.id !== row.id)
-                  newArr.unshift(row)
-                  localStorage.setItem('historyItem',JSON.stringify(newArr))
-                  this.historyAreaList=JSON.parse(localStorage.getItem('historyItem'));
-              } else {
-                  historyItemArr.unshift(row);
-                  localStorage.setItem('historyItem',JSON.stringify(historyItemArr))
-                  this.historyAreaList=JSON.parse(localStorage.getItem('historyItem'));
-                  let arr1 = JSON.parse(localStorage.getItem('historyItem'));
-                  if(arr1.length>=6){
-                      let arr2 =  arr1.splice(0,6)
-                      console.log(arr2,'000')
-                      localStorage.setItem('historyItem',JSON.stringify(arr2));
-                      this.historyAreaList=JSON.parse(localStorage.getItem('historyItem'));
-                  }
-              }
+  directives: {
+    TransferDom
+  },
+  components: {
+    commonTabbar,
+    Popup,
+    Group,
+    Cell,
+    CellBox,
+    XButton
+  },
+  data() {
+    return {
+      showPopup: false,
+      showExamArea: false,
+      showExamLevel: false,
+      examAreaTitle: "北京市",
+      examLevelTitle: "5级",
+      currentHistoryProvinceID: null,
+      currentProvinceID: null,
+      currentLevelID: null,
+      historyAreaList: [],
+      examAreaList: [],
+      examLevelList: [],
+      examRoomList: [],
+      city: ""
+    };
+  },
+  methods: {
+    // 判断关键字是否存在，存在就移除添加在首位
+    setHistoryItems(row) {
+      let historyItem = localStorage.getItem("historyItem");
+      if (historyItem === null) {
+        let arr = [];
+        arr.push(row);
+        localStorage.setItem("historyItem", JSON.stringify(arr));
+        this.historyAreaList = JSON.parse(localStorage.getItem("historyItem"));
+      } else {
+        let historyItemArr = JSON.parse(historyItem);
+        let isExists = historyItemArr.filter(item => item.id === row.id).length;
+        if (isExists) {
+          let newArr = historyItemArr.filter(e => e.id !== row.id);
+          newArr.unshift(row);
+          localStorage.setItem("historyItem", JSON.stringify(newArr));
+          this.historyAreaList = JSON.parse(
+            localStorage.getItem("historyItem")
+          );
+        } else {
+          historyItemArr.unshift(row);
+          localStorage.setItem("historyItem", JSON.stringify(historyItemArr));
+          this.historyAreaList = JSON.parse(
+            localStorage.getItem("historyItem")
+          );
+          let arr1 = JSON.parse(localStorage.getItem("historyItem"));
+          if (arr1.length >= 6) {
+            let arr2 = arr1.splice(0, 6);
+            // console.log(arr2, "000");
+            localStorage.setItem("historyItem", JSON.stringify(arr2));
+            this.historyAreaList = JSON.parse(
+              localStorage.getItem("historyItem")
+            );
           }
-      },
-      //获取考试地区和级别列表
-      getLevelAreaList() {
-          return this.$axios.get("/api/enter/get_examArea").then(res => {
-              if (res.data.code === 0) {
-                  this.examAreaList = res.data.data.areaList;
-                  this.examLevelList = res.data.data.levelType;
-                  this.$nextTick(() => {
-                      this.scroll = new Bscroll(this.$refs.areaWrapper, { click: true });
-                  });
-                  this.$nextTick(() => {
-                      this.scroll = new Bscroll(this.$refs.levelWrapper, { click: true });
-                  });
-                  sessionStorage.setItem("examLevelList",JSON.stringify(res.data.data.levelType));
-              }
-          });
-      },
-      //获取地理定位
-      getLocation(){
-          let geolocation = location.initMap("iCenter"); //定位
-          AMap.event.addListener(geolocation, "complete", result => {
-              this.examAreaTitle = result.addressComponent.province;
-              alert("定位结果为" + result.addressComponent.province);
-       });
-      },
-      getRoomList(params) {
-         this.examRoomList = [];
-        return this.$axios.get("/api/enter/get_examRoom", { params }).then(res => {
-            if (res.data.code === 0) {
-                this.examRoomList = res.data.data;
-                console.log(res.data.data,'99')
-            } else {
-                console.log(res.data.msg);
-            }
-          });
-      },
-      // 点击图标显示弹层
-      showPopupPage() {
-        this.showPopup = true;
-      },
-      // 弹层取消
-      cancleBtn() {
-        this.showPopup = false;
-      },
-      log(aa) {
-        // console.log(aa);
-      },
-      //点击考试地区显示弹层
-      showExamAreaPage() {
-        this.showExamArea = !this.showExamArea;
-      },
-      cancleBtnArea() {
-        this.showExamArea = false;
-        this.currentHistoryProvinceID = null;
-        this.currentProvinceID = null;
-      },
-      //点击考试级别显示弹层
-      showExamLevelPage() {
-        this.showExamLevel = !this.showExamLevel;
-      },
-      cancleBtnLevel() {
-        this.showExamLevel = false;
-      },
-      selectCurrentHistoryArea(row, index) {
-        this.currentHistoryProvinceID = index;
-        this.examAreaTitle = row.areaName;
-        let params = {
-          provinceCode: row.id,
-          examLevel: this.examLevelList.filter(e => e.levelName === this.examLevelTitle)[0].id,
-          examLevalStr:this.examLevelTitle
-        };
-        setTimeout(() => {
-          this.showExamArea = false;
-          this.getRoomList(params);
-          this.currentHistoryProvinceID = null;
-        }, 200);
-      },
-      selectCurrentProvince(row, index) {
-        console.log('11')
-        this.setHistoryItems(row);
-        this.examAreaTitle = row.areaName;
-        this.currentProvinceID = index;
-        let params = {
-          provinceCode: row.id,
-          examLevel: this.examLevelList.filter(e => e.levelName === this.examLevelTitle)[0].id,
-          examLevalStr:this.examLevelTitle
-        };
-        setTimeout(() => {
-          this.showExamArea = false;
-          this.getRoomList(params);
-           this.currentProvinceID = null;
-        }, 200);
-      },
-      selectCurrentLevel(row, index) {
-        this.examLevelTitle = row.levelName;
-        this.currentLevelID = index;
-        let params = {
-          examLevel: row.id,
-          provinceCode: this.examAreaList.filter(e => e.areaName === this.examAreaTitle)[0].id,
-          examLevalStr:this.examLevelTitle
-        };
-        setTimeout(() => {
-          this.showExamLevel = false;
-          this.getRoomList(params);
-          this.currentLevelID = null;
-        }, 200);
-      },
-      handleSignUp(item) {
-        let examLevelId = this.examLevelList.filter(e => e.levelName == this.examLevelTitle)[0].id;
-        sessionStorage.setItem("examLevelTitle", this.examLevelTitle);
-        sessionStorage.setItem("currentItem", JSON.stringify(item));
-        sessionStorage.setItem("examLevelId", examLevelId);
-        this.$router.push({ name: "examRoomDetails" });
-      },
-      async defaultSerach(){
-        let promise = new Promise((resolve, reject) => {
-            resolve(this.getLevelAreaList())
-        })
-        let result = await promise // 直到promise返回一个resolve值（*）
-        let defualtProvince = this.examAreaList.filter(e => e.areaName == this.examAreaTitle)[0].id;
-        let defualtLevel = this.examLevelList.filter(e => e.levelName == this.examLevelTitle)[0].id;
-        let params = {
-            provinceCode: defualtProvince,
-            examLevel: defualtLevel,
-            examLevalStr:this.examLevelTitle
-        };
-        this.getRoomList(params);
+        }
       }
     },
-    created(){
-      this.defaultSerach();
-      // // 判断首次登陆还是返回到这个页面 处理频繁请求地理定位问题
-      // if(sessionStorage.getItem('firstLogin')){
-      //   this.getLocation();
-      // }else{
-      //   sessionStorage.setItem('firstLogin',true)
-      //   this.getLocation();
-      // }
-      //打包前删除
-     sessionStorage.setItem('dsToken','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZW51TGlzdCI6InN0YW5kYXJkLHBhcGVyLGhhbGwsbWVzc2FnZSxwbGFuLG9yZGVyLHN0YXR1cyIsInVuaXRJZCI6IjEiLCJwZXJtaXNzaW9uTGlzdCI6Im1lc3NhZ2U6dGVtcExpc3Qsb3JkZXI6bGlzdCxwbGFuOmFkZCxzdGFuZGFyZDp0ZW1wRGV0YWlsLHBsYW46bGlzdCxoYWxsOmZyZWV6ZURldGFpbCxwbGFuOmRldGFpbCxoYWxsOmxpc3QscGxhbjpsaW1pdExpc3QsbWVzc2FnZTp0ZW1wQWRkLHN0YW5kYXJkOmxpc3Qsc3RhbmRhcmQ6ZGV0YWlsLHBsYW46dXBkYXRlLHN0YW5kYXJkOnRlbXBBZGQscGFwZXI6bGlzdCxvcmRlcjpkZXRhaWwscGFwZXI6dGVtcCxzdGFuZGFyZDp0ZW1wVXBkYXRlLGhhbGw6ZGV0YWlsLGhhbGw6cmVzdW1lLHN0YW5kYXJkOmFkZCxzdGFuZGFyZDp0ZW1wTGlzdCxwYXBlcjpkZXRhaWwsc3RhbmRhcmQ6dXBkYXRlLHBhcGVyOnNlbmQsaGFsbDphZGQsc3RhdHVzOmxpc3QsaGFsbDpmcmVlemVMaXN0LHN0YXR1czpleHBvcnQsbWVzc2FnZTp0ZW1wVXBkYXRlLG1lc3NhZ2U6bGlzdCxoYWxsOmZyZWV6ZSIsImV4cCI6MTU2NTc2NjA0MiwidXNlcklkIjoiMSIsInVzZXJuYW1lIjoiYWRtaW4ifQ.ZcGqLGWhTqVzrZGY1WdRReHYSA7S-TIa77NwyhT46zQ')
-      if (window.localStorage.getItem("historyItem") !== null) {
-        this.historyAreaList = JSON.parse(window.localStorage.getItem("historyItem"))
-      }
+    //获取考试地区和级别列表
+    getLevelAreaList() {
+      return this.$axios.get("/api/enter/get_examArea").then(res => {
+        if (res.data.code === 0) {
+          this.examAreaList = res.data.data.areaList;
+          this.examLevelList = res.data.data.levelType;
+          this.$nextTick(() => {
+            this.scroll = new Bscroll(this.$refs.areaWrapper, { click: true });
+          });
+          this.$nextTick(() => {
+            this.scroll = new Bscroll(this.$refs.levelWrapper, { click: true });
+          });
+          sessionStorage.setItem(
+            "examLevelList",
+            JSON.stringify(res.data.data.levelType)
+          );
+        }
+      });
+    },
+    //获取地理定位
+    getLocation() {
+      let geolocation = location.initMap("iCenter"); //定位
+      AMap.event.addListener(geolocation, "complete", result => {
+        this.examAreaTitle = result.addressComponent.province;
+        alert("定位结果为" + result.addressComponent.province);
+      });
+    },
+    getRoomList(params) {
+      this.examRoomList = [];
+      return this.$axios
+        .get("/api/enter/get_examRoom", { params })
+        .then(res => {
+          if (res.data.code === 0) {
+            this.examRoomList = res.data.data;
+            // console.log(res.data.data, "99");
+          } else {
+            console.log(res.data.msg);
+          }
+        });
+    },
+    // 点击图标显示弹层
+    showPopupPage() {
+      this.showPopup = true;
+    },
+    // 弹层取消
+    cancleBtn() {
+      this.showPopup = false;
+    },
+    //点击考试地区显示弹层
+    showExamAreaPage() {
+      this.showExamArea = !this.showExamArea;
+    },
+    cancleBtnArea() {
+      this.showExamArea = false;
+      this.currentHistoryProvinceID = null;
+      this.currentProvinceID = null;
+    },
+    //点击考试级别显示弹层
+    showExamLevelPage() {
+      this.showExamLevel = !this.showExamLevel;
+    },
+    cancleBtnLevel() {
+      this.showExamLevel = false;
+    },
+    selectCurrentHistoryArea(row, index) {
+      this.currentHistoryProvinceID = index;
+      this.examAreaTitle = row.areaName;
+      let params = {
+        provinceCode: row.id,
+        examLevel: this.examLevelList.filter(
+          e => e.levelName === this.examLevelTitle
+        )[0].id,
+        examLevalStr: this.examLevelTitle
+      };
+      setTimeout(() => {
+        this.showExamArea = false;
+        this.getRoomList(params);
+        this.currentHistoryProvinceID = null;
+      }, 200);
+    },
+    selectCurrentProvince(row, index) {
+      this.setHistoryItems(row);
+      this.examAreaTitle = row.areaName;
+      this.currentProvinceID = index;
+      let params = {
+        provinceCode: row.id,
+        examLevel: this.examLevelList.filter(
+          e => e.levelName === this.examLevelTitle
+        )[0].id,
+        examLevalStr: this.examLevelTitle
+      };
+      setTimeout(() => {
+        this.showExamArea = false;
+        this.getRoomList(params);
+        this.currentProvinceID = null;
+      }, 200);
+    },
+    selectCurrentLevel(row, index) {
+      this.examLevelTitle = row.levelName;
+      this.currentLevelID = index;
+      let params = {
+        examLevel: row.id,
+        provinceCode: this.examAreaList.filter(
+          e => e.areaName === this.examAreaTitle
+        )[0].id,
+        examLevalStr: this.examLevelTitle
+      };
+      setTimeout(() => {
+        this.showExamLevel = false;
+        this.getRoomList(params);
+        this.currentLevelID = null;
+      }, 200);
+    },
+    handleSignUp(item) {
+      let examLevelId = this.examLevelList.filter(
+        e => e.levelName == this.examLevelTitle
+      )[0].id;
+      sessionStorage.setItem("examLevelTitle", this.examLevelTitle);
+      sessionStorage.setItem("currentItem", JSON.stringify(item));
+      sessionStorage.setItem("examLevelId", examLevelId);
+      this.$router.push({ name: "examRoomDetails" });
+    },
+    async defaultSerach() {
+      let promise = new Promise((resolve, reject) => {
+        resolve(this.getLevelAreaList());
+      });
+      let result = await promise; // 直到promise返回一个resolve值（*）
+      let defualtProvince = this.examAreaList.filter(
+        e => e.areaName == this.examAreaTitle
+      )[0].id;
+      let defualtLevel = this.examLevelList.filter(
+        e => e.levelName == this.examLevelTitle
+      )[0].id;
+      let params = {
+        provinceCode: defualtProvince,
+        examLevel: defualtLevel,
+        examLevalStr: this.examLevelTitle
+      };
+      this.getRoomList(params);
     }
+  },
+  created() {
+    this.defaultSerach();
+    // // 判断首次登陆还是返回到这个页面 处理频繁请求地理定位问题
+    // if(sessionStorage.getItem('firstLogin')){
+    //   this.getLocation();
+    // }else{
+    //   sessionStorage.setItem('firstLogin',true)
+    //   this.getLocation();
+    // }
+    //打包前删除
+    sessionStorage.setItem(
+      "dsToken",
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZW51TGlzdCI6InN0YW5kYXJkLHBhcGVyLGhhbGwsbWVzc2FnZSxwbGFuLG9yZGVyLHN0YXR1cyIsInVuaXRJZCI6IjEiLCJwZXJtaXNzaW9uTGlzdCI6Im1lc3NhZ2U6dGVtcExpc3Qsb3JkZXI6bGlzdCxwbGFuOmFkZCxzdGFuZGFyZDp0ZW1wRGV0YWlsLHBsYW46bGlzdCxoYWxsOmZyZWV6ZURldGFpbCxwbGFuOmRldGFpbCxoYWxsOmxpc3QscGxhbjpsaW1pdExpc3QsbWVzc2FnZTp0ZW1wQWRkLHN0YW5kYXJkOmxpc3Qsc3RhbmRhcmQ6ZGV0YWlsLHBsYW46dXBkYXRlLHN0YW5kYXJkOnRlbXBBZGQscGFwZXI6bGlzdCxvcmRlcjpkZXRhaWwscGFwZXI6dGVtcCxzdGFuZGFyZDp0ZW1wVXBkYXRlLGhhbGw6ZGV0YWlsLGhhbGw6cmVzdW1lLHN0YW5kYXJkOmFkZCxzdGFuZGFyZDp0ZW1wTGlzdCxwYXBlcjpkZXRhaWwsc3RhbmRhcmQ6dXBkYXRlLHBhcGVyOnNlbmQsaGFsbDphZGQsc3RhdHVzOmxpc3QsaGFsbDpmcmVlemVMaXN0LHN0YXR1czpleHBvcnQsbWVzc2FnZTp0ZW1wVXBkYXRlLG1lc3NhZ2U6bGlzdCxoYWxsOmZyZWV6ZSIsImV4cCI6MTU2NTc2NjA0MiwidXNlcklkIjoiMSIsInVzZXJuYW1lIjoiYWRtaW4ifQ.ZcGqLGWhTqVzrZGY1WdRReHYSA7S-TIa77NwyhT46zQ"
+    );
+    if (window.localStorage.getItem("historyItem") !== null) {
+      this.historyAreaList = JSON.parse(
+        window.localStorage.getItem("historyItem")
+      );
+    }
+  }
 };
 </script>
 
@@ -458,12 +504,12 @@ export default {
       font-weight: 500;
       color: rgba(32, 105, 229, 1);
       line-height: 22px;
-      & /deep/ .vux-label{
-        font-size:16px;
-        font-family:PingFang-SC-Medium;
-        font-weight:400;
-        color:rgba(32,105,229,1);
-        line-height:22px;
+      & /deep/ .vux-label {
+        font-size: 16px;
+        font-family: PingFang-SC-Medium;
+        font-weight: 400;
+        color: rgba(32, 105, 229, 1);
+        line-height: 22px;
       }
     }
     .weui-cells:before {
@@ -482,87 +528,91 @@ export default {
       margin-top: -6px;
       right: -10px;
     }
-    
   }
 
   // 考场列表样式
-  &>.examRoomList {
+  & > .examRoomListWarp {
     display: flex;
-    flex: 1;
+    // flex: 1;
     width: 100%;
+    height: 440px;
+    overflow: hidden;
     flex-direction: column;
     align-items: center;
     margin-top: 12px;
-    & > div {
-      width: 327px;
-      padding: 16px;
-      margin-top: 12px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
-      border-radius: 14px;
-      &:nth-of-type(1) {
-        margin-top: 0;
+    & > .content {
+      & > div {
+        width: 327px;
+        padding: 16px;
+        margin-top: 12px;
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
+        border-radius: 14px;
+        &:nth-of-type(1) {
+          margin-top: 0;
+        }
+        & > p:nth-of-type(1) {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          & > span {
+            font-size: 16px;
+            font-family: PingFangSC-Semibold;
+            font-weight: 600;
+            color: rgba(51, 51, 51, 1);
+            line-height: 22px;
+          }
+          & > button {
+            background: $bg-blue;
+            border: none;
+            height: 28px;
+            padding: 4px 13px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+          }
+          & > .fullBtn {
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 22px;
+            color: rgba(51, 51, 51, 1);
+          }
+        }
+        & > p:nth-of-type(2) {
+          margin-top: 13px;
+          margin-bottom: 8px;
+        }
+        .commonTagP {
+          & > span {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+          }
+          & > span:nth-of-type(1) {
+            color: #666666;
+            margin-right: 16px;
+            float: left;
+          }
+          & > span:nth-of-type(2) {
+            color: #333333;
+            width: 249px;
+            display: inline-block;
+          }
+        }
       }
-      & > p:nth-of-type(1) {
+      .bottomBar {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        & > span {
-          font-size: 16px;
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
-          color: rgba(51, 51, 51, 1);
-          line-height: 22px;
-        }
-        & > button {
-          background: $bg-blue;
-          border: none;
-          height: 28px;
-          padding: 4px 13px;
-          border-radius: 14px;
-          font-size: 14px;
-          font-weight: 500;
-          color: rgba(255, 255, 255, 1);
-        }
-        & > .fullBtn {
-          border-radius: 14px;
-          font-size: 14px;
-          font-weight: 500;
-          line-height: 22px;
-          color: rgba(51, 51, 51, 1);
-        }
+        justify-content: center;
+        font-size: 12px;
+        font-family: PingFang-SC-Medium;
+        font-weight: 500;
+        padding-bottom: 64px;
+        color: rgba(176, 176, 176, 1);
+        line-height: 17px;
+        margin-top: 8px;
       }
-      & > p:nth-of-type(2) {
-        margin-top: 13px;
-        margin-bottom: 8px;
-      }
-      .commonTagP {
-        & > span {
-          font-size: 14px;
-          font-weight: 400;
-          line-height: 20px;
-        }
-        & > span:nth-of-type(1) {
-          color: #666666;
-          margin-right: 16px;
-          float: left;
-        }
-        & > span:nth-of-type(2) {
-          color: #333333;
-          width: 249px;
-          display: inline-block;
-        }
-      }
-    }
-    .bottomBar {
-      display: flex;
-      justify-content: center;
-      font-size: 12px;
-      font-family: PingFang-SC-Medium;
-      font-weight: 500;
-      color: rgba(176, 176, 176, 1);
-      line-height: 17px;
-      margin-top: 8px;
     }
   }
 }

@@ -7,7 +7,7 @@
 </template>
 
 
-<script>
+<script> 
 import { Loading, TransferDomDirective as TransferDom } from "vux";
 
 export default {

@@ -86,7 +86,6 @@ $bg-color:#F4F4F4; //背景色
   	&>p{
 		margin-bottom: 8px;
 		& > span {
-			font-size: 14px;
 			font-weight: 500;
 			line-height: 20px;
 			font-size:14px;
@@ -99,7 +98,7 @@ $bg-color:#F4F4F4; //背景色
 		& > span:nth-of-type(2) {
 			color: #333333;
 			width: 249px;
-            display: inline-block;
+            // display: inline-block;
 		}
 		&:last-child{
 			margin-bottom: 0px;

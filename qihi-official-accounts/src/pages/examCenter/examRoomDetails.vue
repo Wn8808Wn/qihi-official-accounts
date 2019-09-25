@@ -33,8 +33,10 @@
             </div>
 
             <p style="margin-top:8px;margin-left:16px;font-size:14px;font-weight:500;color:#FF9201;line-height:20px;">可预定两周内的考试，考试前30分钟截止报名</p>
-            <div class="examTimeList">
-                <div v-for="(item,index) in timeList" :key="index">
+            
+            <scroll class="examTimeList" :data='timeList'>
+              <ul class="content">
+                   <div v-for="(item,index) in timeList" :key="index">
                     <div class="examTimeListLeft">
                         <p><i class="iconfont icon-shijian"></i><span>时间</span><span>{{item.examTime}}-{{longTimeAgo(examDateCommon,item.examTime,parseInt(item.timeStr))}}</span></p>
                         <p><i class="iconfont icon-zuowei"></i><span>剩余</span><span>{{item.remainSeat}}</span></p>
@@ -48,13 +50,16 @@
                         <span v-if="item.remainSeat <= 0 && !stopTime(item.examDate,item.examTime)">已约满</span>
                     </div>
                 </div>
-            </div>
+                <p class="bottomBar">
+                    已加载全部
+                </p>
+              </ul>
+            </scroll>
             </div>
         </div>
 
         <div class="fixedBox">
             <p><span>报名费:</span> <i>¥</i><span>{{price}}/人</span></p>
-      
             <button @click="submitExamTime" :class="{'allowClick':disabled === false}" :disabled="disabled" >
                 预约报名
             </button>
@@ -64,7 +69,7 @@
 
 <script>
 // require styles
-import BScroll from 'better-scroll';
+import BScroll from "better-scroll";
 import "../../../node_modules/vue-awesome-swiper/node_modules/swiper/dist/css/swiper.css";
 import { swiper, swiperSlide } from "vue-awesome-swiper";
 export default {
@@ -94,7 +99,7 @@ export default {
       examLevelId: "",
       disabled: true,
       examtime: "",
-      provinceCode:''
+      provinceCode: ""
     };
   },
   computed: {},
@@ -107,15 +112,15 @@ export default {
       return this.formatDate(time, "hh:mm");
     },
     //判断过期时间
-    stopTime(examDate,examTime){
-        var now = new Date();
-        var time  = examDate.split(' ')[0]+' '+examTime;
-        var time1 = new Date(time)
-        if(now.getTime() > time1.getTime()){
-          return true;
-        } else {
-            return false;
-        }
+    stopTime(examDate, examTime) {
+      var now = new Date();
+      var time = examDate.split(" ")[0] + " " + examTime;
+      var time1 = new Date(time);
+      if (now.getTime() > time1.getTime()) {
+        return true;
+      } else {
+        return false;
+      }
     },
     selectDate(item, index) {
       this.examDateCommon = item.examDate;
@@ -125,12 +130,12 @@ export default {
       let params = {
         roomId: JSON.parse(sessionStorage.getItem("currentItem")).examRoomId,
         examDate: item.examDate,
-        examLevelStr:this.examLevelTitle
+        examLevelStr: this.examLevelTitle
       };
       this.$axios.get("/api/enter/get_examDetal", { params }).then(res => {
         if (res.data.code === 0) {
           this.timeList = res.data.data;
-          console.log(res.data.data,'00')
+          // console.log(res.data.data, "00");
         }
       });
     },
@@ -138,7 +143,16 @@ export default {
       //利用 sessionStorage 存储examPlanId
       sessionStorage.setItem("examPlanId", item.id);
       this.disabled = false;
-      this.examTime =item.examDate.split(" ")[0].replace(/-/g, ".") +" " +item.examTime +"-" +this.longTimeAgo(this.examDateCommon, item.examTime,parseInt(item.timeStr));
+      this.examTime =
+        item.examDate.split(" ")[0].replace(/-/g, ".") +
+        " " +
+        item.examTime +
+        "-" +
+        this.longTimeAgo(
+          this.examDateCommon,
+          item.examTime,
+          parseInt(item.timeStr)
+        );
     },
     submitExamTime() {
       sessionStorage.setItem("examTime", this.examTime);
@@ -170,31 +184,36 @@ export default {
     //缓存方式
     this.examLevelId = sessionStorage.getItem("examLevelId");
     this.examLevelTitle = sessionStorage.getItem("examLevelTitle");
-    this.examRoomName = JSON.parse(sessionStorage.getItem("currentItem")).examRoomName;
-    this.provinceCode = JSON.parse(sessionStorage.getItem("currentItem")).provinceCode;
+    this.examRoomName = JSON.parse(
+      sessionStorage.getItem("currentItem")
+    ).examRoomName;
+    this.provinceCode = JSON.parse(
+      sessionStorage.getItem("currentItem")
+    ).provinceCode;
     this.address = JSON.parse(sessionStorage.getItem("currentItem")).address;
     //请求滑动的日期
     let params = {
-        roomId: JSON.parse(sessionStorage.getItem("currentItem")).examRoomId,
-        examLevel:this.examLevelId,
-        examLevelStr:this.examLevelTitle
+      roomId: JSON.parse(sessionStorage.getItem("currentItem")).examRoomId,
+      examLevel: this.examLevelId,
+      examLevelStr: this.examLevelTitle
     };
     this.$axios.get("/api/enter/get_calendar", { params }).then(res => {
       if (res.data.code === 0) {
         this.swiperSlides = res.data.data;
         let item = this.swiperSlides[0];
         this.$nextTick(() => {
-            this.personScroll();
-            if(item !== []){
-                this.selectDate(item,0);
-            }
-        })
+          this.personScroll();
+          if (item !== []) {
+            this.selectDate(item, 0);
+          }
+        });
       }
     });
     //请求报考价格
-    this.$axios.get("/api/enter/get_serviceFee?examLevel="+this.examLevelId+"&provinceCode="+this.provinceCode).then(res => {
+    this.$axios.get("/api/enter/get_serviceFee?examLevel=" +this.examLevelId +"&provinceCode=" +this.provinceCode).then(res => {
         if (res.data.code === 0) {
-            this.price = res.data.data;
+          console.log(res, "examFee");
+          this.price = res.data.data;
         }
     });
   }
@@ -276,128 +295,139 @@ export default {
       flex: 1;
       width: 100%;
       background: #ffffff;
-      &>.wrapper{
+      & > .wrapper {
         margin-top: 11px;
         width: 359px;
         height: 50px;
         overflow: hidden;
-        // background: salmon;
-        .content{
-            height: 50px;
-            padding-left: 16px;
-            // background: seagreen;
-            &>li{
-                width: 48px;
-                height: 48px;
-                background: rgba(255, 255, 255, 1);
-                border-radius: 18px;
-                border: 1px solid #fff;
-                margin-right: 4px;
-                float: left;
-                .dateBox {
-                    text-align: center;
-                    span {
-                        font-size: 12px;
-                        font-weight: 500;
-                        color: rgba(51, 51, 51, 1);
-                        line-height: 17px;
-                    }
-                    .firstSpan {
-                        display: block;
-                        font-size: 14px;
-                        font-weight: 500;
-                        margin: 8px 0 1px;
-                        color: rgba(51, 51, 51, 1);
-                        line-height: 20px;
-                    }
-                  }
-            }
-            .activeSlides {
-              border: 1px solid rgba(32, 105, 229, 1);
-            }
-        }
-      }
-
-
-
-
-
-      .examTimeList {
-        width: 327px;
-        margin-top: 12px;
-        padding: 0 16px 12px 16px;
-        & > div {
-          width: 295px;
-          height: 42px;
-          display: flex;
-          padding: 12px 16px 12px 14px;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 8px;
-          border-radius: 12px;
-          border: 1px solid rgba(229, 229, 229, 1);
-          & > .examTimeListLeft {
-            padding: 12px 0;
-            & > p {
-              &:nth-of-type(1) {
-                margin-bottom: 4px;
-              }
-              & > i {
-                font-size: 13px;
-              }
-              & > span {
-                font-size: 13px;
+        .content {
+          height: 50px;
+          padding-left: 16px;
+          & > li {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 1);
+            border-radius: 18px;
+            border: 1px solid #fff;
+            margin-right: 4px;
+            float: left;
+            .dateBox {
+              text-align: center;
+              span {
+                font-size: 12px;
+                height: 17px;
+                display: block;
                 font-weight: 500;
                 color: rgba(51, 51, 51, 1);
-                line-height: 20px;
+                line-height: 17px;
               }
-              & > span:nth-of-type(1) {
-                margin-left: 8px;
-                color: rgba(102, 102, 102, 1);
-                margin-right: 16px;
+              .firstSpan {
+                display: block;
+                font-size: 14px;
+                font-weight: 500;
+                height: 19px;
+                margin: 6px 0 3px;
+                color: rgba(51, 51, 51, 1);
+                line-height: 19px;
               }
             }
           }
-          & > .examTimeListRight {
-            & > div {
-              width: 20px;
-              height: 20px;
-              overflow: hidden;
-              position: relative;
-              input[type="radio"] {
-                display: none;
-              }
-              input[type="radio"] + label::before {
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                margin-right: 8px;
-                background: url("../../assets/imgs/noSelect.svg");
-                background-size: 100% 100%;
-                content: "";
-                left: 0;
-                top: 0;
-                position: absolute;
-              }
-              input[type="radio"]:checked + label::before {
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                margin-right: 8px;
-                content: "";
-                left: 0;
-                top: 0;
-                position: absolute;
-                background: url("../../assets/imgs/selected.svg");
-                background-size: 100% 100%;
+          .activeSlides {
+            border: 1px solid rgba(32, 105, 229, 1);
+          }
+        }
+      }
+      .examTimeList {
+        width: 327px;
+        height: 320px;
+        overflow: hidden;
+        margin-top: 12px;
+        padding: 0 16px 12px 16px;
+        & > .content {
+          & > div {
+            width: 295px;
+            height: 42px;
+            display: flex;
+            padding: 12px 16px 12px 14px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(229, 229, 229, 1);
+            & > .examTimeListLeft {
+              padding: 12px 0;
+              & > p {
+                &:nth-of-type(1) {
+                  margin-bottom: 4px;
+                }
+                & > i {
+                  font-size: 13px;
+                }
+                & > span {
+                  font-size: 13px;
+                  font-weight: 500;
+                  color: rgba(51, 51, 51, 1);
+                  line-height: 20px;
+                }
+                & > span:nth-of-type(1) {
+                  margin-left: 8px;
+                  color: rgba(102, 102, 102, 1);
+                  margin-right: 16px;
+                }
               }
             }
-            & > span {
-              font-size: 14px;
-              font-weight: 500;
-              color: rgba(102, 102, 102, 1);
-              line-height: 20px;
+            & > .examTimeListRight {
+              & > div {
+                width: 20px;
+                height: 20px;
+                overflow: hidden;
+                position: relative;
+                input[type="radio"] {
+                  display: none;
+                }
+                input[type="radio"] + label::before {
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 50%;
+                  margin-right: 8px;
+                  background: url("../../assets/imgs/noSelect.svg");
+                  background-size: 100% 100%;
+                  content: "";
+                  left: 0;
+                  top: 0;
+                  position: absolute;
+                }
+                input[type="radio"]:checked + label::before {
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 50%;
+                  margin-right: 8px;
+                  content: "";
+                  left: 0;
+                  top: 0;
+                  position: absolute;
+                  background: url("../../assets/imgs/selected.svg");
+                  background-size: 100% 100%;
+                }
+              }
+              & > span {
+                font-size: 14px;
+                font-weight: 500;
+                color: rgba(102, 102, 102, 1);
+                line-height: 20px;
+              }
             }
+          }
+          .bottomBar {
+            display: flex;
+            justify-content: center;
+            font-size: 12px;
+            font-family: PingFang-SC-Medium;
+            font-weight: 500;
+            padding-bottom: 64px;
+            color: rgba(176, 176, 176, 1);
+            line-height: 17px;
+            margin-top: 8px;
           }
         }
       }

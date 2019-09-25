@@ -4,7 +4,7 @@
             <i class="iconfont icon-zhushi"></i><span>申领说明</span>
         </div>
         <div v-transfer-dom>
-            <popup v-model="showPopup" @on-hide="log('hide')" @on-show="log('show')">
+            <popup v-model="showPopup">
                 <div class="popupPage">
                     <div class="PopupTop">
                         <p>申领说明</p>
@@ -27,35 +27,37 @@
             </popup>
         </div>
         <!-- 列表渲染 -->
-        <div class="listBox">
-            <div v-for="(item,index) in certificateList" :key="index">
-              <p>
-                <span class="firstSpan">{{item.playerName}}</span>
-                <span>{{item.certificateNo}}</span>
-                <span class="playCheckBox" v-if="item.examResult === 0 && item.certificationType === 0">
-                    <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentPlayer(item,index)">
-                    <label  :for='item.id'></label>
-                </span>
-                <span class="fltR" v-if="item.certificationType === 1">已认证</span>
-              </p>
-               <p class="commonTagP">
-                <span>电话号码</span>
-                <span>{{item.phone}}</span>
-              </p>
-              <p class="commonTagP">
-                <span>考试级别</span>
-                <span>{{item.leveNames}}</span>
-              </p>
-              <p class="commonTagP">
-                <span>考试结果</span>
-                <span v-if="item.examResult === 0">考试通过</span>
-                <span v-if="item.examResult === 1">考试未通过</span>
-              </p>
-              <p class="commonTagP" v-show="item.examResult === 0">
-                <span>认证服务费</span><span>¥ {{item.examFee}}</span>
-              </p>
-             
-          </div>
+        <div class="listBox listBoxWarper" ref="listBoxWarper">
+            <ul class="content">
+              <div v-for="(item,index) in certificateList" :key="index">
+                <p>
+                  <span class="firstSpan">{{item.playerName}}</span>
+                  <span>{{item.certificateNo}}</span>
+                  <span class="playCheckBox" v-if="item.examResult == 0 && item.certificationType == 0">
+                      <input type="checkbox" :id='item.id' :value="item" v-model="checkList" @change="selectCurrentPlayer(item,index)">
+                      <label  :for='item.id'></label>
+                  </span>
+                  <span class="fltR" v-if="item.certificationType === 1">已认证</span>
+                </p>
+                <p class="commonTagP">
+                  <span>电话号码</span>
+                  <span>{{item.phone}}</span>
+                </p>
+                <p class="commonTagP">
+                  <span>考试级别</span>
+                  <span>{{item.leveNames}}</span>
+                </p>
+                <p class="commonTagP">
+                  <span>考试结果</span>
+                  <span v-if="item.examResult === 0">考试通过</span>
+                  <span v-if="item.examResult === 1">考试未通过</span>
+                </p>
+                <p class="commonTagP" v-show="item.examResult === 0">
+                  <span>认证服务费</span><span>¥ {{item.examFee}}</span>
+                </p>
+              
+              </div>
+            </ul>
           <p class="bottomBar">
               已加载全部
           </p>
@@ -76,11 +78,11 @@
               <button class="submitP" :disabled ="disabled" :class="{'deactiveBtn':disabled === true}" @click="hanleApply">证书申领</button>
           </div>
         </div>
-
     </div>
 </template>
 
 <script>
+import Bscroll from "better-scroll";
 import { TransferDom, Popup, CheckIcon } from "vux";
 export default {
   directives: {
@@ -115,7 +117,6 @@ export default {
     showPopupPage() {
       this.showPopup = true;
     },
-    log() {},
     cancleBtn() {
       this.showPopup = false;
     },
@@ -139,7 +140,6 @@ export default {
       }
     },
     hanleApply(){
-      // console.log(this.checkList,'list1111')
       sessionStorage.setItem('checkList',JSON.stringify(this.checkList))
       this.$router.push({name:'certificateDetails'})
     }
@@ -157,12 +157,17 @@ export default {
       if (res.data.code === 0) {
         console.log(res.data.data,'???')
         this.certificateList = res.data.data;
-        this.hasCertificationList = this.certificateList.filter( e =>e.examResult == 0 && e.certificationType == 0)
+        this.hasCertificationList = this.certificateList.filter( e => e.examResult == 0 && e.certificationType == 0)
+        console.log( this.hasCertificationList ,' this.hasCertificationList ')
+        console.log( this.certificateList)
         if(this.hasCertificationList.length == 0){
-            this.nullDisabled = true;
+          this.nullDisabled = true;
         }else{
-            this.nullDisabled = false;
+          this.nullDisabled = false;
         }
+        this.$nextTick(() => {
+            this.scroll = new Bscroll(this.$refs.listBoxWarper, {click: true});
+        });
       }
     });
   }
@@ -195,89 +200,88 @@ export default {
       color: rgba(51, 51, 51, 1);
     }
   }
-
   & > .listBox {
-    display: flex;
-    flex: 1;
     width: 100%;
-    flex-direction: column;
-    align-items: center;
-    & > div {
-      width: 327px;
-      padding: 16px;
-      margin-top: 12px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
-      border-radius: 14px;
-      &:nth-of-type(1) {
-        margin-top: 0;
-      }
-      & > p:nth-of-type(1) {
-        width: 100%;
-        height: 22px;
-        & > .firstSpan {
-          font-size: 16px;
-          width: 70px;
-          height: 22px;
-          float: left;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
-          margin-right: 8px;
-          color: rgba(51, 51, 51, 1);
-          line-height: 22px;
-        }
-        &>.fltR{
-          font-size: 16px;
-          font-family: PingFang-SC-Medium;
-          font-weight: 500;
-          float: right;
-          line-height: 22px;
-        }
-        & > span {
-          font-size: 16px;
-          font-family: PingFang-SC-Medium;
-          font-weight: 500;
-          float: left;
-          line-height: 22px;
-        }
-        &>.playCheckBox{
-            float: right;
-        }
-      }
-      & > p:nth-of-type(2) {
-        margin-top: 16px;
-      }
-      &>.commonTagP {
-        height: 20px;
-        margin-bottom: 8px;
-        & > span {
-          font-size: 14px;
-          font-weight: 500;
-          line-height: 20px;
-        }
-        & > span:nth-of-type(1) {
-          color: #666666;
-          margin-right: 22px;
-          float: left;
-        }
-        & > span:nth-of-type(2) {
-          color: #333333;
-          width: 249px;
-          // display: inline-block;
-        }
-        &:nth-last-of-type(1) {
-          margin-bottom: 0px;
-          &>span:nth-of-type(1) {
-            margin-right: 8px;
+    height: 526px;
+    overflow: hidden;
+    &>.content{
+        & > div {
+          width: 327px;
+          padding: 16px;
+          margin-top: 12px;
+          background: rgba(255, 255, 255, 1);
+          box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
+          border-radius: 14px;
+          &:nth-of-type(1) {
+            margin-top: 0;
           }
-          &>span:nth-of-type(2) {
-            color: #ED1A23;
+          & > p:nth-of-type(1) {
+            width: 100%;
+            height: 22px;
+            & > .firstSpan {
+              font-size: 16px;
+              width: 70px;
+              height: 22px;
+              float: left;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              font-family: PingFangSC-Semibold;
+              font-weight: 600;
+              margin-right: 8px;
+              color: rgba(51, 51, 51, 1);
+              line-height: 22px;
+            }
+            &>.fltR{
+              font-size: 16px;
+              font-family: PingFang-SC-Medium;
+              font-weight: 500;
+              float: right;
+              line-height: 22px;
+            }
+            & > span {
+              font-size: 16px;
+              font-family: PingFang-SC-Medium;
+              font-weight: 500;
+              float: left;
+              line-height: 22px;
+            }
+            &>.playCheckBox{
+                float: right;
+            }
+          }
+          & > p:nth-of-type(2) {
+            margin-top: 16px;
+          }
+          &>.commonTagP {
+            height: 20px;
+            margin-bottom: 8px;
+            & > span {
+              font-size: 14px;
+              font-weight: 500;
+              line-height: 20px;
+            }
+            & > span:nth-of-type(1) {
+              color: #666666;
+              margin-right: 22px;
+              float: left;
+            }
+            & > span:nth-of-type(2) {
+              color: #333333;
+              width: 249px;
+              // display: inline-block;
+            }
+            &:nth-last-of-type(1) {
+              margin-bottom: 0px;
+              &>span:nth-of-type(1) {
+                margin-right: 8px;
+              }
+              &>span:nth-of-type(2) {
+                color: #ED1A23;
+              }
+            }
           }
         }
-      }
     }
     .bottomBar {
       display: flex;

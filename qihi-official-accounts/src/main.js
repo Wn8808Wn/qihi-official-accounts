@@ -4,6 +4,10 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
+// //全局注册scroll 组件
+import  scrollConponent  from './components/scroll'
+Vue.use(scrollConponent);
+
 //引入vuex 
 import store from './store/index'
 
@@ -23,7 +27,7 @@ import fastclick from 'fastclick'
 fastclick.attach(document.body)
 
 // 引入vconsole  打包前删除
-import vConsole from '../src/utils/vconsole.js'
+//import vConsole from '../src/utils/vconsole.js'
 // 引入axios 挂载
 import axios from './config/axios'
 Vue.prototype.$axios = axios;

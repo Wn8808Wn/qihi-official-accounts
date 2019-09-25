@@ -5,10 +5,10 @@
           <tab-item   seletced  @on-item-click='selectedCurrent'>棋手</tab-item>
           <tab-item   @on-item-click='selectedCurrent'>地址</tab-item>
           <tab-item   @on-item-click='selectedCurrent'>联系人</tab-item>
-          <tab-item   @on-item-click='selectedCurrent'>报销凭证</tab-item>
+          <!-- <tab-item   @on-item-click='selectedCurrent'>报销凭证</tab-item> -->
         </tab>
         <!-- 棋手列表 -->
-        <div class="list listWrapper" ref="listWrapper" v-if="index === 0">
+        <div class="list listWrapper" ref="chessesListWrapper" v-if="index === 0">
             <ul class="content">  
             <div v-for="(item,index) in playerList" :key="index" class="commonBox">
               <div class="lfloat">
@@ -32,9 +32,31 @@
             </ul>
         </div>
          <!-- 地址列表 -->
-       
+         <div class="list listWrapper" ref="addressListWrapper" v-if="index === 1">
+            <ul class="content">  
+            <div v-for="(item,index) in addressList" :key="index" class="commonBox">
+              <div class="lfloat">
+                  <p>
+                      <span>{{item.linkman}}</span>
+                  </p>
+                  <p class="commonTagP">
+                    <span>电话号码</span>
+                    <span>{{item.phone}}</span>
+                  </p>
+                  <p class="commonTagP">
+                    <span>详细地址</span>
+                    <span>{{item.address}}</span>
+                  </p>
+              </div>
+              <div class="rfloat"><i class="iconfont icon-xiugai" @click="editAddressInfo(item)"></i></div>
+            </div>
+            <p class="bottomBar">
+                已加载全部
+            </p>
+            </ul>
+        </div>
          <!-- 联系人列表 -->
-        <div class="list listWrapper" ref="listWrapper" v-if="index === 2">
+        <div class="list listWrapper" ref="linkmanListWrapper" v-if="index === 2">
             <ul class="content">  
             <div v-for="(item,index) in linkmanList" :key="index" class="commonBox">
               <div class="lfloat">
@@ -50,7 +72,7 @@
                     <span>{{item.email}}</span>
                   </p>
               </div>
-              <div class="rfloat"><i class="iconfont icon-xiugai" @click="editlinkmanInfo(item)"></i></div>
+              <div class="rfloat"><i class="iconfont icon-xiugai" @click="editLinkmanInfo(item)"></i></div>
             </div>
             <p class="bottomBar">
                 已加载全部
@@ -58,7 +80,26 @@
             </ul>
         </div>
          <!-- 报销凭证列表 -->
-
+        <!-- <div class="list listWrapper" ref="proofListWrapper" v-if="index === 3">
+            <ul class="content">  
+            <div v-for="(item,index) in proofList" :key="index" class="commonBox">
+              <div class="lfloat">
+                  <p class="commonTagP">
+                    <span>个人抬头</span>
+                    <span>{{item.receiptTitle}}</span>
+                  </p>
+                  <p class="commonTagP">
+                    <span>个人抬头</span>
+                    <span>{{item.receiptNo}}</span>
+                  </p>
+              </div>
+              <div class="rfloat"><i class="iconfont icon-xiugai" @click="editChequeInfo(item)"></i></div>
+            </div>
+            <p class="bottomBar">
+                已加载全部
+            </p>
+            </ul>
+        </div> -->
         <div class="addBtn" @click="addBtn"></div>
         <commonTabbar></commonTabbar>
     </div>
@@ -79,9 +120,9 @@ export default {
   data() {
     return {
       playerList: [],
-      adressList: [],
+      addressList: [],
       linkmanList: [],
-      reimbursementList:[],
+    //  proofList:[],
       index: 0,
     };
   },
@@ -91,29 +132,47 @@ export default {
         this.$router.push({ name: "addPlayer" });
       }
       if (this.index === 1) {
-        // alert("新增地址");
+        this.$router.push({ name: "addAddress" });
       }
       if (this.index === 2) {
          this.$router.push({ name: "addLinkman" });
       }
-      if (this.index === 3) {
-        // alert("新增报销");
-      }
+      // if (this.index === 3) {
+      //   this.$router.push({ name: "addCheque" });
+      // }
     },
     getPlayerList(params) {
       this.$axios.get("/api/player/list", { params }).then(res => {
         if (res.data.code === 0) {
           console.log(res)
           this.playerList = res.data.data;
-          // let examLevelList = JSON.parse(sessionStorage.getItem('examLevelList'));
-          // this.playerList.map( e =>{
-          //   e.chessLevelName = examLevelList.filter( item => item.id == e.chessLevel)[0].levelName;
-          // })
-          this.$nextTick(() => {
-              this.scroll = new Bscroll(this.$refs.listWrapper, { click: true });
-          });
+          if(!this.scroll){
+            this.$nextTick(() => {
+                this.scroll = new Bscroll(this.$refs.chessesListWrapper, { click: true });
+            });
+
+          }else{
+              this.scroll.refresh()
+          }
         }
       });
+    },
+    getAddressList(params){
+       this.$axios.get("/api/address/address_list",{ params }).then(res => {
+        if (res.data.code === 0) {
+          console.log(res,'addressList')
+          this.addressList = res.data.data;
+          if(!this.scroll){
+            this.$nextTick(() => {
+                this.scroll = new Bscroll(this.$refs.addressListWrapper, { click: true });
+            });
+
+          }else{
+              this.scroll.refresh()
+          }
+        }
+      });
+
     },
     getLinkmanList(params){
       this.$axios.get("/api/linkman/list ", { params }).then(res => {
@@ -124,17 +183,44 @@ export default {
           // this.playerList.map( e =>{
           //   e.chessLevelName = examLevelList.filter( item => item.id == e.chessLevel)[0].levelName;
           // })
-          this.$nextTick(() => {
-              this.scroll = new Bscroll(this.$refs.listWrapper, { click: true });
-          });
+          if(!this.scroll){
+            this.$nextTick(() => {
+                this.scroll = new Bscroll(this.$refs.linkmanListWrapper, { click: true });
+            });
+          }else{
+              this.scroll.refresh()
+          }
         }
       });
     },
+    // getProofList(params){
+    //   this.$axios.get("/api/proof/list", { params }).then(res => {
+    //     if (res.data.code === 0) {
+    //       console.log(res,'prooflist')
+    //       this.proofList = res.data.data;
+    //       if(!this.scroll){
+    //         this.$nextTick(() => {
+    //             this.scroll = new Bscroll(this.$refs.proofListWrapper, { click: true });
+    //         });
+    //       }else{
+    //           this.scroll.refresh()
+    //       }
+    //     }
+    //   });
+    // },
     editPlayerInfo(item){
       sessionStorage.setItem('editCurrentPlayerInfo',JSON.stringify(item))
       this.$router.push({name:'editPlayerInfo'})
     },
-     editlinkmanInfo(item){
+    editAddressInfo(item){
+      sessionStorage.setItem('editCurrentAddressInfo',JSON.stringify(item))
+      this.$router.push({name:'editAddress'})
+    },
+    // editChequeInfo(){
+    //   sessionStorage.setItem('editCurrentChequeInfo',JSON.stringify(item))
+    //   this.$router.push({name:'editCheque'})
+    // },
+    editLinkmanInfo(item){
       console.log(item)
       sessionStorage.setItem('editCurrentLinkmanInfo',JSON.stringify(item))
       this.$router.push({name:'editLinkmanInfo'})
@@ -145,14 +231,14 @@ export default {
         this.getPlayerList();
       }
       if (index === 1) {
-        //  this.$router.push({name:'addressInfo'})
+       this.getAddressList();
       }
       if (index === 2) {
         this.getLinkmanList();
       }
-      if (index === 3) {
-        //  this.$router.push({name:'reimbursementInfo'})
-      }
+      // if (index === 3) {
+      //   this.getProofList();
+      // }
     }
   },
   created() {
@@ -163,6 +249,13 @@ export default {
     if( from.name == 'editLinkmanInfo' || from.name == 'addLinkman'){
       next( vm =>{
          vm.selectedCurrent(2);
+      });
+    }else{
+      next();
+    }
+    if( from.name == 'editAddress' || from.name == 'addAddress'){
+      next( vm =>{
+         vm.selectedCurrent(1);
       });
     }else{
       next();

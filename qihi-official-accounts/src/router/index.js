@@ -196,6 +196,22 @@ export default new Router({
       component: () => import('../pages/commonInformation/playerUnitCode.vue'), // 段级位考试=>新增棋手=>棋手机构代码
     },
     {
+      path: '/examCenter/examinationLevel/addAddress',
+      name: 'addAddress',
+      meta: {
+        title: '新增常用地址'
+      },
+      component: () => import('../pages/commonInformation/addAddress.vue'), // 段级位考试=>新增地址
+    },
+    {
+      path: '/examCenter/examinationLevel/editAddress',
+      name: 'editAddress',
+      meta: {
+        title: '编辑常用地址'
+      },
+      component: () => import('../pages/commonInformation/editAddress.vue'), // 段级位考试=>编辑常用地址
+    },
+    {
       path: '/examCenter/examinationLevel/addLinkman',
       name: 'addLinkman',
       meta: {
@@ -211,14 +227,22 @@ export default new Router({
       },
       component: () => import('../pages/commonInformation/editLinkmanInfo.vue'), // 段级位考试=>编辑联系人
     },
-    {
-      path: '/examCenter/examinationLevel/reimbursementInfo',
-      name: 'reimbursementInfo',
-      meta: {
-        title: '报销凭证'
-      },
-      component: () => import('../pages/commonInformation/reimbursementInfo.vue'), // 段级位考试=>报销凭证
-    },
+    // {
+    //   path: '/examCenter/examinationLevel/addCheque',
+    //   name: 'addCheque',
+    //   meta: {
+    //     title: '新增报销凭证'
+    //   },
+    //   component: () => import('../pages/commonInformation/addCheque.vue'), // 段级位考试=>新增报销凭证
+    // },
+    // {
+    //   path: '/examCenter/examinationLevel/editCheque',
+    //   name: 'editCheque',
+    //   meta: {
+    //     title: '编辑报销凭证'
+    //   },
+    //   component: () => import('../pages/commonInformation/editCheque.vue'), // 段级位考试=>编辑报销凭证
+    // },
     {
       path: '/examCenter/coachTest',
       name: 'coachTest',

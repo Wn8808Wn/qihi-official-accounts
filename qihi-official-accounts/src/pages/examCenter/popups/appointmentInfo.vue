@@ -1,5 +1,5 @@
 <template>
-    <div class="popupPage">
+    <div class="popupPageTop">
         <div class="information" @click="showPopupPage">
             <i class="iconfont icon-zhushi"></i><span>预约说明</span>
         </div>
